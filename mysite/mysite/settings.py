@@ -14,7 +14,7 @@ PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'doctors',
+        'NAME': 'homes',
             #os.path.join(PROJECT_ROOT, 'mysql.db'),                      # Or path to database file if using sqlite3.
         'USER': 'root',                      # Not used with sqlite3.
         'PASSWORD': 'thebakery',                  # Not used with sqlite3.
