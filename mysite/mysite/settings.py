@@ -109,7 +109,7 @@ ROOT_URLCONF = 'mysite.urls'
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
 TEMPLATE_DIRS = (
-    os.path.join(PROJECT_ROOT, '../../site-templates/')
+    os.path.join(PROJECT_ROOT, '../../site-templates/'),
 )
 
 INSTALLED_APPS = (
@@ -119,14 +119,14 @@ INSTALLED_APPS = (
  #   'django.contrib.sites',
  #   'django.contrib.messages',
  #    'django.contrib.staticfiles',
- 'product_data',
+    'search',
  
 
     # Uncomment the next line to enable the admin:
-'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-#'south',
+    #'south',
 )
 
 # A sample logging configuration. The only tangible logging

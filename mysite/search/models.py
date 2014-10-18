@@ -1,0 +1,41 @@
+from django.db import models
+
+
+class PrevHomeSales(models.Model):
+    sale_type = models.CharField(max_length=500,null=True, blank=True)
+    home_type = models.CharField(max_length=500,null=True, blank=True)
+    address = models.CharField(max_length=2000,null=True, blank=True)
+    city = models.CharField(max_length=2000,null=True, blank=True)
+    statecode = models.CharField(max_length=2,null=True, blank=True)
+    zipcode = models.CharField(max_length=5,null=True, blank=True)
+    list_price = models.IntegerField(null=True, blank=True)
+    beds = models.IntegerField(null=True, blank=True)
+    #baths = models.DecimalField(max_digits=4, decimal_places=1,null=True, blank=True)
+    #location = models.CharField(max_length=2000,null=True, blank=True)
+    #sqft = models.IntegerField(null=True, blank=True)
+    #lot_size = models.IntegerField(null=True, blank=True)
+    #year_built = models.IntegerField(max_length=4,null=True, blank=True)
+    #parking_spots = models.IntegerField(null=True, blank=True)
+    #parking_type = models.CharField(max_length=500,null=True, blank=True)
+    #days_on_market = models.IntegerField(max_length=4,null=True, blank=True)
+    #status = models.CharField(max_length=500,null=True, blank=True)
+    #next_open_house_date = models.CharField(max_length=50,null=True, blank=True)
+    #next_open_house_start_time = models.CharField(max_length=50,null=True, blank=True)
+    #next_open_house_end_time = models.CharField(max_length=50,null=True, blank=True)
+    #recent_reduction_date = models.CharField(max_length=50,null=True, blank=True)
+    #original_list_price = models.IntegerField(null=True, blank=True)
+    #last_sale_date = models.DateTimeField(null=True, blank=True)
+    #last_sale_price = models.IntegerField(null=True, blank=True)
+    #url = models.URLField(null=True, blank=True)
+    #source = models.CharField(max_length=500,null=True, blank=True)
+    #listing_id = models.CharField(max_length=500,null=True, blank=True)
+    #original_source = models.CharField(max_length=500,null=True, blank=True)
+    #favorite = models.CharField(max_length=5,null=True, blank=True)
+    #interested = models.CharField(max_length=5,null=True, blank=True)
+    #latitude = models.DecimalField(max_digits=15, decimal_places=10,null=True, blank=True)
+    #longitude = models.DecimalField(max_digits=15, decimal_places=10,null=True, blank=True)
+    #is_short_sale = models.BooleanField(blank=True)
+
+
+    def __unicode__(self):
+        return "%s, %s, %s %s" % (self.address, self.city, self.statecode, self.zipcode)

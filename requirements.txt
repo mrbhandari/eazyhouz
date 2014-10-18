@@ -349,6 +349,20 @@ a2dissite 000-default
 #/opt/local/share/mysql5/mysql/mysql.server start
 
 
+#FOr the Eazy houz project:
+#After creating models
+python manage.py syncdb
+
+#Get django version 1.7
+pip install -U Django
+
+
+python manage.py makemigrations search
+python manage.py migrate
+sudo pip install pandas
+
+
+
 
 
 

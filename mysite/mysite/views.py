@@ -4,8 +4,8 @@ from django.template import Context
 from django.http import HttpResponse
 import datetime
 import MySQLdb
-from product_data.models import *
-from django.utils import simplejson
+from search.models import *
+import json
 
 
 def getResults(hcpcs, state):
@@ -29,7 +29,7 @@ def state_autosuggest(request):
     if 'term' in request.GET:
         search = request.GET['term']
         autores = [AK, AL, AR, AZ, CA, CO, CT, DC, DE, FL, GA, HI, IA, ID, IL, IN, KS, KY, LA, MA, MD, ME, MI, MN, MO, MS, MT, NC, ND, NE, NH, NJ, NM, NV, NY, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VA, VT, WA, WI, WV, WY]
-        return HttpResponse(simplejson.dumps(autores), mimetype='application/json')
+        return HttpResponse(json.dumps(autores), mimetype='application/json')
     
 
 
@@ -63,7 +63,7 @@ def hcpcs_autosuggest(request):
         # format what you return
         
         print search
-        return HttpResponse(simplejson.dumps(autores), mimetype='application/json')
+        return HttpResponse(json.dumps(autores), mimetype='application/json')
         #return render_to_response('search_form.html',
         #    {'hcpcs_autosuggest_results': rows
         #     })
