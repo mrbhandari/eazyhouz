@@ -8,6 +8,8 @@ from search.models import *
 import json
 
 
+
+
 def getResults(hcpcs, state):
   db = MySQLdb.connect(host="localhost", # your host, usually localhost
                      user="root", # your username
@@ -33,23 +35,25 @@ def state_autosuggest(request):
     
 
 
-def hcpcs_autosuggest(request):
-    if 'term' in request.GET:
-        search = request.GET['term']
+def autosuggest(request):
+    if 'q' in request.GET:
+        search = request.GET['q']
         
-        db = MySQLdb.connect(host="localhost", # your host, usually localhost
-                     user="root", # your username
-                      passwd="thebakery", # your password
-                      db="doctors") # name of the data base
-
-        cur = db.cursor() 
-      
-        # Use all the SQL you like
-        print "SELECT * FROM hcpcs_autosuggest where (hcpcs_code like '%" + search + "%' or hcpcs_description like '%" + search + "%') LIMIT 100;"
-        cur.execute("SELECT * FROM hcpcs_autosuggest where (hcpcs_code like '%" + search + "%' or hcpcs_description like '%" + search + "%') LIMIT 100;")
-        rows = cur.fetchall()
-        cur.close()
+        #db = MySQLdb.connect(host="localhost", # your host, usually localhost
+        #             user="root", # your username
+        #              passwd="thebakery", # your password
+        #              db="doctors") # name of the data base
+        #
+        #cur = db.cursor() 
+        #
+        ## Use all the SQL you like
+        #print "SELECT * FROM hcpcs_autosuggest where (hcpcs_code like '%" + search + "%' or hcpcs_description like '%" + search + "%') LIMIT 100;"
+        #cur.execute("SELECT * FROM hcpcs_autosuggest where (hcpcs_code like '%" + search + "%' or hcpcs_description like '%" + search + "%') LIMIT 100;")
+        #rows = cur.fetchall()
+        #cur.close()
         
+	
+	rows = ['read', 'write']
         print len(rows)
         autores =[]
         i=0
@@ -58,31 +62,26 @@ def hcpcs_autosuggest(request):
             print i
             i = i +1
         print autores
-        returndata = ["blue shoes", "red shoes"]
         
-        # format what you return
-        
-        print search
-        return HttpResponse(json.dumps(autores), mimetype='application/json')
-        #return render_to_response('search_form.html',
-        #    {'hcpcs_autosuggest_results': rows
-        #     })
-        #
+	response_data = {}
+	response_data['result'] = 'failed'
+	response_data['message'] = 'You messed up'
+	return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 def search(request):
-    if 'hcpcs' in request.GET and 'state' in request.GET:
-        if 'hcpcs' in request.GET and request.GET['hcpcs']:
-            hcpcs = request.GET['hcpcs']
-            hcpcs = hcpcs.split(' -', 1)[0]
-            print "DONE!!"
-            print hcpcs
-            state = request.GET['state']
-            #providers = Medicare.objects.filter(hcpcs_code__icontains=hcpcs, state__icontains=state)
-            #print providers[1].npi
-            #print providers
-            
-            results = getResults(hcpcs, state)
-            print results
+    if 'q' in request.GET:
+        #if 'hcpcs' in request.GET and request.GET['hcpcs']:
+        #    hcpcs = request.GET['hcpcs']
+        #    hcpcs = hcpcs.split(' -', 1)[0]
+        #    print "DONE!!"
+        #    print hcpcs
+        #    state = request.GET['state']
+        #    #providers = Medicare.objects.filter(hcpcs_code__icontains=hcpcs, state__icontains=state)
+        #    #print providers[1].npi
+        #    #print providers
+        #    
+	results = ['read', 'write']
+        print results
             #products = Product.objects.filter(description__icontains=q)
             #print products[1].brand
             #print len(products)
@@ -92,12 +91,12 @@ def search(request):
         #if 'title' in request.GET and request.GET['title']:
          #   title = request.GET['title']
           #  products = Product.objects.filter(title__icontains=title)
-        if 'sort_by' in request.GET and request.GET['sort_by']:
-            sort_by = request.GET['sort_by']
-            if sort_by == 'discount':
-                products = products.extra(select={ 'd_field' : '((1 - price/msrp)*100)' }).extra(order_by=['d_field'])
-            else:
-                products = products.order_by('-'+sort_by)  
+        #if 'sort_by' in request.GET and request.GET['sort_by']:
+        #    sort_by = request.GET['sort_by']
+        #    if sort_by == 'discount':
+        #        products = products.extra(select={ 'd_field' : '((1 - price/msrp)*100)' }).extra(order_by=['d_field'])
+        #    else:
+        #        products = products.order_by('-'+sort_by)  
         return render_to_response('search_results.html',
             {'products': results
              #'query': q

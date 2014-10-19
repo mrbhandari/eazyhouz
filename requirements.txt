@@ -351,8 +351,7 @@ a2dissite 000-default
 
 #FOr the Eazy houz project:
 #After creating models
-python manage.py syncdb
-
+python manage.py syncdbs
 #Get django version 1.7
 pip install -U Django
 
