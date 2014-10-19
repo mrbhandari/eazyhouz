@@ -2,10 +2,11 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
     <script src="{% static 'jquery-1.11.1.min.js' %}"></script>
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
-    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
-    <script src="https://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js"></script>
+    <script src="{% static 'typeahead.js' %}"></script>
     
         <!-- Custom Google Web Font -->
     <link href="{% static 'landing-page/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
@@ -52,7 +53,10 @@
   <body>
     {% block content %}
     {% endblock %}
-
-    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    
+    
+    <!-- Javascript files - At the end of the page load faster -->
+    
+    
   </body>
 </html>

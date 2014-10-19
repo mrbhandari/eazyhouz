@@ -33,40 +33,19 @@ def state_autosuggest(request):
         autores = [AK, AL, AR, AZ, CA, CO, CT, DC, DE, FL, GA, HI, IA, ID, IL, IN, KS, KY, LA, MA, MD, ME, MI, MN, MO, MS, MT, NC, ND, NE, NH, NJ, NM, NV, NY, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VA, VT, WA, WI, WV, WY]
         return HttpResponse(json.dumps(autores), mimetype='application/json')
     
-
-
 def autosuggest(request):
-    if 'q' in request.GET:
-        search = request.GET['q']
-        
-        #db = MySQLdb.connect(host="localhost", # your host, usually localhost
-        #             user="root", # your username
-        #              passwd="thebakery", # your password
-        #              db="doctors") # name of the data base
-        #
-        #cur = db.cursor() 
-        #
-        ## Use all the SQL you like
-        #print "SELECT * FROM hcpcs_autosuggest where (hcpcs_code like '%" + search + "%' or hcpcs_description like '%" + search + "%') LIMIT 100;"
-        #cur.execute("SELECT * FROM hcpcs_autosuggest where (hcpcs_code like '%" + search + "%' or hcpcs_description like '%" + search + "%') LIMIT 100;")
-        #rows = cur.fetchall()
-        #cur.close()
-        
-	
-	rows = ['read', 'write']
-        print len(rows)
-        autores =[]
-        i=0
-        while i<len(rows):
-            autores.append(rows[i][0] + " - " + rows[i][1])
-            print i
-            i = i +1
-        print autores
-        
-	response_data = {}
-	response_data['result'] = 'failed'
-	response_data['message'] = 'You messed up'
-	return HttpResponse(json.dumps(response_data), content_type="application/json")
+    query = request.GET.get('q','')
+    if(len(query) > 0):
+        results = PrevHomeSales.objects.filter(address__icontains=query)
+        result_list = []
+        for item in results:
+            result_list.append(item.address + ", " + item.city + ", " + item.state)
+    else:
+        result_list = []
+
+    response_text = json.dumps(result_list, separators=(',',':'))
+    return HttpResponse(response_text, content_type="application/json")
+
 
 def search(request):
     if 'q' in request.GET:
