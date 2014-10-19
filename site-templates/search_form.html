@@ -18,7 +18,6 @@
                             $( document ).ready(function() {
                             
                                 $('#query').typeahead({
-                                    local: ['San Francisco'],
                                     remote: '/autosuggest/?q=%QUERY',
                                     })
                                 .keydown(function(e) {
@@ -40,7 +39,7 @@
                         <form action="search" method="get" data-ajax="false">
                         <fieldset>
                             <div class="form-group">
-                                <input class="form-control" name="query" autocomplete="off" id="query" placeholder="Start typing something to search..." type="text"
+                                <input class="form-control" name="q" autocomplete="off" id="query" placeholder="Start typing something to search..." type="text"
                                 style="position: relative; vertical-align: top; background-color: rgb(255, 255, 255); font-size: 1.5em; height:40px">              
                             </div>
                             <button type="submit" class="btn btn-primary">Search</button>

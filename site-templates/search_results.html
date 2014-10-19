@@ -1,53 +1,198 @@
-{% extends "base.html" %}
-{% block content %}
-<head>
-    <title>Search Results</title>
-    
 
-</head>
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block content %}
+<link href="{% static 'dashboard.css' %}" rel="stylesheet" media="screen">
 
 <body>
-    <div data-role="header"><h1>Search Results<strong>{{ query }}</strong></h1></div>    
-    
-    <div data-role="content">
-        
-    {% if products %}
-        <div class="resultTitle">Found {{ products|length }} matching your search</div>
-        <table data-role="table" id="results" data-mode="reflow">
-         <thead>
-           <tr>
-               <th> NPI </th>
-               <th> First Name </th>
-               <th> Last Name </th>
-               <th> Number of procedures </th>
-               <th> Procedure description </th>
-               <th> City </th>
-               <th> State </th>
-           </tr>
-         </thead>
-     <tbody>
-       
-            {% for product in products %}
-              <tr>
-              <td>{{product.0}}</td>
-              <td>{{product.1}} </td>
-              <td>{{product.2}} </td>
-              <td>{{product.3}}</td>
-              <td>{{product.4}} </td>
-              <td>{{product.5}} </td>
-              <td>{{product.6}} </td>
-               </tr>
-            {% endfor %}
-     </tbody>
-    </table>  
-    {% else %}
-        <p>No doctors performed that prodedure on patients in our database.</p>
-    {% endif %}
 
-        
-        
-        
-        
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li class="active"><a href="#">Overview</a></li>
+            <li><a href="#">Reports</a></li>
+            <li><a href="#">Analytics</a></li>
+            <li><a href="#">Export</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="">Nav item</a></li>
+            <li><a href="">Nav item again</a></li>
+            <li><a href="">One more nav</a></li>
+            <li><a href="">Another nav item</a></li>
+            <li><a href="">More navigation</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="">Nav item again</a></li>
+            <li><a href="">One more nav</a></li>
+            <li><a href="">Another nav item</a></li>
+          </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">{{ query }}</h1>
+          
+          {% for result in results %}
+          
+          
+          
+          
+          <div class="row placeholders">
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src="{{result.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4>{{result.address}}</h4>
+              <span class="text-muted">Original Property</span>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src="{{result.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4>22 St Martin Ave</h4>
+              <span class="text-muted">Comp #1</span>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src="{{result.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4>24 St Martin Ave</h4>
+              <span class="text-muted">Comp #2</span>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src="{{result.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4>25 St Martin Ave</h4>
+              <span class="text-muted">Comp #3</span>
+            </div>
+          </div>
+
+          <h2 class="sub-header">Estimate Explanation</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Original</th>
+                  <th>Comp #1</th>
+                  <th>Comp #2</th>
+                  <th>Comp #3</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Address</td>
+                  <td>{{result.address}}</td>
+                  <td>{{result.address}}</td>
+                  <td>{{result.address}}</td>
+                  <td>{{result.address}}</td>
+                  
+                </tr>
+                <tr>
+                  <td>City</td>
+                  <td>{{result.city}}</td>
+                  <td>{{result.city}}</td>
+                  <td>{{result.city}}</td>
+                  <td>{{result.city}}</td>
+                </tr>
+                <tr>
+                  <td>Sale Price</td>
+                  <td>{{result.sale_price}}</td>
+                  <td>{{result.sale_price}}</td>
+                  <td>{{result.sale_price}}</td>
+                  <td>{{result.sale_price}}</td>
+                </tr>
+                <tr>
+                  <td>Last Sale Date</td>
+                  <td>{{result.last_sale_date}}</td>
+                  <td>{{result.last_sale_date}}</td>
+                  <td>{{result.last_sale_date}}</td>
+                  <td>{{result.last_sale_date}}</td>
+                </tr>
+                <tr>
+                  <td>Beds</td>
+                  <td>{{result.beds}}</td>
+                  <td>{{result.beds}}</td>
+                  <td>{{result.beds}}</td>
+                  <td>{{result.beds}}</td>
+                </tr>
+                <tr>
+                  <td>Baths</td>
+                  <td>{{result.baths}}</td>
+                  <td>{{result.baths}}</td>
+                  <td>{{result.baths}}</td>
+                  <td>{{result.baths}}</td>
+                </tr>
+                <tr>
+                  <td>Sqft</td>
+                  <td>{{result.sqft}}</td>
+                  <td>{{result.sqft}}</td>
+                  <td>{{result.sqft}}</td>
+                  <td>{{result.sqft}}</td>
+                </tr>
+                <tr>
+                  <td>Year Built</td>
+                  <td>{{result.year_built}}</td>
+                  <td>{{result.year_built}}</td>
+                  <td>{{result.year_built}}</td>
+                  <td>{{result.year_built}}</td>
+                </tr>
+                <tr>
+                  <td>Interior</td>
+                  <td>{{result.interior_rating}}</td>
+                  <td>{{result.interior_rating}}</td>
+                  <td>{{result.interior_rating}}</td>
+                  <td>{{result.interior_rating}}</td>
+                </tr>
+                <tr>
+                  <td>Exterior</td>
+                  <td>{{result.exterior_rating}}</td>
+                  <td>{{result.exterior_rating}}</td>
+                  <td>{{result.exterior_rating}}</td>
+                  <td>{{result.exterior_rating}}</td>
+                </tr>
+                <tr>
+                  <td>View</td>
+                  <td>{{result.view_rating}}</td>
+                  <td>{{result.view_rating}}</td>
+                  <td>{{result.view_rating}}</td>
+                  <td>{{result.view_rating}}</td>
+                </tr>
+                <tr>
+                  <td>Elementary School</td>
+                  <td>{{result.view_rating}}</td>
+                  <td>{{result.view_rating}}</td>
+                  <td>{{result.view_rating}}</td>
+                  <td>{{result.view_rating}}</td>
+                </tr>
+                <tr>
+                  <td>Middle School</td>
+                  <td>{{result.middle}}</td>
+                  <td>{{result.middle}}</td>
+                  <td>{{result.middle}}</td>
+                  <td>{{result.middle}}</td>
+                </tr>
+                <tr>
+                  <td>High School</td>
+                  <td>{{result.high}}</td>
+                  <td>{{result.high}}</td>
+                  <td>{{result.high}}</td>
+                  <td>{{result.high}}</td>
+                </tr>
+                <tr>
+                  <td>Description</td>
+                  <td>per</td>
+                  <td>inceptos</td>
+                  <td>himenaeos</td>
+                  <td>Curabitur</td>
+                </tr>
+                <tr>
+                  <td>Other</td>
+                  <td>sodales</td>
+                  <td>ligula</td>
+                  <td>in</td>
+                  <td>libero</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
         
         
     </div>
