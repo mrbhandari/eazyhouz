@@ -364,4 +364,7 @@ sudo pip install pandas
 
 
 
-
+#SCRAPING
+sudo pip install Scrapy
+sudo pip install w3lib
+sudo pip install BeautifulSoup
