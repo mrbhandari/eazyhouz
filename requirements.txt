@@ -1,6 +1,6 @@
 #begin
 #new user
-ssh -i rahulkey.pem ubuntu@ec2-54-90-112-29.compute-1.amazonaws.com
+ssh -i ~/Downloads/rahulkey.pem ubuntu@ec2-54-90-112-29.compute-1.amazonaws.com
 # old user
 #ssh -v -i rahulkey.pem ec2-user@ec2-54-243-61-145.compute-1.amazonaws.com
 
@@ -31,9 +31,9 @@ a2dissite default
 
 
 apt-get -y install mysql-server mysql-client
-echo "CREATE DATABASE doctors;" | mysql -u root -p
-echo "CREATE USER 'apacheuser'@'localhost' IDENTIFIED BY 'thebakery';" | mysql -u root -p
-echo "GRANT ALL PRIVILEGES ON doctors.* TO 'apacheuser'@'localhost';" | mysql -u root -p
+echo "CREATE DATABASE homes;" | mysql -u root -p
+echo "CREATE USER 'eazyapacheuser'@'localhost' IDENTIFIED BY 'thebakery';" | mysql -u root -p
+echo "GRANT ALL PRIVILEGES ON homes.* TO 'eazyapacheuser'@'localhost';" | mysql -u root -p
 echo "FLUSH PRIVILEGES;" | mysql -u root -p
 
 cd /srv/
@@ -42,17 +42,19 @@ mkdir -p my_project/logs my_project/run/eggs
 virtualenv my_project/venv
 /srv/my_project/venv/bin/pip install django
 
+#to upgrade /srv/my_project/venv/bin/pip install django --upgrade
 
 
-pushd my_project/app/
-/srv/my_project/venv/bin/python /srv/my_project/venv/bin/django-admin.py startproject webapp
-popd
+
+#pushd my_project/app/
+#/srv/my_project/venv/bin/python /srv/my_project/venv/bin/django-admin.py startproject webapp
+#popd
 
 mkdir -p my_project/app/webapp/site_media
 mkdir -p my_project/app/templates
 cd my_project/app/conf/apache/
 
-nano django.wsgi
+vim django.wsgi
 
 #Paste the following code into the editor and save it.
 import os
@@ -61,45 +63,48 @@ import sys
 root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'venv/lib/python2.7/site-packages/')))
 sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'app')))
-sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'app', 'webapp')))
+sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'app', 'Eazyhouz', 'mysite')))
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'webapp.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
 
-import django.core.handlers.wsgi
-application = django.core.handlers.wsgi.WSGIHandler()
+#import django.core.handlers.wsgi
+#application = django.core.handlers.wsgi.WSGIHandler()
+from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()
 
 
 
 #Create system user http://www.lennu.net/2012/05/14/django-deployement-installation-to-ubuntu-12-dot-04-server/
-useradd --system --no-create-home --home-dir /data/Grabit/mysite/ --user-group apacheuser
-chsh -s /bin/bash apacheuser
-vim /etc/apache2/sites-available/thetrackrec.conf
+sudo useradd --system --no-create-home --home-dir /data/Eazyhouz/mysite/ --user-group eazyapacheuser
+chsh -s /bin/bash eazyapacheuser
+vim /etc/apache2/sites-available/eazyhouz.conf
 
 
 #pasted file below
 
 
 <VirtualHost *:80>
-ServerAdmin root@thetrackrec
-ServerName thetrackrec
+ServerAdmin root@eazyhouz
+ServerName eazyhouz
 
-Alias /site_media/ /srv/my_project/app/webapp/site_media/
-Alias /static/ /srv/my_project/venv/lib/python2.7/site-packages/django/contrib/admin/static/
-Alias /robots.txt /srv/my_project/app/webapp/site_media/robots.txt
+Alias /site_media/ /srv/my_project/app/Eazyhouz/site_media/
+#This alias interferes with the site
+#Alias /static/ /srv/my_project/venv/lib/python2.7/site-packages/django/contrib/admin/static/
+Alias /robots.txt /srv/my_project/app/Eazyhouz/site_media/robots.txt
 Alias /favicon.ico /srv/my_project/app/webapp/site_media/favicon.ico
 
-CustomLog "|/usr/sbin/rotatelogs /srv/my_project/logs/access.log.%Y%m%d-%H%M%S 5M" combined
-ErrorLog "|/usr/sbin/rotatelogs /srv/my_project/logs/error.log.%Y%m%d-%H%M%S 5M"
+#CustomLog "|/usr/sbin/rotatelogs /srv/my_project/logs/access.log.%Y%m%d-%H%M%S 5M" combined
+#ErrorLog "|/usr/sbin/rotatelogs /srv/my_project/logs/error.log.%Y%m%d-%H%M%S 5M"
 LogLevel warn
 
-WSGIDaemonProcess thetrackrec user=apacheuser group=apacheuser processes=1 threads=15 maximum-requests=10000 python-path=/srv/my_project/venv/lib/python2.7/site-packages python-eggs=/srv/my_project/run/eggs
-WSGIProcessGroup thetrackrec
+WSGIDaemonProcess eazyhouz user=eazyapacheuser group=eazyapacheuser processes=1 threads=15 maximum-requests=10000 python-path=/srv/my_project/venv/lib/python2.7/site-packages python-eggs=/srv/my_project/run/eggs
+WSGIProcessGroup eazyhouz
 WSGIScriptAlias / /srv/my_project/app/conf/apache/django.wsgi
 
-<Directory /srv/my_project/app/webapp/site_media>
+<Directory /srv/my_project/app/Eazyhouz/static/>
 Order deny,allow
 Allow from all
-Options -Indexes FollowSymLinks
+#Options -Indexes FollowSymLinks
 </Directory>
 
 <Directory /srv/my_project/app/conf/apache>
@@ -112,19 +117,18 @@ Allow from all
 
 
 #start new server
-a2ensite thetrackrec
+a2ensite eazyhouz
 apt-get build-dep python-mysqldb
 /srv/my_project/venv/bin/pip install MySQL-python
 
 
-cd ../../
-cd webapp/webapp/
-nano settings.py
+cd /srv/my_project/app/Eazyhouz/mysite/
+sudo vim mysite/settings.py
 
 DATABASES = {
   'default': {
       'ENGINE': 'django.db.backends.mysql',
-      'NAME': 'doctors',
+      'NAME': 'homes',
       'USER': 'root',
       'PASSWORD': 'thebakery',
   }
@@ -134,7 +138,7 @@ MEDIA_ROOT = '/srv/my_project/app/webapp/site_media/'
 TEMPLATE_DIRS = '/srv/my_project/app/templates/'
 
 
-chown -R apacheuser:apacheuser /srv/my_project/
+chown -R eazyapacheuser:eazyapacheuser /srv/my_project/
 sudo service apache2 restart
 
 
@@ -144,8 +148,8 @@ sudo apt-get install git
 #get git repo
 cd ../../..
 cd /data
-git clone https://github.com/mrbhandari/Grabit.git
-cd Grabit/mysite/
+git clone https://github.com/mrbhandari/Eazyhouz.git
+cd Eazyhouz/mysite/
 
 #activate virtual env
 source /srv/my_project/venv/bin/activate
@@ -161,7 +165,7 @@ import sys
 root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'venv/lib/python2.7/site-packages/')))
 sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'app')))
-sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'app', 'Grabit', 'mysite')))
+sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'app', 'Eazyhouz', 'mysite')))
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
 
@@ -177,30 +181,25 @@ scp -i rahulkey.pem medicare.tsv ubuntu@ec2-54-90-112-29.compute-1.amazonaws.com
 #adding medicare table and creating the fields
 mysql --local-infile -u root -p
 thebakery
-create database doctors;
+create database homes;
 
 
 #create standard Django table
-cd /srv/my_project/app/Grabit
-python manage.py validate
-python manage.py sqlall product_data
+cd /srv/my_project/app/Eazyhouz/mysite
+python manage.py migrate
 
-#check output then ...
-python manage.py syncdb
-
-
-mysql --local-infile -u root -p
-use doctors;
-create table medicare ( npi varchar(10), last_name varchar(100), first_name varchar(100), middle_name varchar(100), credentials varchar(1000), gender varchar(10), entity_code varchar(2), street1 varchar(1024), street2 varchar(1024), city varchar(1024), zip_code varchar(100), state varchar(512), country varchar(100), provider_type varchar(1024), medicare_indicator varchar(2), place_of_service varchar(10), hcpcs_code varchar(100), hcpcs_description varchar(1024), num_services int, num_uniq_users int, num_uniq_users_per_day int, avg_medicare_amt double, std_dev_medicare_amt double, avg_submitted_amt  double, std_dev_submitted_amt double, avg_medicare_payment double, std_dev_medicare_payment double);
+source /srv/my_project/venv/bin/activate
+sudo su
+pip install numpy
 
 
 #switch back to ec2 to load the data
-cp /home/ubuntu/medicare.tsv /data/medicare/medicare.tsv
-mysql --local-infile -u root -p
-thebakery
-use doctors;
-LOAD DATA LOCAL INFILE '/data/medicare/medicare.tsv' into TABLE medicare LINES TERMINATED BY '\n';
-select count(*) from medicare;
+#cp /home/ubuntu/medicare.tsv /data/medicare/medicare.tsv
+#mysql --local-infile -u root -p
+#thebakery
+#use homes;
+#LOAD DATA LOCAL INFILE '/data/medicare/medicare.tsv' into TABLE medicare LINES TERMINATED BY '\n';
+#select count(*) from medicare;
 
 #check output
 
@@ -208,8 +207,8 @@ select count(*) from medicare;
 #add index speed up performance
 #Create table for autosuggest
 
-Create table hcpcs_autosuggest select hcpcs_code, hcpcs_description from medicare group by hcpcs_code, hcpcs_description order by sum(num_uniq_users) desc;
-ALTER TABLE `medicare` ADD INDEX `hcpcs_code` (`hcpcs_code`);
+#Create table hcpcs_autosuggest select hcpcs_code, hcpcs_description from medicare group by hcpcs_code, hcpcs_description order by sum(num_uniq_users) desc;
+#ALTER TABLE `medicare` ADD INDEX `hcpcs_code` (`hcpcs_code`);
 
 
 
@@ -294,11 +293,12 @@ sudo apt-get install python-mysqldb
 pip install lxml
 
 
-cd Grabit/mysite/
+cd Eazyhouz/mysite/
 mkdir temp
 
 # to run hugo
 #ldconfig /~/../usr
+cd /srv/my_project/app/Eazyhouz/mysite
 export DJANGO_SETTINGS_MODULE=mysite.settings
 
 
@@ -316,12 +316,12 @@ sudo service httpd start
 sudo service httpd restart
 
 #setting up a cron job
-#cd /Grabit/mysite/hugo_fetch2.py 
+#cd /Eazyhouz/mysite/hugo_fetch2.py 
 #shell script
 #sudo sh
 #cd /project/hugoFetch/
 #source bin/activate
-#cd /Grabit/mysite/
+#cd /Eazyhouz/mysite/
 #export DJANGO_SETTINGS_MODULE=mysite.settings
 #python hugo_fetch2.py
 
@@ -358,7 +358,15 @@ pip install -U Django
 
 python manage.py makemigrations search
 python manage.py migrate
-sudo pip install pandas
+
+
+
+
+#new file
+import os
+import sys
+
+
 
 
 
