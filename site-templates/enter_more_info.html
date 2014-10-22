@@ -1,0 +1,39 @@
+
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<link href="{% static 'dashboard.css' %}" rel="stylesheet" media="screen">
+
+<div class="container"><div class="row"><div class="well">	
+We need more information about {{query}}. Could you help us by verifying this information about your property?
+<br>
+      <h3>Get more accurate</h3>
+      <p>This will only take a <strong> minute</strong>!</p>
+      <div class="row">
+        <div class="col-md-4">.
+        {% crispy form %}
+        
+        </div>
+
+        
+        <div class="col-md-8">.
+        <h3>Its your biggest purchase. Feel confident in knowing its value</h3>
+        <br><br>
+        <img src="https://www.baywaymortgage.com/wp-content/uploads/2013/01/purchase-home_big-480x340.jpg" class='resize_fit_center'>
+            <br><br>
+        We determine an estaimet based on a range of publicly available information.
+        Home Value Engine determines an estimate for a home based on a range of publicly available information, including sales of comparable houses in a neighborhood. estimate does not take into consideration home-specific factors like recent remodeling, although there is an option to update the information for a particular home. The accuracy of the estimate varies by location depending on how much information is publicly available, but Home Value Engine allows users to check the accuracy of estimates in their own region against actual sales.[citation needed] In many U.S. states, information on the transfer prices of real estate is readily available and accessible by the general public and is not exclusively held in realtors' databases.[24]
+<br><br>
+In March 2011, Home Value Engine released Rent estimates, which provide estimated rent prices for 90 million homes on both the Home Value Engine website and all of its mobile apps.[25]
+<br><br>
+On June 14, 2011, Home Value Engine changed its algorithm used to calculate estimates. In addition to changing the current estimate for millions of homes throughout the country, Home Value Engine changed historical estimate value information dating back to 2006. This resulted in drastic changes in both past and present estimate values for millions of homeowners.
+        
+        </div>
+      </div>
+
+
+
+</div></div></div>
+{% endblock %}

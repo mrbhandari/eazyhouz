@@ -1,8 +1,9 @@
 {% extends "base.html" %}
+
 {% block content %}
 
 <head>
-    <title>EazyHouz Best Way to negotiate for a house</title>
+    <title>Home Value Engine - The Best Way to negotiate for a house</title>
 </head>
 <body>
     
@@ -39,10 +40,12 @@
                         <form action="search" method="get" data-ajax="false">
                         <fieldset>
                             <div class="form-group">
+                                {{error}}
                                 <input class="form-control" name="q" autocomplete="off" id="query" placeholder="Start typing something to search..." type="text"
                                 style="position: relative; vertical-align: top; background-color: rgb(255, 255, 255); font-size: 1.5em; height:40px">              
                             </div>
                             <button type="submit" class="btn btn-primary">Search</button>
+                            
                         </fieldset>
                         </form>
                         </div></div></div>

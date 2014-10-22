@@ -191,6 +191,7 @@ python manage.py migrate
 source /srv/my_project/venv/bin/activate
 sudo su
 pip install numpy
+pip install django-crispy-forms
 
 
 #switch back to ec2 to load the data
