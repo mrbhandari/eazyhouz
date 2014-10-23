@@ -3,7 +3,7 @@ from django.contrib import admin
 admin.autodiscover()
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from mysite.views import search, autosuggest
-from django.views.generic import TemplateView
+from django.http import HttpResponse
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -14,7 +14,7 @@ urlpatterns = patterns('',
                        (r'^admin/', include(admin.site.urls)),
                        (r'^search/$', search),
                        (r'^autosuggest/$', autosuggest),
-                       (r'^robots\.txt$', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
+                       (r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow:", content_type="text/plain"))
 )
 
 urlpatterns += staticfiles_urlpatterns()
