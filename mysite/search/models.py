@@ -26,6 +26,7 @@ class PrevHomeSales(models.Model):
     high = models.IntegerField(null=True)
     remodeled = models.NullBooleanField()
     last_sale_date = models.DateField(null=True)
+    user_input = models.NullBooleanField()
 
     #parking_spots = models.IntegerField(null=True, blank=True)
     #parking_type = models.CharField(max_length=500,null=True, blank=True)

@@ -189,9 +189,12 @@ cd /srv/my_project/app/Eazyhouz/mysite
 python manage.py migrate
 
 source /srv/my_project/venv/bin/activate
-sudo su
+    sudo su
 pip install numpy
 pip install django-crispy-forms
+pip install xmltodict
+pip install address
+
 
 
 #switch back to ec2 to load the data
@@ -366,6 +369,9 @@ python manage.py migrate
 #new file
 import os
 import sys
+
+
+#Zillow API
 
 
 
