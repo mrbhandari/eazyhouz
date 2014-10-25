@@ -127,7 +127,8 @@ INSTALLED_APPS = (
    'django.contrib.staticfiles',
     'search',
     'django.contrib.admin',
-    'crispy_forms'
+    'crispy_forms',
+    'django.contrib.humanize'
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

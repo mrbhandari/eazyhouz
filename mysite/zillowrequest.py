@@ -43,27 +43,29 @@ def return_zhome_attr(raw_address, raw_citystatezip):
     prevhomesales.beds = result['bedrooms']
     print prevhomesales.beds
     
-    prevhomesales.baths = result['bathrooms']
+    print "DID THIS EXECUTE"
+    
+    prevhomesales.baths = result.get('bathrooms', {})
     print prevhomesales.baths
     
-    prevhomesales.sqft =result['finishedSqFt']
+    prevhomesales.sqft =result.get('finishedSqFt', {})
     print prevhomesales.sqft
     
-    prevhomesales.year_built =result['yearBuilt']
+    prevhomesales.year_built =result.get('yearBuilt', {})
     print prevhomesales.year_built
     
-    prevhomesales.sale_price = Decimal(result['lastSoldPrice']['#text'])
+    prevhomesales.sale_price = Decimal(result.get('lastSoldPrice', {}).get('#text', {}))
     print prevhomesales.sale_price
     
-    prevhomesales.url = result['links']['homedetails']
+    prevhomesales.url = result.get('links', {}).get('homedetails', {})
     print prevhomesales.url
     
     prevhomesales.image_url = ''
     
-    prevhomesales.latitude = Decimal(result['address']['latitude'])
+    prevhomesales.latitude = Decimal(result.get('address', {}).get('latitude', {}))
     print prevhomesales.latitude
     
-    prevhomesales.longitude = Decimal(result['address']['longitude'])
+    prevhomesales.longitude = Decimal(result.get('address', {}).get('longitude', {}))
     print prevhomesales.longitude
     
     prevhomesales.city = result['address']['city']
@@ -76,26 +78,33 @@ def return_zhome_attr(raw_address, raw_citystatezip):
     print prevhomesales.zipcode
     
     prevhomesales.address = result['address']['street']
+    print prevhomesales.address
     
+    prevhomesales.home_type = result.get('useCose', {})
+    print prevhomesales.home_type
+    
+    #TODO
+    #prevhomesales.remodeled
+    #prevhomesales.interior_rating
+    #prevhomesales.interior_rating
     #prevhomesales.elementary
     #prevhomesales.middle
     #prevhomesales.high
     
-    prevhomesales.home_type = result['useCode']
-    print prevhomesales.home_type
-    
-    #prevhomesales.remodeled
-    #prevhomesales.interior_rating
-    #prevhomesales.interior_rating
-    
-    prevhomesales.lot_size = result['lotSizeSqFt']
+    prevhomesales.lot_size = result.get('lotSizeSqFt', {})
     print prevhomesales.lot_size
     
     
-    prevhomesales.last_sale_date = datetime.datetime.strptime("03/25/2014", '%m/%d/%Y').date()
+    prevhomesales.last_sale_date = datetime.datetime.strptime(result.get('lastSoldDate', {}), '%m/%d/%Y').date()
     print prevhomesales.last_sale_date
     
     prevhomesales.user_input = True
+    
+    
+    
+    prevhomesales.last_zestimate = Decimal(result.get('zestimate', {}).get('amount', {}).get('#text', {}))
+    print prevhomesales.last_zestimate
+    
     prevhomesales.save()
     #TODO: does not check if this record already exists just saves it
     return prevhomesales

@@ -1,7 +1,7 @@
 from django.template.loader import get_template
 from django.shortcuts import render_to_response
 from django.template import Context
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse
 import datetime
 import MySQLdb
 from search.models import *
@@ -37,39 +37,44 @@ def search(request):
       query = request.GET.get('q','')
       query2 = request.GET.get('q2','')
       address = query.split(',')
-      
-      result = PrevHomeSales.objects.filter(address__icontains=address[0])[:1]
+      DB_LOOKUP = 0
+      #skips the db lookup for now since we use zillow
+      result = PrevHomeSales.objects.filter(address__icontains=address[0])[:DB_LOOKUP]
       #TODO: Considers only exact match
       #TODO: Needs to consider both query parameters q and q2
       
       if result.count() > 0:
 	result = result[0]
         print result
-	
-	return render_to_response('search_results.html',
-	      {'result': result,
-	       'query': query,
-      	       })
-      #case 1b = Doesn't exits in our DB as exact match, Try Zillow
+	print result.id
+      
       else:
 	try:
-	  print query, query2
 	  result = return_zhome_attr(query, query2)
 	  
-	  print "XXXXXXXXX"
-	  print result
-	  return render_to_response('search_results.html',
-	      {'result': result,
-	       'query': query,
-      	       })
+	  print result.id
 	  
-	#case 1c = if that doesn't work return a blank form
 	except:
-	  return render_to_response('enter_more_info.html',
-		{'results': result,
-		 'query': query,
-		 'form': TargetHomeForm(),
-		 })
+	  pass
+      
+      if request.method == 'POST':
+        form = LeadGenUserForm(request.POST)
+	
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.save()
+            return HttpResponseRedirect('/gen_results/?prevHomeSalesId=' + str(result.id))
+      else:
+        form = LeadGenUserForm()
+      	
+      return render_to_response('enter_more_info.html',
+		    {'result': result,
+		     'query': query,
+		     'form': form,
+		     })
+      #case 1b = Doesn't exits in our DB as exact match, Try Zillow	  
+	#case 1c = if that doesn't work return a blank form
+	
     else:
 	if 'q' in request.GET and request.GET.get('q','')=='':
 	  error = "Please enter a search term."
@@ -77,3 +82,13 @@ def search(request):
 	  error = ''
 	return render_to_response('search_form.html',
 				  {'error':error})
+
+def gen_results(request):
+  if 'prevHomeSalesId' in request.GET:
+    prevHomeSalesId = request.GET.get('prevHomeSalesId','')
+    result = PrevHomeSales.objects.filter(id=prevHomeSalesId)[:1][0]
+    result.last_zestimate = int(round(result.last_zestimate * 1.05, -2))
+
+  return render_to_response('lead_gen_results.html',
+		    {'result': result,
+		     })

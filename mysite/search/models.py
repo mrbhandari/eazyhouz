@@ -1,6 +1,11 @@
 from django.db import models
 
 
+class LeadGenUser(models.Model):
+    full_name = models.CharField(max_length=512,null=False, blank=False)
+    email_address = models.EmailField(max_length=512,null=False, blank=False)
+    #property_address = models.CharField(max_length=1024,null=True, blank=True)
+
 class PrevHomeSales(models.Model):
     #sale_type = models.CharField(max_length=512,null=True, blank=True)
     home_type = models.CharField(max_length=512,null=True, blank=True)
@@ -27,6 +32,7 @@ class PrevHomeSales(models.Model):
     remodeled = models.NullBooleanField()
     last_sale_date = models.DateField(null=True)
     user_input = models.NullBooleanField()
+    last_zestimate = models.IntegerField(null=True, blank=True)
 
     #parking_spots = models.IntegerField(null=True, blank=True)
     #parking_type = models.CharField(max_length=500,null=True, blank=True)
