@@ -49,14 +49,15 @@ def search(request):
 	print result.id
       
       else:
-	try:
-	  result = return_zhome_attr(query, query2)
+	#try:
 	  
-	  print result.id
+	result = return_zhome_attr(query, query2)
 	  
-	except:
-	  pass
-      
+	print result.id
+	  
+	#except:
+	#  pass
+	#     
       if request.method == 'POST':
         form = LeadGenUserForm(request.POST)
 	

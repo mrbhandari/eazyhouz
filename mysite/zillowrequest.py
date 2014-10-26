@@ -34,38 +34,44 @@ def parse_zhome_attr(url_xml_string):
 
 #pulls all the fuctions together
 def return_zhome_attr(raw_address, raw_citystatezip):
+    
     url = zformrequest(raw_address, raw_citystatezip)
     url_xml_string = request(url)
     
     output = parse_zhome_attr(url_xml_string)
+    print output
+    
+    
+    
     result = output['SearchResults:searchresults']['response']['results']['result']
+    print result
     prevhomesales = PrevHomeSales()
-    prevhomesales.beds = result['bedrooms']
+    prevhomesales.beds = result.get('bedroom', None)
     print prevhomesales.beds
     
     print "DID THIS EXECUTE"
     
-    prevhomesales.baths = result.get('bathrooms', {})
+    prevhomesales.baths = result.get('bathrooms', None)
     print prevhomesales.baths
     
-    prevhomesales.sqft =result.get('finishedSqFt', {})
+    prevhomesales.sqft =result.get('finishedSqFt', None)
     print prevhomesales.sqft
     
-    prevhomesales.year_built =result.get('yearBuilt', {})
+    prevhomesales.year_built =result.get('yearBuilt', None)
     print prevhomesales.year_built
     
-    prevhomesales.sale_price = Decimal(result.get('lastSoldPrice', {}).get('#text', {}))
+    prevhomesales.sale_price = Decimal(result.get('lastSoldPrice', None).get('#text', None))
     print prevhomesales.sale_price
     
-    prevhomesales.url = result.get('links', {}).get('homedetails', {})
+    prevhomesales.url = result.get('links', None).get('homedetails', None)
     print prevhomesales.url
     
-    prevhomesales.image_url = ''
+    prevhomesales.image_url = None
     
-    prevhomesales.latitude = Decimal(result.get('address', {}).get('latitude', {}))
+    prevhomesales.latitude = Decimal(result.get('address', None).get('latitude', None))
     print prevhomesales.latitude
     
-    prevhomesales.longitude = Decimal(result.get('address', {}).get('longitude', {}))
+    prevhomesales.longitude = Decimal(result.get('address', None).get('longitude', None))
     print prevhomesales.longitude
     
     prevhomesales.city = result['address']['city']
@@ -80,7 +86,7 @@ def return_zhome_attr(raw_address, raw_citystatezip):
     prevhomesales.address = result['address']['street']
     print prevhomesales.address
     
-    prevhomesales.home_type = result.get('useCose', {})
+    prevhomesales.home_type = result.get('useCose', None)
     print prevhomesales.home_type
     
     #TODO
@@ -91,21 +97,35 @@ def return_zhome_attr(raw_address, raw_citystatezip):
     #prevhomesales.middle
     #prevhomesales.high
     
-    prevhomesales.lot_size = result.get('lotSizeSqFt', {})
+    prevhomesales.lot_size = result.get('lotSizeSqFt', None)
     print prevhomesales.lot_size
     
-    
-    prevhomesales.last_sale_date = datetime.datetime.strptime(result.get('lastSoldDate', {}), '%m/%d/%Y').date()
-    print prevhomesales.last_sale_date
+    lastSoldDate = result.get('lastSoldDate', None)
+    if len(lastSoldDate) > 0:
+        prevhomesales.last_sale_date = datetime.datetime.strptime(lastSoldDate, '%m/%d/%Y').date()
+        print prevhomesales.last_sale_date
     
     prevhomesales.user_input = True
     
     
     
-    prevhomesales.last_zestimate = Decimal(result.get('zestimate', {}).get('amount', {}).get('#text', {}))
+    prevhomesales.last_zestimate = Decimal(result.get('zestimate', None).get('amount', None).get('#text', None))
     print prevhomesales.last_zestimate
     
+    
+    from django.core.exceptions import ValidationError
+    try:
+        print "TEST0"
+        prevhomesales.full_clean()
+    except ValidationError as e:
+        print "TEST0.1"
+        print e
+        pass
+    
+    
+    print "TEST1"
     prevhomesales.save()
+    print "TEST2"
     #TODO: does not check if this record already exists just saves it
     return prevhomesales
     

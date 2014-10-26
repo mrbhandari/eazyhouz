@@ -39,7 +39,7 @@
                 </tr>
                 <tr>
                   <td>Last Sale Price</td>
-                  <td>{{result.sale_price}}</td>
+                  <td>${{result.sale_price | intcomma}}</td>
                 </tr>
                 <tr>
                   <td>Last Sale Date</td>
@@ -68,8 +68,8 @@
         </div>
 
         <div class="col-lg-6">
-                <div class="jumbotron">
-        <h4>Estimated Value</h4>
+                <div class="jumbotron">         
+        <h4>Current Estimated Value</h4>
         <h2>${{result.last_zestimate|intcomma}}</h2>
         
         <p>For a better estimate, we need a few details:</p>

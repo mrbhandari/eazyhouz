@@ -14,7 +14,7 @@ class PrevHomeSales(models.Model):
     state = models.CharField(max_length=50,null=True, blank=True)
     zipcode = models.CharField(max_length=10,null=True, blank=True)
     sale_price = models.IntegerField(null=True, blank=True)
-    beds = models.IntegerField()
+    beds = models.IntegerField(null=True, blank=True)
     baths = models.DecimalField(max_digits=4, decimal_places=1,null=True, blank=True)
     sqft = models.IntegerField(null=True, blank=True)
     lot_size = models.IntegerField(null=True, blank=True)
