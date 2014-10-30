@@ -4,8 +4,15 @@ from django.db import models
 class LeadGenUser(models.Model):
     full_name = models.CharField(max_length=512,null=False, blank=False)
     email_address = models.EmailField(max_length=512,null=False, blank=False)
-    #property_address = models.CharField(max_length=1024,null=True, blank=True)
-
+    inquiry_reason = models.CharField(max_length=1024,null=False, blank=False, default="Select")
+    property_address = models.CharField(max_length=1024,null=True, blank=True)
+    phone_number = models.CharField(max_length=10,null=True, blank=False)
+    user_agent = models.CharField(max_length=1024,null=True, blank=True)
+    remote_address = models.IPAddressField(null=True, blank=True)
+    created_date = models.DateTimeField(auto_now = True, null=True)
+    zestimate_found = models.NullBooleanField()
+    zestimate_link = models.URLField(null=True, blank=True)
+                            
 class PrevHomeSales(models.Model):
     #sale_type = models.CharField(max_length=512,null=True, blank=True)
     home_type = models.CharField(max_length=512,null=True, blank=True)

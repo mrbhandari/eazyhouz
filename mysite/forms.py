@@ -9,7 +9,7 @@ from crispy_forms.bootstrap import (
     PrependedText, PrependedAppendedText, FormActions)
 from search.models import *
 
-
+CHOICES = (('1', 'First',), ('2', 'Second',))
 
 
 # Create the form class.
@@ -23,8 +23,22 @@ class TargetHomeForm(ModelForm):
 class LeadGenUserForm(ModelForm):
     class Meta:
         model = LeadGenUser
+        exclude = ('phone_number',)
+    YESNO_CHOICES = (('Selling', 'Selling'), ('Buying', 'Buying'), ('Re-financing', 'Re-financing'), ('Curious', 'Just curious'))
+    inquiry_reason = forms.TypedChoiceField(
+                     choices=YESNO_CHOICES, widget=forms.RadioSelect, empty_value = None,
+                     )
+    inquiry_reason.label = 'Optimize report for:'
+
     helper = FormHelper()
     helper.form_method = 'POST'
+    #helper.form_class = 'form-special' 
+    helper.layout = Layout(
+        Field('full_name', css_class='input-sm'),
+        Field('email_address', css_class='input-sm'),
+        Field('inquiry_reason', style="padding-left: 20px", css_class='form-special'),
+    )
+
     helper.add_input(Submit('Submit', 'Get Your Report', css_class="btn btn-lg btn-success"))
 
 

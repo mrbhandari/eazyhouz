@@ -219,3 +219,26 @@ text-align: left;
     max-height:100%;
     vertical-align: middle;
 }
+
+
+/*input[type="radio"].form-special {
+	color: #5cb85c;
+	border-radius: 10px;
+
+}
+*/
+
+
+.form-special {
+	color: #5cb85c;
+	background-color: #ddd;
+	
+	border-radius: 100px;
+	cursor: pointer;
+	display: inline-block;
+	height: 15px;
+	margin-right: 15px;
+	margin-left: 200px;
+	position: relative;
+	width: 15px;
+}

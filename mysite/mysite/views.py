@@ -33,6 +33,7 @@ def autosuggest(request):
 def search(request):
 #This takes a query as an input and searches the db and says if there was an exact match
   #case 1a - check if there is an exact match, if so return our data
+    success_status = False
     if 'q' in request.GET:
       query = request.GET.get('q','')
       query2 = request.GET.get('q2','')
@@ -49,25 +50,48 @@ def search(request):
 	print result.id
       
       else:
-	#try:
+	try:
 	  
-	result = return_zhome_attr(query, query2)
-	  
-	print result.id
-	  
-	#except:
-	#  pass
-	#     
+	  result = return_zhome_attr(query, query2)
+	    
+	  print result.id
+	  success_status = True
+	    
+	except:
+	  phrase = "** Found **"
+	  result.beds = phrase
+	  result.baths = phrase
+	  result.sqft = phrase
+	  result.year_built = phrase
+	  result.last_sale_date = phrase
+	  result.sale_price = phrase
+	  result.address = phrase
+	  result.city = phrase
+	  result.url = ''
+	  result.id = 0
+	       
       if request.method == 'POST':
-        form = LeadGenUserForm(request.POST)
+	#add the property address the user has input in
+	post_request = request.POST.copy()
+	post_request.appendlist('property_address', request.META.get('QUERY_STRING'))
+	post_request.appendlist('user_agent', request.META.get('HTTP_USER_AGENT'))
+	
+	#TODO: this doesn't seem to populate the ip address
+	post_request.appendlist('remote_address', get_client_ip(request))
+	post_request.appendlist('zestimate_found', success_status)
+	post_request.appendlist('zestimate_link', result.url)
+	
+        form = LeadGenUserForm(post_request)
 	
         if form.is_valid():
             instance = form.save(commit=False)
             instance.save()
             return HttpResponseRedirect('/gen_results/?prevHomeSalesId=' + str(result.id))
       else:
+	
         form = LeadGenUserForm()
-      	
+
+	
       return render_to_response('enter_more_info.html',
 		    {'result': result,
 		     'query': query,
@@ -85,11 +109,26 @@ def search(request):
 				  {'error':error})
 
 def gen_results(request):
+  
   if 'prevHomeSalesId' in request.GET:
-    prevHomeSalesId = request.GET.get('prevHomeSalesId','')
-    result = PrevHomeSales.objects.filter(id=prevHomeSalesId)[:1][0]
-    result.last_zestimate = int(round(result.last_zestimate * 1.05, -2))
+    result = PrevHomeSales()
+    prevHomeSalesId = int(request.GET.get('prevHomeSalesId',''))
+    
+    if prevHomeSalesId > 0:
+      print "THIS HAPPENED"
+      result = PrevHomeSales.objects.filter(id=prevHomeSalesId)[:1][0]
+      result.last_zestimate = int(round(result.last_zestimate * 1.05, -2))
+    else:
+      result.last_zestimate = '...Will send in Email'
 
   return render_to_response('lead_gen_results.html',
 		    {'result': result,
 		     })
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip

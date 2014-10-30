@@ -128,10 +128,16 @@ INSTALLED_APPS = (
     'search',
     'django.contrib.admin',
     'crispy_forms',
-    'django.contrib.humanize'
+    'django.contrib.humanize',
+    'django_twilio',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
+#TO DO MOVE TO ENV VARIABLES
+TWILIO_AUTH_TOKEN = '9c9026216c818eb92f78c5921a2d322c'
+TWILIO_ACCOUNT_SID = 'AC54c41ac1142b993d70a3177837c111ef'
+TWILIO_DEFAULT_CALLERID = '9185495854'
+#DJANGO_TWILIO_FORGERY_PROTECTION = False
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
