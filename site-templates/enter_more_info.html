@@ -23,7 +23,7 @@
             <p>To learn the value of your the property, please complete the questionnaire below.</p>
             <br>
         <div class="col-lg-6">
-                    <h4 class="sub-header">Found your property</h4>
+                    <h4 class="sub-header">We used this information to estimate your current home value</h4>
           <div class="table-responsive">
             <table class="table table-striped">
               <thead>
@@ -61,7 +61,7 @@
                 </tr>
                 <tr>
                   <td>Sqft</td>
-                  <td>{{result.sqft}}</td>
+                  <td>{{result.sqft | intcomma}}</td>
                 </tr>
                 <tr>
                   <td>Year Built</td>
@@ -74,7 +74,7 @@
         </div>
 
         <div class="col-lg-6">
-          <h4>Tell us where to send the report</h4>
+          <h4>Tell us where to send the estimate</h4>
           {% crispy form %}
         </div>
       </div>
