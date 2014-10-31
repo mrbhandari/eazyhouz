@@ -132,3 +132,34 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
+
+def more_info(request):
+  #request = contains q1 and q2
+  #parse q1 and q2 in URL
+  #if q1 and q2 exist, then make a zillow call
+  #zillow_call(request) --> model object
+    #if model_object = null --> render blank form, sorry we coudln't find info
+    # if not null then --> render form with fields
+  #if the url has post request in it then
+    #validation of form happens here
+    # if validates and saves, then go to gen appraisal
+    # if validation fails return original url
+
+  pass
+  
+def zillow_call(request):
+  #TO DO FIX THIS
+  #IF Call fails - returns null
+  return model_object
+
+
+def gen_appraisal(prevSaleid):
+  #input = model id
+  #new PreviousHomeSale()
+  #new adjustment
+  # out put = [(model, adjustment), ...]
+  pass
+
+#class adjustment():
+#  pass

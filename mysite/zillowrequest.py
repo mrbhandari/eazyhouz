@@ -41,7 +41,7 @@ def return_zhome_attr(raw_address, raw_citystatezip):
     output = parse_zhome_attr(url_xml_string)
     print output
     
-    
+    #TODO this needs to be its own function
     
     result = output['SearchResults:searchresults']['response']['results']['result']
     print result
@@ -115,10 +115,8 @@ def return_zhome_attr(raw_address, raw_citystatezip):
     
     from django.core.exceptions import ValidationError
     try:
-        print "TEST0"
         prevhomesales.full_clean()
     except ValidationError as e:
-        print "TEST0.1"
         print e
         pass
     
