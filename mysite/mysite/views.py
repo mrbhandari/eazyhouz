@@ -155,10 +155,29 @@ def zillow_call(request):
 
 
 def gen_appraisal(prevSaleid):
+  data = {}
+  house = {}
+  house['beds'] = 3
+  house['baths'] = 2
+  house['sqft'] = 1234
+  house['address'] = "120 Main st, Mountain view, CA"
+  house['city'] = "Mountain View"
+  house['price'] = 250000
+  adjustments = {}
+  adjustments['sqft'] = -10000
+  data['price'] = 240000
+  data['target_house'] = house
+  data['house1'] = house
+  data['adjustment1'] = adjustments
+  data['house2'] = house
+  data['adjustment2'] = adjustments
+  data['house3'] = house
+  data['adjustment3'] = adjustments
+  return json.dumps(data)
   #input = model id
   #new PreviousHomeSale()
   #new adjustment
-  # out put = [(model, adjustment), ...]
+  # output = [(model, adjustment), ...]
   pass
 
 #class adjustment():
