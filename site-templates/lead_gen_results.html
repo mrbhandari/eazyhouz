@@ -1,0 +1,99 @@
+
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load humanize %} 
+{% block content %}
+<link href="{% static 'dashboard.css' %}" rel="stylesheet" media="screen">
+<link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+
+  <div class="container">
+ 
+
+
+
+      <div class="row marketing">
+            <br>
+            <h2>Your property detail report</h2>
+            <br>
+        <div class="col-lg-6">
+                    <h4 class="sub-header">Details Found</h4>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Detail</th>
+                  <th>Subject Property</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Address</td>
+                  <td>{{result.address}}</td>
+                  
+                </tr>
+                <tr>
+                  <td>City</td>
+                  <td>{{result.city}}</td>
+                </tr>
+                <tr>
+                  <td>Last Sale Price</td>
+                  <td>${{result.sale_price | intcomma}}</td>
+                </tr>
+                <tr>
+                  <td>Last Sale Date</td>
+                  <td>{{result.last_sale_date}}</td>
+                </tr>
+                <tr>
+                  <td>Beds</td>
+                  <td>{{result.beds}}</td>
+                </tr>
+                <tr>
+                  <td>Baths</td>
+                  <td>{{result.baths}}</td>
+                </tr>
+                <tr>
+                  <td>Sqft</td>
+                  <td>{{result.sqft}}</td>
+                </tr>
+                <tr>
+                  <td>Year Built</td>
+                  <td>{{result.year_built}}</td>
+                </tr>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+                <div class="jumbotron">         
+        <h4>Current Estimated Value</h4>
+        <h2>${{result.last_zestimate|intcomma}}</h2>
+        <p>Higher or lower than you expected?</p>
+        <p>We're available by phone for an explanation.</p>
+        <div class="row">
+        
+          
+        
+        </div>
+        <p><a class="btn btn-lg btn-success" href="tel:+16509184551" onClick="""_gaq.push(['_trackEvent', 'Button', 'Click', 'Tried to call']);""" role="button">Get Explanation</a></p>
+      </div>
+          <h4></h4>
+          <h4></h4>
+          
+        </div>
+      </div>
+
+
+    </div> <!-- /container -->
+
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+
+
+
+
+{% endblock %}

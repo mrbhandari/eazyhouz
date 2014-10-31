@@ -1,10 +1,13 @@
 {% extends "base.html" %}
+
 {% block content %}
 
 <head>
-    <title>EazyHouz Best Way to negotiate for a house</title>
+    <title>Home Value Engine - Find the worth of your home</title>
 </head>
 <body>
+              <h1>{{result.last_zestimate}}</h1>
+
     
         <div class="intro-header">
 
@@ -15,18 +18,18 @@
                     <div class="intro-message">
                         
                         <script type="text/javascript">
-                            $( document ).ready(function() {
-                            
-                                $('#query').typeahead({
-                                    remote: '/autosuggest/?q=%QUERY',
-                                    })
-                                .keydown(function(e) {
-                                if (e.keyCode === 13) {
-                                    $("form").trigger('submit');
-                                    }
-                                });
-                                $('.tt-query').css('background-color','#fff');  
-                        });
+                        //    $( document ).ready(function() {
+                        //    
+                        //        $('#query').typeahead({
+                        //            remote: '/autosuggest/?q=%QUERY',
+                        //            })
+                        //        .keydown(function(e) {
+                        //        if (e.keyCode === 13) {
+                        //            $("form").trigger('submit');
+                        //            }
+                        //        });
+                        //        $('.tt-query').css('background-color','#fff');  
+                        //});
                         </script>     
           
                             
@@ -34,15 +37,20 @@
                         
                        
                         
-                        <div class="container" style="width:800px;"><div class="row"><div class="well">	
-                        <h1>Negotiate the best value for you home</h1>
+                        <div class="container" class="col-md-8"><div class="row"><div class="well">	
+                        <h1>Find Your Home's Value Instantly</h1>
                         <form action="search" method="get" data-ajax="false">
                         <fieldset>
                             <div class="form-group">
-                                <input class="form-control" name="q" autocomplete="off" id="query" placeholder="Start typing something to search..." type="text"
-                                style="position: relative; vertical-align: top; background-color: rgb(255, 255, 255); font-size: 1.5em; height:40px">              
+                                {{error}}
+                                <input class="form-control" name="q" autocomplete="off" id="query" placeholder="123 Main Street Apt 123" type="text"
+                                style="position: relative; vertical-align: top; background-color: rgb(255, 255, 255); font-size: 1.5em; height:40px">
+                                    <br><br>
+                                <input class="form-control" name="q2" autocomplete="off" id="query_ln2" placeholder="City, State" type="text"
+                                style="position: relative; vertical-align: top; background-color: rgb(255, 255, 255); font-size: 1.5em; height:40px">
                             </div>
-                            <button type="submit" class="btn btn-primary">Search</button>
+                            <button type="submit" class="btn btn-lg btn-success">Get Value Now!</button>
+                            
                         </fieldset>
                         </form>
                         </div></div></div>
@@ -61,20 +69,20 @@
       <!-- Example row of columns -->
       <div class="row">
         <div class="col-md-4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+          <h2>Personalized Market Value Report</h2>
+          <p>Use Home Value Engine to get a free estimated market value of your home or a home you are interested in. We'll calculate our best estimated home valuation using the millions of home records in our database. Simply enter the address and click “Get Value”.</p>
+          <p><a class="btn btn-default" href="#" role="button">Get Value &raquo;</a></p>
         </div>
         <div class="col-md-4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+          <h2> ... In a Few Seconds</h2>
+          <p>No need to wait for weeks for an appraisal. Get a real estate home valuation estimate on what your home is worth. View comparable home prices, recent property sales.</p>
+          <p><a class="btn btn-default" href="#" role="button">Get Value &raquo;</a></p>
        </div>
         <div class="col-md-4">
-          <h2>Heading</h2>
+          <h2>.. And Much More</h2>
     
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+          <p>Find real estate, homes for sale, properties for rent, school and neighborhood information and much more. Find timely and comprehensive information about newest listings in your market.</p>
+          <p><a class="btn btn-default" href="#" role="button">Get Value &raquo;</a></p>
         </div>
       </div>
    

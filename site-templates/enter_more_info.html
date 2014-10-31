@@ -1,0 +1,92 @@
+
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load humanize %} 
+
+
+{% block content %}
+<link href="{% static 'dashboard.css' %}" rel="stylesheet" media="screen">
+<link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+
+  <div class="container">
+ 
+
+<!--      <div class="jumbotron">
+        <h1>Jumbotron heading</h1>
+        <p class="lead">Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+        <p><a class="btn btn-lg btn-success" href="#" role="button">Sign up today</a></p>
+      </div>-->
+
+      <div class="row marketing">
+            <br>
+            <p>To learn the value of your the property, please complete the questionnaire below.</p>
+            <br>
+        <div class="col-lg-6">
+                    <h4 class="sub-header">We used this information to estimate your current home value</h4>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Detail</th>
+                  <th>Subject Property</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Address</td>
+                  <td>{{result.address}}</td>
+                  
+                </tr>
+                <tr>
+                  <td>City</td>
+                  <td>{{result.city}}</td>
+                </tr>
+                <tr>
+                  <td>Last Sale Price</td>
+                  <td>${{result.sale_price | intcomma}}</td>
+                </tr>
+                <tr>
+                  <td>Last Sale Date</td>
+                  <td>{{result.last_sale_date}}</td>
+                </tr>
+                <tr>
+                  <td>Beds</td>
+                  <td>{{result.beds}}</td>
+                </tr>
+                <tr>
+                  <td>Baths</td>
+                  <td>{{result.baths}}</td>
+                </tr>
+                <tr>
+                  <td>Sqft</td>
+                  <td>{{result.sqft | intcomma}}</td>
+                </tr>
+                <tr>
+                  <td>Year Built</td>
+                  <td>{{result.year_built}}</td>
+                </tr>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <h4>Tell us where to send the estimate</h4>
+          {% crispy form %}
+        </div>
+      </div>
+
+
+    </div> <!-- /container -->
+
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+
+
+
+
+{% endblock %}

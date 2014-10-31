@@ -39,7 +39,8 @@ for ind in range(1,len(lines)):
 	prevhomesales.zipcode = line1['ZIP_CODE']
         prevhomesales.lot_size = line1['LOT_SIZE']
         prevhomesales.last_sale_date = datetime.datetime.strptime(line1['LAST_SALE_DATE'], '%m/%d/%y').date()
-	prevhomesales.address = line1['ADDRESS'] 
+	prevhomesales.address = line1['ADDRESS']
+	prevhomesales.user_input = False
 	#prevhomesales.view_rating = line1['VIEW']
 
 	
