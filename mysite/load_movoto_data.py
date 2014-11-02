@@ -2,7 +2,7 @@ import json
 import sys,os
 import datetime
 from decimal import *
-
+import datetime
 
 your_djangoproject_home="/Users/pradeep/eazyhouz/eazyhouz/mysite"
 
@@ -11,63 +11,17 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
 getcontext().prec = 5
 from search.models import PrevHomeSales
 
-files = ["/Users/pradeep/amazon/part1/1/final_data.json",
-"/Users/pradeep/amazon/part1/1/final_data1.json",
-"/Users/pradeep/amazon/part1/10/final_data.json",
-"/Users/pradeep/amazon/part1/10/final_data1.json",
-"/Users/pradeep/amazon/part1/2/final_data.json",
-"/Users/pradeep/amazon/part1/2/final_data1.json",
-"/Users/pradeep/amazon/part1/3/final_data.json",
-"/Users/pradeep/amazon/part1/3/final_data1.json",
-"/Users/pradeep/amazon/part1/4/final_data.json",
-"/Users/pradeep/amazon/part1/4/final_data1.json",
-"/Users/pradeep/amazon/part1/5/final_data.json",
-"/Users/pradeep/amazon/part1/5/final_data1.json",
-"/Users/pradeep/amazon/part1/6/final_data.json",
-"/Users/pradeep/amazon/part1/6/final_data1.json",
-"/Users/pradeep/amazon/part1/7/final_data.json",
-"/Users/pradeep/amazon/part1/7/final_data1.json",
-"/Users/pradeep/amazon/part1/8/final_data.json",
-"/Users/pradeep/amazon/part1/8/final_data1.json",
-"/Users/pradeep/amazon/part1/9/final_data.json",
-"/Users/pradeep/amazon/part1/9/final_data1.json",
-"/Users/pradeep/amazon/part2/1/final_data2.json",
-"/Users/pradeep/amazon/part2/10/final_data2.json",
-"/Users/pradeep/amazon/part2/2/final_data2.json",
-"/Users/pradeep/amazon/part2/3/final_data2.json",
-"/Users/pradeep/amazon/part2/4/final_data2.json",
-"/Users/pradeep/amazon/part2/5/final_data2.json",
-"/Users/pradeep/amazon/part2/6/final_data2.json",
-"/Users/pradeep/amazon/part2/7/final_data2.json",
-"/Users/pradeep/amazon/part2/8/final_data2.json",
-"/Users/pradeep/amazon/part2/9/final_data2.json",
-"/Users/pradeep/amazon/part4/1/final_data3.json",
-"/Users/pradeep/amazon/part4/10/final_data3.json",
-"/Users/pradeep/amazon/part4/2/final_data3.json",
-"/Users/pradeep/amazon/part4/3/final_data3.json",
-"/Users/pradeep/amazon/part4/4/final_data3.json",
-"/Users/pradeep/amazon/part4/5/final_data3.json",
-"/Users/pradeep/amazon/part4/6/final_data3.json",
-"/Users/pradeep/amazon/part4/7/final_data3.json",
-"/Users/pradeep/amazon/part4/8/final_data3.json",
-"/Users/pradeep/amazon/part4/9/final_data3.json",
-"/Users/pradeep/amazon/part5/1/final_data4.json",
-"/Users/pradeep/amazon/part5/10/final_data4.json",
-"/Users/pradeep/amazon/part5/2/final_data4.json",
-"/Users/pradeep/amazon/part5/3/final_data4.json",
-"/Users/pradeep/amazon/part5/4/final_data4.json",
-"/Users/pradeep/amazon/part5/5/final_data4.json",
-"/Users/pradeep/amazon/part5/6/final_data4.json",
-"/Users/pradeep/amazon/part5/7/final_data4.json",
-"/Users/pradeep/amazon/part5/8/final_data4.json",
-"/Users/pradeep/amazon/part5/9/final_data4.json"]
+files = []
+filename = sys.argv[1]
+print filename
+files.extend(filename)
 
 houses = []
 for f in files:
     houses.extend(json.load(open(f)))
 
 def good_house(house):
-    return bool(house.get("beds")) and bool(house.get("baths")) and bool(house.get("address")) and bool(house.get("zipcode")) and bool(house.get("state")) and bool(house.get("city")) and bool(house.get("price"))
+    return bool(house.get("beds")) and bool(house.get("baths")) and bool(house.get("address")) and bool(house.get("zipcode")) and bool(house.get("state")) and bool(house.get("city")) and bool(house.get("price")) and bool(house.get("sqft")) and bool(house.get("year_built")) and bool(house.get("last_sold_date")) and bool(house.get("latitude")) and bool(house.get("longitude"))
 
 city="san mateo"
 num_good_houses = 0
@@ -107,6 +61,11 @@ for house in houses:
 	            if lot_size:
 		    	prevhomesales.lot_size = lot_size
                     description = house.get("description")
+		    prevhomesales.latitude = house.get("latitude")
+		    prevhomesales.longitude = house.get("longitude")
+		    last_sale_date = house.get("last_sold_date")
+                    if last_sale_date:
+		    	prevhomesales.last_sale_date = datetime.datetime.strptime(last_sale_date,'%m/%d/%y').date()
 		    if description:
 			prevhomesales.remodeled = 1 if (("remodel" in description.lower()) or ("updated" in description.lower())) else 0
 		    print prevhomesales
