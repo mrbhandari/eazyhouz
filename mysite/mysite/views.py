@@ -234,3 +234,5 @@ def gen_appraisal(prevSaleid):
   # output = [(model, adjustment), ...]
   pass
 
+
+
