@@ -56,8 +56,8 @@ def gen_appraisal(subject_home):
 prevHome = PrevHomeSales()
 prevHome.beds = 2
 prevHome.city = "san mateo"
-prevHome.baths = 3
-prevHome.sqft=1213
+prevHome.baths = 2.0
+prevHome.sqft=1693
 data = gen_appraisal(prevHome)
 pp = pprint.PrettyPrinter(indent=4)
 print pp.pprint(data)

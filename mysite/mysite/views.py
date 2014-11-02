@@ -10,6 +10,7 @@ from forms import *
 from zillowrequest import return_zhome_attr
 from django.forms.models import model_to_dict
 import heapq
+from decimal import *
 
 
 def autosuggest(request):
@@ -203,11 +204,13 @@ def gen_appraisal_page(request):
   if 'pid' in request.GET: #All correct vars exist load page
     pid = request.GET.get('pid','')  
     r = PrevHomeSales.objects.get(id=pid)
-  json_data = gen_appraisal(pid)
-  print json_data
-  return render_to_response('search_results.html',
-		    {'result': json_data,
-		     }, )
+    print r
+    print "THIS EXECUTED"
+    data = gen_appraisal(r)
+    print data
+    return render_to_response('search_results.html',
+		      {'result': data,
+		       }, )
 
 def home_similarity(home, subject_home):
   return 10 * abs(home.sqft - subject_home.sqft) + 800 * abs(home.sqft - subject_home.sqft)
@@ -220,8 +223,8 @@ def gen_appraisal(subject_home):
   beds = subject_home.beds
   baths = subject_home.baths
   sqft = subject_home.sqft
-  min_baths = baths - 0.5
-  max_baths = baths + 0.5
+  min_baths = Decimal(baths) - Decimal(0.5)
+  max_baths = Decimal(baths) + Decimal(0.5)
   min_sqft = sqft * 0.8
   max_sqft = sqft * 1.2
   #TODO make sure to not fetch the subject home itself.

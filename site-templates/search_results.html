@@ -61,19 +61,6 @@
               <span class="text-muted">Comp #3</span>
             </div>
           </div>
-
-          
-         
-          TEST BLOCK <br> 
-          <div class="table-responsive">
-            <table class="table table-striped">
-          {% for item in result %}
-            {% if forloop.counter0|divisibleby:3 %}<tr>{% endif %}
-            <td>{{ item }}</td>
-            {% if forloop.counter|divisibleby:3 %}</tr>{% endif %}
-        {% endfor %}
-            </table>
-          </div>
           
           
           <h2 class="sub-header">Estimate Explanation</h2>
@@ -92,58 +79,58 @@
                 <tr>
                   <td>Address</td>
                   <td>{{result.target_house.address}}</td>
-                  <td>{{result.house1.address}}</td>
-                  <td>{{result.house2.address}}</td>
-                  <td>{{result.house3.address}}</td>                  
+                  <td>{{result.home1.address}}</td>
+                  <td>{{result.home2.address}}</td>
+                  <td>{{result.home3.address}}</td>                  
                 </tr>
                 <tr>
                   <td>City</td>
-                  <td>{{result.city}}</td>
-                  <td>{{result.city}}</td>
-                  <td>{{result.city}}</td>
-                  <td>{{result.city}}</td>
+                  <td>{{result.target_house.city}}</td>
+                  <td>{{result.home1.city}}</td>
+                  <td>{{result.home2.city}}</td>
+                  <td>{{result.home3.city}}</td>                  
                 </tr>
                 <tr>
                   <td>Sale Price</td>
-                  <td>{{result.sale_price}}</td>
-                  <td>{{result.sale_price}}</td>
-                  <td>{{result.sale_price}}</td>
-                  <td>{{result.sale_price}}</td>
+                  <td>{{result.target_house.sale_price}}</td>
+                  <td>{{result.home1.sale_price}}</td>
+                  <td>{{result.home2.sale_price}}</td>
+                  <td>{{result.home3.sale_price}}</td>                  
                 </tr>
                 <tr>
                   <td>Last Sale Date</td>
-                  <td>{{result.last_sale_date}}</td>
-                  <td>{{result.last_sale_date}}</td>
-                  <td>{{result.last_sale_date}}</td>
-                  <td>{{result.last_sale_date}}</td>
+                  <td>{{result.target_house.last_sale_date}}</td>
+                  <td>{{result.home1.last_sale_date}}</td>
+                  <td>{{result.home2.last_sale_date}}</td>
+                  <td>{{result.home3.last_sale_date}}</td> 
                 </tr>
                 <tr>
                   <td>Beds</td>
-                  <td>{{result.beds}}</td>
-                  <td>{{result.beds}}</td>
-                  <td>{{result.beds}}</td>
-                  <td>{{result.beds}}</td>
+                  <td>{{result.target_house.beds}}</td>
+                  <td>{{result.home1.beds}}</td>
+                  <td>{{result.home2.beds}}</td>
+                  <td>{{result.home3.beds}}</td> 
                 </tr>
                 <tr>
                   <td>Baths</td>
-                  <td>{{result.baths}}</td>
-                  <td>{{result.baths}}</td>
-                  <td>{{result.baths}}</td>
-                  <td>{{result.baths}}</td>
+                  <td>{{result.target_house.baths}}</td>
+                  <td>{{result.home1.baths}}</td>
+                  <td>{{result.home2.baths}}</td>
+                  <td>{{result.home3.baths}}</td> 
                 </tr>
                 <tr>
                   <td>Sqft</td>
-                  <td>{{result.sqft}}</td>
-                  <td>{{result.sqft}}</td>
-                  <td>{{result.sqft}}</td>
-                  <td>{{result.sqft}}</td>
+                  <td>{{result.target_house.sqft}}</td>
+                  <td>{{result.home1.sqft}}</td>
+                  <td>{{result.home2.sqft}}</td>
+                  <td>{{result.home3.sqft}}</td> 
                 </tr>
                 <tr>
                   <td>Year Built</td>
-                  <td>{{result.year_built}}</td>
-                  <td>{{result.year_built}}</td>
-                  <td>{{result.year_built}}</td>
-                  <td>{{result.year_built}}</td>
+                  <td>{{result.target_house.year_built}}</td>
+                  <td>{{result.home1.year_built}}</td>
+                  <td>{{result.home2.year_built}}</td>
+                  <td>{{result.home3.year_built}}</td> 
                 </tr>
                 <tr>
                   <td>Interior</td>
@@ -168,7 +155,7 @@
                 </tr>
                 <tr>
                   <td>Elementary School</td>
-                  <td>{{result.elementary}}</td>
+                  <td>{{result.home1.elementary}}</td>
                   <td>{{result.elementary}}</td>
                   <td>{{result.elementary}}</td>
                   <td>{{result.elementary}}</td>
@@ -186,20 +173,6 @@
                   <td>{{result.high}}</td>
                   <td>{{result.high}}</td>
                   <td>{{result.high}}</td>
-                </tr>
-                <tr>
-                  <td>Description</td>
-                  <td>per</td>
-                  <td>inceptos</td>
-                  <td>himenaeos</td>
-                  <td>Curabitur</td>
-                </tr>
-                <tr>
-                  <td>Other</td>
-                  <td>sodales</td>
-                  <td>ligula</td>
-                  <td>in</td>
-                  <td>libero</td>
                 </tr>
               </tbody>
             </table>
