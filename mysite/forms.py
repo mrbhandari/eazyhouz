@@ -13,7 +13,7 @@ CHOICES = (('1', 'First',), ('2', 'Second',))
 
 
 # Create the form class.
-class TargetHomeForm(ModelForm):
+class PrevHomeSalesForm(ModelForm):
     class Meta:
         model = PrevHomeSales
     helper = FormHelper()

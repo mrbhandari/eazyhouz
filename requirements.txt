@@ -195,6 +195,8 @@ pip install django-crispy-forms
 pip install xmltodict
 pip install address
 pip install django-twilio
+pip install django-debug-toolbar
+pip install django-tables2
 
 
 

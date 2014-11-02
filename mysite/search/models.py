@@ -61,3 +61,11 @@ class PrevHomeSales(models.Model):
 
     def __unicode__(self):
         return "%s, %s, %s %s" % (self.address, self.city, self.state, self.zipcode)
+    
+    #def save(self, *args, **kwargs):
+    #     try:
+    #         existing = PrevHomeSales.objects.get(user=self.user)
+    #         self.id = existing.id #force update instead of insert
+    #     except PrevHomeSales.DoesNotExist:
+    #         pass 
+    #     models.Model.save(self, *args, **kwargs)

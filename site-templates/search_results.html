@@ -62,6 +62,20 @@
             </div>
           </div>
 
+          
+         
+          TEST BLOCK <br> 
+          <div class="table-responsive">
+            <table class="table table-striped">
+          {% for item in result %}
+            {% if forloop.counter0|divisibleby:3 %}<tr>{% endif %}
+            <td>{{ item }}</td>
+            {% if forloop.counter|divisibleby:3 %}</tr>{% endif %}
+        {% endfor %}
+            </table>
+          </div>
+          
+          
           <h2 class="sub-header">Estimate Explanation</h2>
           <div class="table-responsive">
             <table class="table table-striped">
@@ -77,11 +91,10 @@
               <tbody>
                 <tr>
                   <td>Address</td>
-                  <td>{{result.address}}</td>
-                  <td>{{result.address}}</td>
-                  <td>{{result.address}}</td>
-                  <td>{{result.address}}</td>
-                  
+                  <td>{{result.target_house.address}}</td>
+                  <td>{{result.house1.address}}</td>
+                  <td>{{result.house2.address}}</td>
+                  <td>{{result.house3.address}}</td>                  
                 </tr>
                 <tr>
                   <td>City</td>
@@ -155,10 +168,10 @@
                 </tr>
                 <tr>
                   <td>Elementary School</td>
-                  <td>{{result.view_rating}}</td>
-                  <td>{{result.view_rating}}</td>
-                  <td>{{result.view_rating}}</td>
-                  <td>{{result.view_rating}}</td>
+                  <td>{{result.elementary}}</td>
+                  <td>{{result.elementary}}</td>
+                  <td>{{result.elementary}}</td>
+                  <td>{{result.elementary}}</td>
                 </tr>
                 <tr>
                   <td>Middle School</td>

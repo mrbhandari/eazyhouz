@@ -5,9 +5,22 @@ from decimal import *
 import datetime
 import os
 from address import AddressParser, Address
-
-os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
 from search.models import PrevHomeSales
+os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
+
+
+
+#pulls all the fuctions together
+def return_zhome_attr(raw_address, raw_citystatezip):
+    
+    url = zformrequest(raw_address, raw_citystatezip)
+    url_xml_string = request(url)
+    
+    output = parse_zhome_attr(url_xml_string)
+    print output
+    result_prevhomesales = parse_zillow_result(output)
+    result_prevhomesales.save()
+    return result_prevhomesales
 
 #forms the URL request for Zillow
 def zformrequest(raw_address, raw_citystatezip):
@@ -31,22 +44,12 @@ def parse_zhome_attr(url_xml_string):
     testd = xmltodict.parse(url_xml_string)
     parsed_home_attr = testd
     return parsed_home_attr
-
-#pulls all the fuctions together
-def return_zhome_attr(raw_address, raw_citystatezip):
     
-    url = zformrequest(raw_address, raw_citystatezip)
-    url_xml_string = request(url)
-    
-    output = parse_zhome_attr(url_xml_string)
-    print output
-    
-    #TODO this needs to be its own function
-    
-    result = output['SearchResults:searchresults']['response']['results']['result']
+def parse_zillow_result(zillow_dict):    
+    result = zillow_dict['SearchResults:searchresults']['response']['results']['result']
     print result
     prevhomesales = PrevHomeSales()
-    prevhomesales.beds = result.get('bedroom', None)
+    prevhomesales.beds = result.get('bedrooms', None)
     print prevhomesales.beds
     
     print "DID THIS EXECUTE"
@@ -119,11 +122,6 @@ def return_zhome_attr(raw_address, raw_citystatezip):
     except ValidationError as e:
         print e
         pass
-    
-    
-    print "TEST1"
-    prevhomesales.save()
-    print "TEST2"
     #TODO: does not check if this record already exists just saves it
     return prevhomesales
     
@@ -131,17 +129,6 @@ def return_zhome_attr(raw_address, raw_citystatezip):
 
 #places: https://graph.facebook.com/search?q=&type=place&center=37.56166,-122.318908&distance=100&access_token=CAACEdEose0cBACopUWkMgy2d3JgFbPmZCP2u5A4vn9rmhhJKpbsXgdRfuM41SBj2JRHrcD6gY3Mw0aQoRFqpfL0eOEBx9o3t99EWJohpZBEr3S58wV73vvdwM0m7yZAR9ue24ZAZCBsZAdp6A1GG9OeKCLkD6RYRwv6ROiobr5s8UUqMWhSWGJXjyeLtZC1DZCCK9V7NHLmejDSqoZAhhCU3g
     
-#raw_address = raw_input("Please enter something: ")
-#raw_citystatezip = raw_input("Please enter something: ")
-#
-#ap = AddressParser()
-#address = ap.parse_address(raw_address)
-#input_street_address = "{0} {1} {2} {3}".format(address.house_number, address.street_prefix, address.street, address.street_suffix)
-#input_citystatezip = "{0} {1} {2}".format(address.city, address.state, address.zip)
-#print input_street_address
-#print input_citystatezip
-#print address.full_address()
-
 
 
 
