@@ -8,7 +8,8 @@ from search.models import *
 import json
 from forms import *
 from zillowrequest import return_zhome_attr
-
+from django.forms.models import model_to_dict
+import heapq
 
 
 def autosuggest(request):
@@ -208,31 +209,62 @@ def gen_appraisal_page(request):
 		    {'result': json_data,
 		     }, )
 
-def gen_appraisal(prevSaleid):
+def home_similarity(home, subject_home):
+  return 10 * abs(home.sqft - subject_home.sqft) + 800 * abs(home.sqft - subject_home.sqft)
+
+
+def gen_appraisal(subject_home):
   data = {}
-  house = {}
-  house['beds'] = 3
-  house['baths'] = 2
-  house['sqft'] = 1234
-  house['address'] = "120 Main st, Mountain view, CA"
-  house['city'] = "Mountain View"
-  house['price'] = 250000
-  adjustments = {}
-  adjustments['sqft'] = -10000
-  data['price'] = 240000
-  data['target_house'] = house
-  data['house1'] = house
-  data['adjustment1'] = adjustments
-  data['house2'] = house
-  data['adjustment2'] = adjustments
-  data['house3'] = house
-  data['adjustment3'] = adjustments
+
+  city = subject_home.city
+  beds = subject_home.beds
+  baths = subject_home.baths
+  sqft = subject_home.sqft
+  min_baths = baths - 0.5
+  max_baths = baths + 0.5
+  min_sqft = sqft * 0.8
+  max_sqft = sqft * 1.2
+  #TODO make sure to not fetch the subject home itself.
+  comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city)
+  h = []
+  if len(comp_candidates) < 3:
+     return data
+  for c in comp_candidates:
+    sim_score = home_similarity(c,subject_home)
+    heapq.heappush(h,(sim_score,c))
+  k = 3
+  avg_sqft_price = 0
+  
+  for i in range(1,k+1):
+    sim_score,home = heapq.heappop(h)
+    avg_sqft_price += home.sale_price/home.sqft
+    data['home' + str(i)] = model_to_dict(home)
+  avg_sqft_price /= k
+  data['estimated_price'] = avg_sqft_price * subject_home.sqft
+  for i in range(1,k+1):
+    adjustment = {}
+    adjustment['sqft'] = avg_sqft_price * (subject_home.sqft - data['home'+str(i)]['sqft'])
+    data['adjustment' + str(i)] = adjustment
   return data
+#  house = {}
+#  house['beds'] = 3
+#  house['baths'] = 2
+#  house['sqft'] = 1234
+#  house['address'] = "120 Main st, Mountain view, CA"
+#  house['city'] = "Mountain View"
+#  house['price'] = 250000
+#  adjustments = {}
+#  adjustments['sqft'] = -10000
+#  data['price'] = 240000
+#  data['target_house'] = house
+#  data['house1'] = house
+#  data['adjustment1'] = adjustments
+#  data['house2'] = house
+#  data['adjustment2'] = adjustments
+#  data['house3'] = house
+#  data['adjustment3'] = adjustments
+#  return json.dumps(data)
   #input = model id
   #new PreviousHomeSale()
   #new adjustment
   # output = [(model, adjustment), ...]
-  pass
-
-
-
