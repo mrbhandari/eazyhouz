@@ -130,7 +130,6 @@ INSTALLED_APPS = (
     'crispy_forms',
     'django.contrib.humanize',
     'django_twilio',
-    'debug_toolbar',
     'django_tables2',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',

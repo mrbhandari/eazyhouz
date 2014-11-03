@@ -136,17 +136,10 @@ def get_client_ip(request):
 
 #NON LEAD GEN PORTION OF SITE
 
-
-
-
-
 def gen_homepage(request):
   error = []
   return render_to_response('search_form.html',
                             {'error':error})
-
-
-
 
 
 def more_info_page(request):
@@ -154,47 +147,43 @@ def more_info_page(request):
   
   if 'q' in request.GET and 'q2' in request.GET: #All correct vars exist load page
     query, query2 = request.GET.get('q',''), request.GET.get('q2','')
-    try:
-      result = return_zhome_attr(query, query2)
-      print result.id
-    except KeyError:
-      result = PrevHomeSales() #create blank result
-
-    return_request = update_prevhome(request, result)
+    return_request = update_prevhome(request, query, query2)
     return return_request
-
-  
-    if request.method == 'POST':
-      return render_to_response('search_results.html',
-		      {'result': result,
-		       })
 
   else: #Return homepage with error
     error = ['Not a valid query']
     return render_to_response('search_form.html',
                             {'error':error})
 
-
-def update_prevhome(request, result):
+def update_prevhome(request, query, query2):
       if request.method== 'POST':
-          form = PrevHomeSalesForm(request.POST, request.FILES)
+          try:	  
+	    print "XXXXXXX XXXXXXX"
+	    print request.POST.get('id')
+            u = PrevHomeSales.objects.get(id=request.POST.get('id')) #TODO figure out a unique key
+            form = PrevHomeSalesForm(request.POST, instance=u)
+          except PrevHomeSales.DoesNotExist:
+            form = PrevHomeSalesForm(request.POST)
           if form.is_valid():
-              requesthome = form.save(commit=False)
-              requesthome.save()
-              return HttpResponseRedirect('/home/genappraisal/?pid=' + str(requesthome.id))
-	  else:
-	    return render_to_response('detailed_more_info.html', #Render normal page
+            requesthome = form.save(commit=False)
+            requesthome.save()
+            return HttpResponseRedirect('/home/genappraisal/?pid=' + str(requesthome.id))
+          else:
+	    print form.errors
+            return render_to_response('detailed_more_info.html', #Render normal page
                     {'form': form,
                      })
       else:
           try:
-	      print "TRIED"
-              u = PrevHomeSales.objects.get(id=result.id)
-              form = PrevHomeSalesForm(instance=u)
-	      print form
+            print "Not a post request"
+            result = return_zhome_attr(query, query2) #try to get Zillow data
+            form = PrevHomeSalesForm(instance=result)
+            print form
           except PrevHomeSales.DoesNotExist:
-              form = PrevHomeSalesForm()
-	      print form
+            form = PrevHomeSalesForm()
+            print form
+          except KeyError:
+            result = PrevHomeSales() #create blank result
           return render_to_response('detailed_more_info.html', #Render normal page
                     {'form': form,
                      })
@@ -210,6 +199,7 @@ def gen_appraisal_page(request):
     print data
     return render_to_response('search_results.html',
 		      {'result': data,
+		       'subject_home': r
 		       }, )
 
 def home_similarity(home, subject_home):
@@ -228,7 +218,7 @@ def gen_appraisal(subject_home):
   min_sqft = sqft * 0.8
   max_sqft = sqft * 1.2
   #TODO make sure to not fetch the subject home itself.
-  comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city)
+  comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city).exclude(user_input__exact=1)
   h = []
   if len(comp_candidates) < 3:
      return data

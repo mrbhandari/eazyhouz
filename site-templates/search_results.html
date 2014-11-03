@@ -2,6 +2,7 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block content %}
+{% load humanize %} 
 <link href="{% static 'dashboard.css' %}" rel="stylesheet" media="screen">
 
 <body>
@@ -32,8 +33,10 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <h1 class="page-header">Home Estimate Report</h1>
           
-        <h3>${{result.sale_price}}</h3>
-        <strong>{{ query }}</strong>
+        <h3>{% if result.estimated_price %}${% endif %}
+        {{result.estimated_price | intcomma}}</h3>
+        <p><strong>{{ subject_home.address }}</strong>
+        <br>Alternate Estimate: <strong>{{ subject_home.last_zestimate | intcomma }}</strong>
         <br><br>
           
           
@@ -41,24 +44,24 @@
           
           <div class="row placeholders">
             <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="{{result.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>{{result.address}}</h4>
-              <span class="text-muted">Original Property</span>
+              <img src="{{subject_home.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4>{{subject_home.address}}</h4>
+              <span class="text-muted">Subject Property</span>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="{{result.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>22 St Martin Ave</h4>
-              <span class="text-muted">Comp #1</span>
+              <img src="{{result.home1.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4>{{ result.home1.address }}</h4>
+              <span class="text-muted">Comparable #1</span>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="{{result.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>24 St Martin Ave</h4>
-              <span class="text-muted">Comp #2</span>
+              <img src="{{result.home2.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4>{{ result.home2.address }}</h4>
+              <span class="text-muted">Comparable #2</span>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="{{result.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>25 St Martin Ave</h4>
-              <span class="text-muted">Comp #3</span>
+              <img src="{{result.home3.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4>{{ result.home3.address }}</h4>
+              <span class="text-muted">Comparable #3</span>
             </div>
           </div>
           
@@ -70,109 +73,67 @@
                 <tr>
                   <th>#</th>
                   <th>Original</th>
-                  <th>Comp #1</th>
-                  <th>Comp #2</th>
-                  <th>Comp #3</th>
+                  <th>Comparable #1</th>
+                  <th>Comparable #2</th>
+                  <th>Comparable #3</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td>Address</td>
-                  <td>{{result.target_house.address}}</td>
+                  <td>{{subject_home.address}}</td>
                   <td>{{result.home1.address}}</td>
                   <td>{{result.home2.address}}</td>
                   <td>{{result.home3.address}}</td>                  
                 </tr>
                 <tr>
                   <td>City</td>
-                  <td>{{result.target_house.city}}</td>
+                  <td>{{subject_home.city}}</td>
                   <td>{{result.home1.city}}</td>
                   <td>{{result.home2.city}}</td>
                   <td>{{result.home3.city}}</td>                  
                 </tr>
                 <tr>
-                  <td>Sale Price</td>
-                  <td>{{result.target_house.sale_price}}</td>
-                  <td>{{result.home1.sale_price}}</td>
-                  <td>{{result.home2.sale_price}}</td>
-                  <td>{{result.home3.sale_price}}</td>                  
+                  <td>Last Sale Price</td>
+                  <td>${{subject_home.sale_price | intcomma}}</td>
+                  <td>${{result.home1.sale_price | intcomma}}</td>
+                  <td>${{result.home2.sale_price | intcomma}}</td>
+                  <td>${{result.home3.sale_price | intcomma}}</td>                  
                 </tr>
                 <tr>
                   <td>Last Sale Date</td>
-                  <td>{{result.target_house.last_sale_date}}</td>
+                  <td>{{subject_home.last_sale_date}}</td>
                   <td>{{result.home1.last_sale_date}}</td>
                   <td>{{result.home2.last_sale_date}}</td>
                   <td>{{result.home3.last_sale_date}}</td> 
                 </tr>
                 <tr>
                   <td>Beds</td>
-                  <td>{{result.target_house.beds}}</td>
+                  <td>{{subject_home.beds}}</td>
                   <td>{{result.home1.beds}}</td>
                   <td>{{result.home2.beds}}</td>
                   <td>{{result.home3.beds}}</td> 
                 </tr>
                 <tr>
                   <td>Baths</td>
-                  <td>{{result.target_house.baths}}</td>
+                  <td>{{subject_home.baths}}</td>
                   <td>{{result.home1.baths}}</td>
                   <td>{{result.home2.baths}}</td>
                   <td>{{result.home3.baths}}</td> 
                 </tr>
                 <tr>
                   <td>Sqft</td>
-                  <td>{{result.target_house.sqft}}</td>
-                  <td>{{result.home1.sqft}}</td>
-                  <td>{{result.home2.sqft}}</td>
-                  <td>{{result.home3.sqft}}</td> 
+                  <td>{{subject_home.sqft |intcomma}}</td>
+                  <td>{{result.home1.sqft |intcomma}}</td>
+                  <td>{{result.home2.sqft|intcomma}}</td>
+                  <td>{{result.home3.sqft|intcomma}}</td> 
                 </tr>
                 <tr>
                   <td>Year Built</td>
-                  <td>{{result.target_house.year_built}}</td>
+                  <td>{{subject_home.year_built}}</td>
                   <td>{{result.home1.year_built}}</td>
                   <td>{{result.home2.year_built}}</td>
                   <td>{{result.home3.year_built}}</td> 
-                </tr>
-                <tr>
-                  <td>Interior</td>
-                  <td>{{result.interior_rating}}</td>
-                  <td>{{result.interior_rating}}</td>
-                  <td>{{result.interior_rating}}</td>
-                  <td>{{result.interior_rating}}</td>
-                </tr>
-                <tr>
-                  <td>Exterior</td>
-                  <td>{{result.exterior_rating}}</td>
-                  <td>{{result.exterior_rating}}</td>
-                  <td>{{result.exterior_rating}}</td>
-                  <td>{{result.exterior_rating}}</td>
-                </tr>
-                <tr>
-                  <td>View</td>
-                  <td>{{result.view_rating}}</td>
-                  <td>{{result.view_rating}}</td>
-                  <td>{{result.view_rating}}</td>
-                  <td>{{result.view_rating}}</td>
-                </tr>
-                <tr>
-                  <td>Elementary School</td>
-                  <td>{{result.home1.elementary}}</td>
-                  <td>{{result.elementary}}</td>
-                  <td>{{result.elementary}}</td>
-                  <td>{{result.elementary}}</td>
-                </tr>
-                <tr>
-                  <td>Middle School</td>
-                  <td>{{result.middle}}</td>
-                  <td>{{result.middle}}</td>
-                  <td>{{result.middle}}</td>
-                  <td>{{result.middle}}</td>
-                </tr>
-                <tr>
-                  <td>High School</td>
-                  <td>{{result.high}}</td>
-                  <td>{{result.high}}</td>
-                  <td>{{result.high}}</td>
-                  <td>{{result.high}}</td>
                 </tr>
               </tbody>
             </table>

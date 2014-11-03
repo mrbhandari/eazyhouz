@@ -4,11 +4,12 @@ import datetime
 from decimal import *
 import datetime
 
-your_djangoproject_home="/Users/pradeep/eazyhouz/eazyhouz/mysite"
+your_djangoproject_home="/Applications/MAMP/htdocs/eazyhouz/mysite"
 
 sys.path.append(your_djangoproject_home)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
-getcontext().prec = 5
+import django
+django.setup()
 from search.models import PrevHomeSales
 
 filename = sys.argv[1]
@@ -67,7 +68,7 @@ for house in houses:
 				if description:
 					prevhomesales.remodeled = 1 if (("remodel" in description.lower()) or ("updated" in description.lower())) else 0
 				print "GOOD HOME:" + str(prevhomesales)
-				print str(prevhomesales.beds) + "\t" + str(prevhomesales.baths) + "\t" + str(prevhomesales.sqft) + "\t" + str(prevhomesales.year_built) + "\t" + str(prevhomesales.sale_price) + "\t" + str(prevhomesales.city) + "\t" + str(prevhomesales.image_url) + "\t" + str(prevhomesales.zipcode) + "\t" + str(prevhomesales.lot_size) + "\t" + str(prevhomesales.state) + "\t" + str(prevhomesales.remodeled)
+				print str(prevhomesales.beds) + "\t" + str(prevhomesales.baths) + "\t" + str(prevhomesales.sqft) + "\t" + str(prevhomesales.year_built) + "\t" + str(prevhomesales.sale_price) + "\t" + str(prevhomesales.city) + "\t" + str(prevhomesales.image_url) + "\t" + str(prevhomesales.zipcode) + "\t" + str(prevhomesales.lot_size) + "\t" + str(prevhomesales.state) + "\t" + str(prevhomesales.remodeled) + "\t" + str(prevhomesales.latitude) + "\t" + str(prevhomesales.longitude)
 				prevhomesales.save()
 		else:
 			print "BAD HOME:" + str(house)
