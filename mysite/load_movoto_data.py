@@ -4,11 +4,12 @@ import datetime
 from decimal import *
 import datetime
 
-your_djangoproject_home="/Users/pradeep/eazyhouz/eazyhouz/mysite"
+your_djangoproject_home="/Applications/MAMP/htdocs/eazyhouz/mysite"
 
 sys.path.append(your_djangoproject_home)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
-getcontext().prec = 5
+import django
+django.setup()
 from search.models import PrevHomeSales
 
 files = []
@@ -17,11 +18,10 @@ print filename
 files.extend(filename)
 
 houses = []
-for f in files:
-    houses.extend(json.load(open(f)))
+houses.extend("san_mateo_data.json")
 
 def good_house(house):
-    return bool(house.get("beds")) and bool(house.get("baths")) and bool(house.get("address")) and bool(house.get("zipcode")) and bool(house.get("state")) and bool(house.get("city")) and bool(house.get("price")) and bool(house.get("sqft")) and bool(house.get("year_built")) and bool(house.get("last_sold_date")) and bool(house.get("latitude")) and bool(house.get("longitude"))
+    return bool(house.get("beds")) and bool(house.get("baths")) and bool(house.get("address")) and bool(house.get("zipcode")) and bool(house.get("state")) and bool(house.get("city")) and bool(house.get("price"))
 
 city="san mateo"
 num_good_houses = 0

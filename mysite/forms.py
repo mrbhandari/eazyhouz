@@ -9,24 +9,60 @@ from crispy_forms.bootstrap import (
     PrependedText, PrependedAppendedText, FormActions)
 from search.models import *
 
-CHOICES = (('1', 'First',), ('2', 'Second',))
 
 
 # Create the form class.
 class PrevHomeSalesForm(ModelForm):
     class Meta:
         model = PrevHomeSales
+    id = forms.IntegerField(widget=forms.HiddenInput()) #need this for the model to update properly
+    HOME_TYPE_CHOICES = ((1, 'Single Family Home'), (0, 'Condo/Townhouse'), )
+    
+    home_type = forms.TypedChoiceField(choices=HOME_TYPE_CHOICES,
+                                            widget=forms.Select,
+                                            empty_value = None,
+                                            )
     helper = FormHelper()
     helper.form_method = 'POST'
+    helper.layout = Layout(
+        Field('home_type', css_class='input-sm'),
+        Field('address', css_class='input-sm'),
+        Field('city', css_class='input-sm'),
+        Field('state', css_class='input-sm'),
+        Field('zipcode', css_class='input-sm'),
+        Field('beds', css_class='input-sm'),
+        Field('baths', css_class='input-sm'),
+        Field('sqft', css_class='input-sm'),
+        Field('lot_size', css_class='input-sm'),
+        Field('year_built', css_class='input-sm'),
+        Field('elementary', css_class='input-sm'),
+        Field('middle', css_class='input-sm'),
+        Field('high', css_class='input-sm'),
+        
+        #bunch of fields hidden for now
+        Field('last_sale_date', type="hidden"),
+        Field('id', type="hidden"),
+        Field('user_input', type="hidden"),
+        Field('latitude', type="hidden"),
+        Field('longitude', type="hidden"),
+        Field('image_url', type="hidden"),
+        Field('remodeled', type="hidden"),
+        Field('sale_price', type="hidden"),
+        Field('last_zestimate', type="hidden"),
+        Field('exterior_rating', type="hidden"),
+        Field('interior_rating', type="hidden"),
+
+    )
     helper.add_input(Submit('Submit', 'Submit', css_class='btn-primary'))
 
 class LeadGenUserForm(ModelForm):
     class Meta:
         model = LeadGenUser
         exclude = ('phone_number',)
-    YESNO_CHOICES = (('Selling', 'Selling'), ('Buying', 'Buying'), ('Re-financing', 'Re-financing'), ('Curious', 'Just curious'))
+    INQUIRY_REASON_CHOICES = (('Selling', 'Selling'), ('Buying', 'Buying'), ('Re-financing', 'Re-financing'), ('Curious', 'Just curious'))
+    
     inquiry_reason = forms.TypedChoiceField(
-                     choices=YESNO_CHOICES, widget=forms.RadioSelect, empty_value = None,
+                     choices=INQUIRY_REASON_CHOICES, widget=forms.RadioSelect, empty_value = None,
                      )
     inquiry_reason.label = 'Optimize report for:'
 
