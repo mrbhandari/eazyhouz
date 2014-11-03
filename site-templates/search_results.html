@@ -10,28 +10,28 @@
 
     <div class="container-fluid">
       <div class="row">
+        
         <div class="col-sm-3 col-md-2 sidebar">
-          <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Overview</a></li>
-            <li><a href="#">Reports</a></li>
-            <li><a href="#">Analytics</a></li>
-            <li><a href="#">Export</a></li>
+          <ul class="nav nav-sidebar" id="sidenav">
+            <li class="active"><a href="#">Overview</a></li> <!--TODO: active does not move-->
+            <li><a href="#estimate_explanation">Estimate Explanation</a></li>
+            <li><a href="#recent_sales">Recent Sales</a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="">Nav item</a></li>
-            <li><a href="">Nav item again</a></li>
-            <li><a href="">One more nav</a></li>
-            <li><a href="">Another nav item</a></li>
-            <li><a href="">More navigation</a></li>
+            <li><a href="#instagram">Instagram</a></li>
+            <li><a href="#">Nav item again</a></li>
+            <li><a href="#">One more nav</a></li>
+            <li><a href="#">Another nav item</a></li>
+            <li><a href="#">More navigation</a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="">Nav item again</a></li>
-            <li><a href="">One more nav</a></li>
-            <li><a href="">Another nav item</a></li>
+            <li><a href="#">Nav item again</a></li>
+            <li><a href="#">One more nav</a></li>
+            <li><a href="#">Another nav item</a></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Home Estimate Report</h1>
+            <h1 class="page-header"> Home Estimate Report: {{ subject_home.address }} </h1>
           
         <h3>{% if result.estimated_price %}${% endif %}
         {{result.estimated_price | intcomma}}</h3>
@@ -63,11 +63,11 @@
               <h4>{{ result.home3.address }}</h4>
               <span class="text-muted">Comparable #3</span>
             </div>
-          </div>
+          </div> <!--images row-->
           
           
-          <h2 class="sub-header">Estimate Explanation</h2>
-          <div class="table-responsive">
+        <h2 class="sub-header" id="estimate_explanation">Estimate Explanation</h2>
+        <div class="table-responsive">
             <table class="table table-striped">
               <thead>
                 <tr>
@@ -129,7 +129,7 @@
                   <td>{{result.home3.sqft|intcomma}}</td> 
                 </tr>
                 <tr>
-                  <td>Year Built</td>
+                  <td id="goreport">Year Built</td>
                   <td>{{subject_home.year_built}}</td>
                   <td>{{result.home1.year_built}}</td>
                   <td>{{result.home2.year_built}}</td>
@@ -137,16 +137,113 @@
                 </tr>
               </tbody>
             </table>
+          </div> <!-- end responsive table-->
+        
+         
+         
+         
+        
+        <h2 class="sub-header" id="recent_sales">Recent Sales</h2>
+        <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Original</th>
+                  <th>Comparable #1</th>
+                  <th>Comparable #2</th>
+                  <th>Comparable #3</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Address</td>
+                  <td>{{subject_home.address}}</td>
+                  <td>{{result.home1.address}}</td>
+                  <td>{{result.home2.address}}</td>
+                  <td>{{result.home3.address}}</td>                  
+                </tr>
+                <tr>
+                  <td>City</td>
+                  <td>{{subject_home.city}}</td>
+                  <td>{{result.home1.city}}</td>
+                  <td>{{result.home2.city}}</td>
+                  <td>{{result.home3.city}}</td>                  
+                </tr>
+                <tr>
+                  <td>Last Sale Price</td>
+                  <td>${{subject_home.sale_price | intcomma}}</td>
+                  <td>${{result.home1.sale_price | intcomma}}</td>
+                  <td>${{result.home2.sale_price | intcomma}}</td>
+                  <td>${{result.home3.sale_price | intcomma}}</td>                  
+                </tr>
+                <tr>
+                  <td>Last Sale Date</td>
+                  <td>{{subject_home.last_sale_date}}</td>
+                  <td>{{result.home1.last_sale_date}}</td>
+                  <td>{{result.home2.last_sale_date}}</td>
+                  <td>{{result.home3.last_sale_date}}</td> 
+                </tr>
+            
+              </tbody>
+            </table>
           </div>
+        
+        
+        
+        <h2 class="sub-header" id=instagram>Instagram</h2>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <tbody>
+                    {% for r in instagram_r %}
+                        {% cycle '<tr>' '' '' '' %}
+                        <td><a href="{{r.sri}}"><img data-src="holder.js/200x200" src="{{r.lri}}" class="img-thumbnail" alt="Instagram Img"></a></td>
+                        {% cycle '' '' '' '</tr>' %}
+                    {% endfor %}
+                </tbody>
+        </div> <!--table div ends-->
+        
         </div>
       </div>
     </div>
     
+       
+        </div>
+      </div>
+    </div>
+        
+     
         
         
     </div>
 </body>
 
-
+    <script>
+            $( document ).ready(function() {
+            console.log("TEST1")
+            $("#sidenav ul li a[href^='#']").on('click', function(e) {
+            console.log("TEST")
+            // prevent default anchor click behavior
+            e.preventDefault();
+            
+            // store hash
+            var hash = this.hash;
+            
+            console.log(this.hash)
+            
+            // animate
+            $('html, body').animate({
+            scrollTop: $(this.hash).offset().top
+            }, 300, function(){
+            
+            // when done, add hash to url
+            // (default click behaviour)
+            window.location.hash = hash;
+            });
+            
+            });//end nav element selector
+            
+            });//end document.ready
+    </script>
 
 {% endblock %}
