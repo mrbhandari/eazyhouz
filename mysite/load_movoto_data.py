@@ -3,7 +3,7 @@ import sys,os
 import datetime
 from decimal import *
 import datetime
-
+import re
 your_djangoproject_home="/Applications/MAMP/htdocs/eazyhouz/mysite"
 
 sys.path.append(your_djangoproject_home)
@@ -17,16 +17,15 @@ houses = []
 houses.extend(json.load(open(filename)))
 
 def good_house(house):
-    return bool(house.get("beds")) and bool(house.get("baths")) and bool(house.get("address")) and bool(house.get("zipcode")) and bool(house.get("state")) and bool(house.get("city")) and bool(house.get("price")) and bool(house.get("sqft")) and bool(house.get("year")) and bool(house.get("last_sold_date")) and bool(house.get("latitude")) and bool(house.get("longitude"))
+    return bool(house.get("beds")) and bool(house.get("baths")) and bool(house.get("address")) and bool(house.get("zipcode")) and bool(house.get("state")) and bool(house.get("city")) and bool(house.get("price")) and bool(house.get("sqft")) and bool(house.get("last_sold_date")) and bool(house.get("latitude")) and bool(house.get("longitude"))
 
-city="san mateo"
 num_good_houses = 0
 num_houses_with_exceptions = 0
 for house in houses:
 	try:
 		if good_house(house):
 	        	house_city = house.get("city").lower().replace(",","")
-	        	if city == house_city:
+	        	if house_city:
 	           		prevhomesales = PrevHomeSales()
 	            		num_good_houses += 1
 	            		prevhomesales.address = house.get("address")
@@ -54,7 +53,7 @@ for house in houses:
 			        lot_size = house.get("lot_size")
 			        if lot_size:
 			            lot_size = lot_size.replace(",","").replace("-","")
-			        if lot_size:
+			        if lot_size and re.match("^[0-9]*$",lot_size):
 					prevhomesales.lot_size = lot_size
 		                description = house.get("description")
 				prevhomesales.latitude = house.get("latitude")
@@ -72,8 +71,8 @@ for house in houses:
 				prevhomesales.save()
 		else:
 			print "BAD HOME:" + str(house)
-	except InvalidOperation as e:
+	except (InvalidOperation,ValueError) as e:
 		num_houses_with_exceptions+=1
 	
-print "Number of good " + city + " houses: " + str(num_good_houses)
-print "Number of exception " + city + " houses: " + str(num_houses_with_exceptions)
+print "Number of good houses: " + str(num_good_houses)
+print "Number of exception  houses: " + str(num_houses_with_exceptions)
