@@ -2,7 +2,8 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block content %}
-{% load humanize %} 
+{% load humanize %}
+{% load mathfilters %}
 <link href="{% static 'dashboard.css' %}" rel="stylesheet" media="screen">
 
 <body>
@@ -19,8 +20,8 @@
           </ul>
           <ul class="nav nav-sidebar">
             <li><a href="#instagram">Instagram</a></li>
-            <li><a href="#">Nav item again</a></li>
-            <li><a href="#">One more nav</a></li>
+            <li><a href="#yelp">Yelp</a></li>
+            <li><a href="#twitter">Recent Tweets</a></li>
             <li><a href="#">Another nav item</a></li>
             <li><a href="#">More navigation</a></li>
           </ul>
@@ -150,47 +151,33 @@
                 <tr>
                   <th>#</th>
                   <th>Original</th>
-                  <th>Comparable #1</th>
-                  <th>Comparable #2</th>
-                  <th>Comparable #3</th>
+                  <th>Stat #1</th>
+                  <th>Stat #2</th>
+                  <th>Stat #3</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>Address</td>
-                  <td>{{subject_home.address}}</td>
-                  <td>{{result.home1.address}}</td>
-                  <td>{{result.home2.address}}</td>
-                  <td>{{result.home3.address}}</td>                  
+                  <td>Home 1</td>
+                  <td>100</td>
+                  <td>2002</td>
+                  <td>300</td>
+                  <td>400</td>                  
                 </tr>
                 <tr>
-                  <td>City</td>
-                  <td>{{subject_home.city}}</td>
-                  <td>{{result.home1.city}}</td>
-                  <td>{{result.home2.city}}</td>
-                  <td>{{result.home3.city}}</td>                  
+                  <td>Home 2</td>
+                  <td>100</td>
+                  <td>200</td>
+                  <td>300</td>
+                  <td>400</td>                  
                 </tr>
-                <tr>
-                  <td>Last Sale Price</td>
-                  <td>${{subject_home.sale_price | intcomma}}</td>
-                  <td>${{result.home1.sale_price | intcomma}}</td>
-                  <td>${{result.home2.sale_price | intcomma}}</td>
-                  <td>${{result.home3.sale_price | intcomma}}</td>                  
-                </tr>
-                <tr>
-                  <td>Last Sale Date</td>
-                  <td>{{subject_home.last_sale_date}}</td>
-                  <td>{{result.home1.last_sale_date}}</td>
-                  <td>{{result.home2.last_sale_date}}</td>
-                  <td>{{result.home3.last_sale_date}}</td> 
-                </tr>
-            
               </tbody>
             </table>
           </div>
         
         
         
+       
         <h2 class="sub-header" id=instagram>Instagram</h2>
         <div class="table-responsive">
             <table class="table table-striped">
@@ -201,7 +188,52 @@
                         {% cycle '' '' '' '</tr>' %}
                     {% endfor %}
                 </tbody>
+            </table>
         </div> <!--table div ends-->
+       
+        
+        <h2 class="sub-header" id="yelp">Yelp</h2>
+
+            <!--alternate view-->
+                <div class="row list-group">
+                    {% for r in yelp_r.businesses %}
+                    <div class="item  col-xs-3 col-lg-3" style="height:300px; overflow: auto;">
+                        <div class="img-responsive">
+                            <img class="img-thumbnail" style="height: 175px" src="{{r.image_url}}" alt="{{r.snippet_text}}" />
+                            <div class="caption">
+                                <h4 class="group inner list-group-item-heading">
+                                    <a href="{{r.url}}">{{r.name}}</a> ({{r.distance|intdiv:1 |floatformat:"0"}} m)</h4>
+                                <p class="group inner list-group-item-text">
+                                    {% for i in r.categories %}
+                                    {% with i|first as first_doc %}{{ first_doc }}{% endwith %}
+                                    {% endfor %}</p>
+                                <div class="row">
+                                    
+                                    <div class="col-xs-12 col-md-12">
+                                        <p><img class="img-responsive" src="{{r.rating_img_url_large}}"></a>({{r.review_count}})</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                        
+                    {% endfor %}                    
+                </div> <!--end alternate view-->
+            
+
+       
+        <h2 class="sub-header" id=twitter>Recent Tweets</h2>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <tbody>
+                    {% for r in twitter_r %}
+                        {% cycle '<tr>' '' '' '' %}
+                        <td>{{ r }}</td>
+                        {% cycle '' '' '' '</tr>' %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div> <!--table div ends-->
+              
         
         </div>
       </div>

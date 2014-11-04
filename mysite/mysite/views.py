@@ -11,7 +11,7 @@ from zillowrequest import return_zhome_attr
 from django.forms.models import model_to_dict
 import heapq
 from decimal import *
-from social_data import nearby_insta
+from social_data import nearby_insta, nearby_yelp, nearby_twitter
 
 
 def autosuggest(request):
@@ -195,16 +195,25 @@ def gen_appraisal_page(request):
     pid = request.GET.get('pid','')  
     r = PrevHomeSales.objects.get(id=pid)
     print r
-    print "THIS EXECUTED"
     data = gen_appraisal(r)
     print data
+
     print r.latitude, r.longitude
     instagram_r = nearby_insta(r.latitude, r.longitude)
     print instagram_r
+    
+    yelp_r = nearby_yelp(r.latitude, r.longitude)
+    twitter_r = nearby_twitter(r.latitude, r.longitude)
+    
+    print "THIS EXECUTED"
+    print twitter_r[0]
+
     return render_to_response('search_results.html',
 		      {'result': data,
 		       'subject_home': r,
 		       'instagram_r': instagram_r,
+		       'yelp_r': yelp_r,
+		       'twitter_r': twitter_r,
 		       }, )
 
 def home_similarity(home, subject_home):

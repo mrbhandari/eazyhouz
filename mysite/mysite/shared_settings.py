@@ -131,6 +131,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django_twilio',
     'django_tables2',
+    'mathfilters',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

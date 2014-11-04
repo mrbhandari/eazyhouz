@@ -198,9 +198,8 @@ pip install django-twilio
 pip install django-debug-toolbar
 pip install django-tables2
 pip install python-instagram
-easy_install -U setuptools
 pip install yelpapi
-
+pip install django-mathfilters
 
 
 
@@ -383,7 +382,7 @@ import sys
 
 
 
-
+python load_movoto_data.py san_mateo_data.json
 
 
 #SCRAPING
