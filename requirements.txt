@@ -189,7 +189,7 @@ cd /srv/my_project/app/Eazyhouz/mysite
 python manage.py migrate
 
 source /srv/my_project/venv/bin/activate
-    sudo su
+        sudo su
 pip install numpy
 pip install django-crispy-forms
 pip install xmltodict
@@ -200,8 +200,10 @@ pip install django-tables2
 pip install python-instagram
 pip install yelpapi
 pip install django-mathfilters
-
-
+pip install twitter
+pip install foursquare
+pip install eventful
+pip install geopy
 
 #switch back to ec2 to load the data
 #cp /home/ubuntu/medicare.tsv /data/medicare/medicare.tsv

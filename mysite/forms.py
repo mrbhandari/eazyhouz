@@ -13,11 +13,28 @@ from search.models import *
 
 # Create the form class.
 class PrevHomeSalesForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(PrevHomeSalesForm, self).__init__(*args,**kwargs)
+        
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        id = cleaned_data.get('id')
+        
+        #if not id:
+        #    raise forms.ValidationError("Must specify an ID")
+        
+        return super(PrevHomeSalesForm,self).clean()
+    
+    
     class Meta:
         model = PrevHomeSales
     id = forms.IntegerField(widget=forms.HiddenInput()) #need this for the model to update properly
-    HOME_TYPE_CHOICES = ((1, 'Single Family Home'), (0, 'Condo/Townhouse'), )
+    #TODO: Rename elementary school to a rating
+    #forms.fields['elementary'].label = "Elementary School rating 1-10"
+    #middle.label = "Middle School rating 1-10"
+    #high.label = "High School rating 1-10"
     
+    HOME_TYPE_CHOICES = ((1, 'Single Family Home'), (0, 'Condo/Townhouse'), )
     home_type = forms.TypedChoiceField(choices=HOME_TYPE_CHOICES,
                                             widget=forms.Select,
                                             empty_value = None,
@@ -35,7 +52,7 @@ class PrevHomeSalesForm(ModelForm):
         Field('sqft', css_class='input-sm'),
         Field('lot_size', css_class='input-sm'),
         Field('year_built', css_class='input-sm'),
-        Field('elementary', css_class='input-sm'),
+        Field('elementary', css_class='input-sm', label='Greatschools Rating'),
         Field('middle', css_class='input-sm'),
         Field('high', css_class='input-sm'),
         

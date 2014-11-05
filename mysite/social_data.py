@@ -1,12 +1,15 @@
 from instagram.client import InstagramAPI
 from yelpapi import YelpAPI
 from twitter import *
-import urllib, urllib2
+from foursquare import Foursquare
+import urllib, urllib2, simplejson
 import os, json
 os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
 rdist = 1000
+tradius = str(rdist/1000)+"km"
 sanmateo= "37.561667,-122.318908"
 bixby = "35.9608,-95.8783"
+import eventful
 
 
 def nearby_insta(latitude, longitude):
@@ -45,17 +48,13 @@ def nearby_yelp(latitude, longitude):
             
     return search_results
 
-
-
-consumer_key = "O5Z1KINSBaDEQgTBB3FA"
-consumer_secret = "kf42pzVoDrmP4hoe9LNQW5t765J2zEspqdHQhotw"
-access_key = "2172397754-TrCNJSgVarJIMnYb6uLXFzfI76zI7m8cfy5zIvL"
-access_secret = "FNiDwwbgs0WiElgaJ2hVECnsyavUKIQ3IP7JNr4BkiOhx"# create twitter API object
-auth = OAuth(access_key, access_secret, consumer_key, consumer_secret)
-twitter = Twitter(auth = auth)
-tradius = str(rdist/1000)+"km"
-
 def nearby_twitter(latitude, longitude, radius=tradius):
+    consumer_key = "O5Z1KINSBaDEQgTBB3FA"
+    consumer_secret = "kf42pzVoDrmP4hoe9LNQW5t765J2zEspqdHQhotw"
+    access_key = "2172397754-TrCNJSgVarJIMnYb6uLXFzfI76zI7m8cfy5zIvL"
+    access_secret = "FNiDwwbgs0WiElgaJ2hVECnsyavUKIQ3IP7JNr4BkiOhx"# create twitter API object
+    auth = OAuth(access_key, access_secret, consumer_key, consumer_secret)
+    twitter = Twitter(auth = auth)
     geocode = "%s,%s,%s" % (latitude, longitude, radius)
     query = twitter.search.tweets(geocode = geocode, count=100)
     tweets = []
@@ -63,25 +62,118 @@ def nearby_twitter(latitude, longitude, radius=tradius):
         tweets.append(result.get("text"))
     return tweets
 
-#def instagram_request(lat, lon):
-#    baseurl = 'https://api.instagram.com/v1/media/search'
-#    values = {'client_id' : Instagram.client_id,
-#              'lat' : lat,
-#              'lng' : lon }
-#    data = urllib.urlencode(values)
-#    print data
-#    url = baseurl + '?' +data
-#    print url
-#    return url
-#
-#def make_request(url):
-#    response = urllib2.urlopen(url)
-#    reponse_string = response.read()
-#    return reponse_string
-#
-#
-#insta_url = instagram_request(lat, lon)
-#print insta_url
-#
-#
-#print make_request(insta_url)
+def nearby_foursquare(latitude, longitude, radius=rdist):
+    fsclient_id = 'LVMG0AY1BFF5AJFPS0GJEF2MD4G4PB4OYDRJVZ4NJDC3PSRK'
+    fsclient_secret = 'M5A2YFXKFKWHAMRX10430ZWUOH5VFOGDBTL42H5WPYYVG5R5'
+    client = Foursquare(client_id=fsclient_id,
+            client_secret=fsclient_secret,)
+    
+    params = {
+        'll': ('%s,%s' % (latitude, longitude)),
+        #'categoryId': '4d4b7105d754a06378d81259',
+        'limit': 50,
+        'radius': radius,
+    }
+    response = client.venues.search(params)
+    fscheckins = []
+
+    #Filtering for high quality: make sure atleast 5% of users in area checked in here
+    #percent_of_total = .05
+    #totaluserCount = response.get('venues')[0].get('stats').get('usersCount')
+    #totaluserCount = response.get('venues')[0]
+    #print totaluserCount
+    #actual_venues = response.get('venues')[2:len(response.get('venues'))]#skips the first response which is always meta data
+    
+    for i in response.get('venues'): 
+        fsvenue = {}
+        userCount = i.get('stats').get('usersCount')
+        if userCount > 30:
+            fsvenue['name'] = i.get('name')
+            fsvenue['usersCount'] = userCount
+            fsvenue['checkinsCount'] = i.get('stats').get('checkinsCount')
+            fsvenue['repeatRatio'] = fsvenue['checkinsCount'] / fsvenue['usersCount']
+            fsvenue['url'] = i.get('url')
+            #print i.get('popular')
+            #print i.get('hereNow')
+            #print i.get('tips')
+            #print i.get('tags')
+            #print i.get('photos')
+            try:
+                index_value = i.get('categories')[0].get('shortName')
+            except ValueError:
+                index_value = None
+            fsvenue['category'] = index_value
+            fscheckins.append(fsvenue)
+    return fscheckins
+    
+def nearby_eventful(latitude, longitude, radius=rdist):
+    api = eventful.API('Jk6L9pr5QZfBz3Tb')
+    geocode = "%s,%s" % (latitude, longitude)
+    events = api.call('/events/search', location=geocode, within=(radius/1000), units="km")
+    
+    resultevents = []
+    try:
+        for event in events['events']['event']:
+            print event
+            i = {}
+            i['title'] = event.get('title')
+            i['start_time'] = event.get('start_time')
+            i['description'] = event.get('description')
+            i['venue_name'] = event.get('venue_name')
+            i['comment_count'] = event.get('comment_count')
+            i['calendar_count'] = event.get('calendar_count')
+            try:
+                index_value = event.get('image').get('url')
+            except:
+                index_value = None
+            i['image_url'] = index_value
+            resultevents.append(i)
+    except TypeError:
+        print "no events found in Eventful --- skipping"
+            
+    
+    return resultevents
+
+def nearby_seatgeek(latitude, longitude, radius=tradius):
+    pass
+
+
+#http://api.seatgeek.com/2/events?range=3mi&lat=37.561667&lon=-122.318908&sort=score.desc
+    baseurl = 'http://api.seatgeek.com/2/events'
+    values = {'sort' : "score.desc",
+              'lat' : latitude,
+              'lon' : longitude }
+    data = urllib.urlencode(values)
+    print data
+    url = baseurl + '?' +data
+    print url
+    json = send_request(url)
+    build_event_list(json)
+
+def build_event_list(json):
+    loc_event = []
+    try:
+        for event in json.get('events'):
+            print event
+            event_items = []
+            event_items['title'] = event.get('title')
+            event_items['venue_name'] = event.get('venue_name')
+            event_items['url'] = event.get('url')
+            event_items['address'] = event['venue']['location']['street'] + ', ' + event['venue']['location']['city'] + ', ' + event['venue']['location']['country'] + ' ' + event['venue']['location']['postalcode']
+            event_items['image'] =  event['images']['medium']
+            loc_event.append(event_items)
+    except KeyError:
+        pass
+
+    return loc_event
+
+def send_request(string=None):
+    if string != None:
+        request_string = string
+        request = urllib2.Request(request_string)
+        opener = urllib2.build_opener()
+        f = opener.open(request)
+        json_result = simplejson.load(f)
+        return json_result
+    
+#print nearby_seatgeek(37.561667,-122.318908, "30mi")

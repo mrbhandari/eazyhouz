@@ -1,5 +1,6 @@
 # Django settings for mysite project.
 import os.path
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -135,6 +136,10 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
+
+TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.request',)
+
+
 #TO DO MOVE TO ENV VARIABLES
 TWILIO_AUTH_TOKEN = '9c9026216c818eb92f78c5921a2d322c'
 TWILIO_ACCOUNT_SID = 'AC54c41ac1142b993d70a3177837c111ef'

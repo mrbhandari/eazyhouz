@@ -11,8 +11,24 @@ from zillowrequest import return_zhome_attr
 from django.forms.models import model_to_dict
 import heapq
 from decimal import *
-from social_data import nearby_insta, nearby_yelp, nearby_twitter
+from social_data import nearby_insta, nearby_yelp, nearby_twitter, nearby_foursquare, nearby_eventful
+import django_tables2 as tables
+from django.template import RequestContext
+from django_tables2 import RequestConfig
+from geolatlong import geolocate
 
+class FoursquareTable(tables.Table):
+    name = tables.Column(verbose_name="Venue Name")
+    category = tables.Column(verbose_name="Type")
+    usersCount = tables.Column(verbose_name="Users")
+    checkinsCount = tables.Column(verbose_name="Check-ins")
+    repeatRatio = tables.Column(verbose_name="Loyalty Rating")
+    url = tables.URLColumn(verbose_name="Website")
+    
+    
+    class Meta:
+      attrs = {"class": "table table-striped"}
+      order_by_field = True
 
 def autosuggest(request):
 #Takes an autosuggest input and returns matching address line1s from the prevHomeSales model database
@@ -158,19 +174,21 @@ def more_info_page(request):
 
 def update_prevhome(request, query, query2):
       if request.method== 'POST':
-          try:	  
-	    print "XXXXXXX XXXXXXX"
-	    print request.POST.get('id')
+          try:     
+            print "XXXXXXX XXXXXXX"
+            print request.POST.get('id')
             u = PrevHomeSales.objects.get(id=request.POST.get('id')) #TODO figure out a unique key
             form = PrevHomeSalesForm(request.POST, instance=u)
-          except PrevHomeSales.DoesNotExist:
+          except: #TODO FIX blanket except clause PrevHomeSales.DoesNotExist, AttributeError:
             form = PrevHomeSalesForm(request.POST)
+	    print form
+	    form.id = -1
           if form.is_valid():
             requesthome = form.save(commit=False)
             requesthome.save()
             return HttpResponseRedirect('/home/genappraisal/?pid=' + str(requesthome.id))
           else:
-	    print form.errors
+            print form.errors
             return render_to_response('detailed_more_info.html', #Render normal page
                     {'form': form,
                      })
@@ -180,11 +198,14 @@ def update_prevhome(request, query, query2):
             result = return_zhome_attr(query, query2) #try to get Zillow data
             form = PrevHomeSalesForm(instance=result)
             print form
-          except PrevHomeSales.DoesNotExist:
+          except PrevHomeSales.DoesNotExist, AttributeError: #Zillow fails
             form = PrevHomeSalesForm()
-            print form
-          except KeyError:
-            result = PrevHomeSales() #create blank result
+          except: #TODO FIX blanket except clause
+	    location = geolocate(query + ' ' +query2)
+            form = PrevHomeSalesForm( initial={'address': location.address,
+					       'id': -1,
+					       'latitude': location.latitude,
+					       'longitude': location.longitude}) #create blank result
           return render_to_response('detailed_more_info.html', #Render normal page
                     {'form': form,
                      })
@@ -195,26 +216,35 @@ def gen_appraisal_page(request):
     pid = request.GET.get('pid','')  
     r = PrevHomeSales.objects.get(id=pid)
     print r
-    data = gen_appraisal(r)
-    print data
+    app_data = gen_appraisal(r)
+    print app_data
 
     print r.latitude, r.longitude
     instagram_r = nearby_insta(r.latitude, r.longitude)
     print instagram_r
     
     yelp_r = nearby_yelp(r.latitude, r.longitude)
+    
     twitter_r = nearby_twitter(r.latitude, r.longitude)
     
-    print "THIS EXECUTED"
-    print twitter_r[0]
-
-    return render_to_response('search_results.html',
-		      {'result': data,
-		       'subject_home': r,
-		       'instagram_r': instagram_r,
-		       'yelp_r': yelp_r,
-		       'twitter_r': twitter_r,
-		       }, )
+    foursquare_r = nearby_foursquare(r.latitude, r.longitude)
+    foursquare_table = FoursquareTable(foursquare_r)
+    RequestConfig(request).configure(foursquare_table)
+    
+    eventful_r = nearby_eventful(r.latitude, r.longitude)
+    
+    return render_to_response(
+		  'search_results.html',
+		  {'result': app_data,
+		   'subject_home': r,
+		   'instagram_r': instagram_r,
+		   'yelp_r': yelp_r,
+		   'twitter_r': twitter_r,
+		   'foursquare_r': foursquare_r,
+		   'table': foursquare_table,
+		   'eventful_r': eventful_r,
+		   },
+		  RequestContext(request))
 
 def home_similarity(home, subject_home):
   return 10 * abs(home.sqft - subject_home.sqft) + 800 * abs(home.sqft - subject_home.sqft)
@@ -233,6 +263,10 @@ def gen_appraisal(subject_home):
   max_sqft = sqft * 1.2
   #TODO make sure to not fetch the subject home itself.
   comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city).exclude(user_input__exact=1)
+  
+  print "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  print comp_candidates
+  
   h = []
   if len(comp_candidates) < 3:
      return data
@@ -244,7 +278,11 @@ def gen_appraisal(subject_home):
   
   for i in range(1,k+1):
     sim_score,home = heapq.heappop(h)
-    avg_sqft_price += home.sale_price/home.sqft
+    avg_sqft_price = 0
+    try:
+      avg_sqft_price = home.sale_price/home.sqft
+    except TypeError:
+      pass
     data['home' + str(i)] = model_to_dict(home)
   avg_sqft_price /= k
   data['estimated_price'] = avg_sqft_price * subject_home.sqft

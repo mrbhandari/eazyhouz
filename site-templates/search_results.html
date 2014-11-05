@@ -4,6 +4,7 @@
 {% block content %}
 {% load humanize %}
 {% load mathfilters %}
+{% load render_table from django_tables2 %}
 <link href="{% static 'dashboard.css' %}" rel="stylesheet" media="screen">
 
 <body>
@@ -22,8 +23,8 @@
             <li><a href="#instagram">Instagram</a></li>
             <li><a href="#yelp">Yelp</a></li>
             <li><a href="#twitter">Recent Tweets</a></li>
-            <li><a href="#">Another nav item</a></li>
-            <li><a href="#">More navigation</a></li>
+            <li><a href="#foursquare">Foursquare</a></li>
+            <li><a href="#eventful">Eventful</a></li>
           </ul>
           <ul class="nav nav-sidebar">
             <li><a href="#">Nav item again</a></li>
@@ -51,17 +52,17 @@
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
               <img src="{{result.home1.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>{{ result.home1.address }}</h4>
+              <a href="/home/genappraisal/?pid={{ result.home1.id }}"><h4>{{ result.home1.address }}</h4></a>
               <span class="text-muted">Comparable #1</span>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
               <img src="{{result.home2.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>{{ result.home2.address }}</h4>
+              <a href="/home/genappraisal/?pid={{ result.home2.id }}"><h4>{{ result.home2.address }}</h4></a>
               <span class="text-muted">Comparable #2</span>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
               <img src="{{result.home3.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>{{ result.home3.address }}</h4>
+              <a href="/home/genappraisal/?pid={{ result.home3.id }}"><h4>{{ result.home3.address }}</h4></a>
               <span class="text-muted">Comparable #3</span>
             </div>
           </div> <!--images row-->
@@ -178,7 +179,7 @@
         
         
        
-        <h2 class="sub-header" id=instagram>Instagram</h2>
+        <h2 class="sub-header" id=instagram>Instagram posts within 1000m</h2>
         <div class="table-responsive">
             <table class="table table-striped">
                 <tbody>
@@ -192,7 +193,7 @@
         </div> <!--table div ends-->
        
         
-        <h2 class="sub-header" id="yelp">Yelp</h2>
+        <h2 class="sub-header" id="yelp">Yelp within 1000m</h2>
 
             <!--alternate view-->
                 <div class="row list-group">
@@ -233,7 +234,48 @@
                 </tbody>
             </table>
         </div> <!--table div ends-->
-              
+
+
+        <h2 class="sub-header" id=foursquare>Foursquare within 1000m</h2>
+        
+        {% render_table table %}
+        
+        
+        
+        <h2 class="sub-header" id="eventful">Eventful within 1000m</h2>
+
+            <!--alternate view-->
+                <div class="row list-group">
+                    {% for r in eventful_r %}
+                    <div class="item  col-xs-3 col-lg-3" style="height:300px; overflow: auto;">
+                        <div class="img-responsive">
+                            <img class="img-thumbnail" style="height: 175px" src="{{r.image_url}}" alt="{{r.description}}" />
+                            <div class="caption">
+                                <h4 class="group inner list-group-item-heading">
+                                    <a href="{{r.url}}">{{r.title}}</a></h4>
+                                <p class="group inner list-group-item-text">
+                                    {{ r.start_time }} <br> {{ r.calendar_count }}
+
+                                <div class="row">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>                        
+                    {% endfor %}                    
+                </div> <!--end alternate view-->
+            
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         </div>
       </div>
