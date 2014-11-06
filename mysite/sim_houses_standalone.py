@@ -16,7 +16,7 @@ from search.models import *
 django.setup()
 
 def home_similarity(home,subject_home):
-  return 10 * abs(home.sqft - subject_home.sqft) + 800 * abs(home.sqft - subject_home.sqft)
+  return 10 * abs(home.sqft - subject_home.sqft) + 800 * abs(float(home.baths) - float(subject_home.baths)) #+ 10 * abs(home.year_built - subject_home.year_built)
 
 def gen_appraisal(subject_home):
   data = {}
@@ -28,8 +28,9 @@ def gen_appraisal(subject_home):
   max_baths = baths + 0.5
   min_sqft = sqft * 0.8
   max_sqft = sqft * 1.2
+  last_sale_date_threshold = "2014-01-01"
   #TODO make sure to not fetch the subject home itself.
-  comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city)
+  comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold).exclude(user_input__exact=1)
   h = []
   if len(comp_candidates) < 3:
      return data
