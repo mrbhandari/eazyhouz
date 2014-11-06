@@ -11,6 +11,10 @@ sanmateo= "37.561667,-122.318908"
 bixby = "35.9608,-95.8783"
 import eventful
 
+def nearby_image(latitude,longitude):
+    img_url = """https://maps.googleapis.com/maps/api/streetview?size=400x400&location=%s,%s8&key=AIzaSyBYVngMReah5qDa3j-ZZqpwkvxJ-7gYecs""" % (latitude, longitude)
+    print "PRINTING IMG: %s" % img_url
+    return img_url
 
 def nearby_insta(latitude, longitude):
     #https://github.com/Instagram/python-instagram
@@ -114,7 +118,6 @@ def nearby_eventful(latitude, longitude, radius=rdist):
     resultevents = []
     try:
         for event in events['events']['event']:
-            print event
             i = {}
             i['title'] = event.get('title')
             i['start_time'] = event.get('start_time')
@@ -144,9 +147,7 @@ def nearby_seatgeek(latitude, longitude, radius=tradius):
               'lat' : latitude,
               'lon' : longitude }
     data = urllib.urlencode(values)
-    print data
     url = baseurl + '?' +data
-    print url
     json = send_request(url)
     build_event_list(json)
 
@@ -154,7 +155,6 @@ def build_event_list(json):
     loc_event = []
     try:
         for event in json.get('events'):
-            print event
             event_items = []
             event_items['title'] = event.get('title')
             event_items['venue_name'] = event.get('venue_name')
