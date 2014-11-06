@@ -16,6 +16,7 @@ import django_tables2 as tables
 from django.template import RequestContext
 from django_tables2 import RequestConfig
 from geolatlong import geolocate
+import pprint
 
 class FoursquareTable(tables.Table):
     name = tables.Column(verbose_name="Venue Name")
@@ -154,7 +155,9 @@ def get_client_ip(request):
 #NON LEAD GEN PORTION OF SITE
 
 def gen_homepage(request):
-  error = []
+  error = None
+  if 'error' in request.GET:
+    error = request.GET.get('error','')
   return render_to_response('search_form.html',
                             {'error':error})
 
@@ -167,48 +170,57 @@ def more_info_page(request):
     return_request = update_prevhome(request, query, query2)
     return return_request
 
-  else: #Return homepage with error
-    error = ['Not a valid query']
-    return render_to_response('search_form.html',
-                            {'error':error})
+  else:
+    return HttpResponseRedirect('/home?error=Please fill out the form completely') #Return homepage with error
+
 
 def update_prevhome(request, query, query2):
       if request.method== 'POST':
-          try:     
-            print "XXXXXXX XXXXXXX"
-            print request.POST.get('id')
-            u = PrevHomeSales.objects.get(id=request.POST.get('id')) #TODO figure out a unique key
-            form = PrevHomeSalesForm(request.POST, instance=u)
-          except: #TODO FIX blanket except clause PrevHomeSales.DoesNotExist, AttributeError:
-            form = PrevHomeSalesForm(request.POST)
-	    print form
-	    form.id = -1
-          if form.is_valid():
-            requesthome = form.save(commit=False)
-            requesthome.save()
-            return HttpResponseRedirect('/home/genappraisal/?pid=' + str(requesthome.id))
-          else:
-            print form.errors
-            return render_to_response('detailed_more_info.html', #Render normal page
-                    {'form': form,
-                     })
-      else:
-          try:
-            print "Not a post request"
-            result = return_zhome_attr(query, query2) #try to get Zillow data
-            form = PrevHomeSalesForm(instance=result)
-            print form
-          except PrevHomeSales.DoesNotExist, AttributeError: #Zillow fails
-            form = PrevHomeSalesForm()
-          except: #TODO FIX blanket except clause
-	    location = geolocate(query + ' ' +query2)
-            form = PrevHomeSalesForm( initial={'address': location.address,
-					       'id': -1,
-					       'latitude': location.latitude,
-					       'longitude': location.longitude}) #create blank result
+        try:     
+          print "XXXXXXX XXXXXXX"
+          print request.POST.get('id')
+          u = PrevHomeSales.objects.get(id=request.POST.get('id')) #TODO figure out a unique key
+          form = PrevHomeSalesForm(request.POST, instance=u)
+        except: #TODO FIX blanket except clause PrevHomeSales.DoesNotExist, AttributeError:
+          form = PrevHomeSalesForm(request.POST)
+          print form
+          form.id = -1
+        if form.is_valid():
+          requesthome = form.save(commit=False)
+          requesthome.save()
+          return HttpResponseRedirect('/home/genappraisal/?pid=' + str(requesthome.id))
+        else:
+          print form.errors
           return render_to_response('detailed_more_info.html', #Render normal page
-                    {'form': form,
-                     })
+                  {'form': form,
+                   })
+      else:
+        try:
+          print "Not a post request"
+          result = return_zhome_attr(query, query2) #try to get Zillow data
+          if result == None:
+	    raise AttributeError
+          form = PrevHomeSalesForm(instance=result)
+          print form
+        except AttributeError: #catches if Zillow Fails
+          try:
+            loc = geolocate(query + ' ' +query2)
+            print loc['latitude'] #throws exception if the geolocate fails
+            print pprint.pprint(loc)
+            form = PrevHomeSalesForm( initial={'address': loc.get('firstline'),
+                                               'city': loc.get('city'),
+                                               'zipcode': loc.get('zipcode'),
+                                               'state':  loc.get('state'), 
+                                               'id': -1,
+                                               'user_input': True,
+                                               'latitude': loc.get('latitude'),
+                                               'longitude': loc.get('longitude')}) #create blank result
+          except KeyError, e: #catches a failed geolocate
+            print "%s not found" % (e)
+	    return HttpResponseRedirect('/home?error=Please enter a valid address')#Return homepage with error
+	return render_to_response('detailed_more_info.html', #Render normal page
+		  {'form': form,
+		   })
 
 def gen_appraisal_page(request):
   result = []
@@ -279,7 +291,7 @@ def gen_appraisal(subject_home):
   for i in range(1,k+1):
     sim_score,home = heapq.heappop(h)
     avg_sqft_price = 0
-    try:
+    try: #RAHUL: I added this
       avg_sqft_price = home.sale_price/home.sqft
     except TypeError:
       pass

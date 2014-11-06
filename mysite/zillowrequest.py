@@ -19,7 +19,7 @@ def return_zhome_attr(raw_address, raw_citystatezip):
     output = parse_zhome_attr(url_xml_string)
     print output
     result_prevhomesales = parse_zillow_result(output)
-    result_prevhomesales.save()
+    
     return result_prevhomesales
 
 #forms the URL request for Zillow
@@ -45,84 +45,88 @@ def parse_zhome_attr(url_xml_string):
     parsed_home_attr = testd
     return parsed_home_attr
     
-def parse_zillow_result(zillow_dict):    
-    result = zillow_dict['SearchResults:searchresults']['response']['results']['result']
-    print result
-    prevhomesales = PrevHomeSales()
-    prevhomesales.beds = result.get('bedrooms', None)
-    print prevhomesales.beds
-    
-    print "DID THIS EXECUTE"
-    
-    prevhomesales.baths = result.get('bathrooms', None)
-    print prevhomesales.baths
-    
-    prevhomesales.sqft =result.get('finishedSqFt', None)
-    print prevhomesales.sqft
-    
-    prevhomesales.year_built =result.get('yearBuilt', None)
-    print prevhomesales.year_built
-    
-    prevhomesales.sale_price = Decimal(result.get('lastSoldPrice', None).get('#text', None))
-    print prevhomesales.sale_price
-    
-    prevhomesales.url = result.get('links', None).get('homedetails', None)
-    print prevhomesales.url
-    
-    prevhomesales.image_url = None
-    
-    prevhomesales.latitude = Decimal(result.get('address', None).get('latitude', None))
-    print prevhomesales.latitude
-    
-    prevhomesales.longitude = Decimal(result.get('address', None).get('longitude', None))
-    print prevhomesales.longitude
-    
-    prevhomesales.city = result['address']['city']
-    print prevhomesales.city
-    
-    prevhomesales.state = result['address']['state']
-    print prevhomesales.state
-    
-    prevhomesales.zipcode = result['address']['zipcode']
-    print prevhomesales.zipcode
-    
-    prevhomesales.address = result['address']['street']
-    print prevhomesales.address
-    
-    prevhomesales.home_type = result.get('useCose', None)
-    print prevhomesales.home_type
-    
-    #TODO
-    #prevhomesales.remodeled
-    #prevhomesales.interior_rating
-    #prevhomesales.interior_rating
-    #prevhomesales.elementary
-    #prevhomesales.middle
-    #prevhomesales.high
-    
-    prevhomesales.lot_size = result.get('lotSizeSqFt', None)
-    print prevhomesales.lot_size
-    
-    lastSoldDate = result.get('lastSoldDate', None)
-    if len(lastSoldDate) > 0:
-        prevhomesales.last_sale_date = datetime.datetime.strptime(lastSoldDate, '%m/%d/%Y').date()
-        print prevhomesales.last_sale_date
-    
-    prevhomesales.user_input = True
-    
-    
-    
-    prevhomesales.last_zestimate = Decimal(result.get('zestimate', None).get('amount', None).get('#text', None))
-    print prevhomesales.last_zestimate
-    
-    
-    from django.core.exceptions import ValidationError
+def parse_zillow_result(zillow_dict):
     try:
-        prevhomesales.full_clean()
-    except ValidationError as e:
-        print e
-        pass
-    #TODO: does not check if this record already exists just saves it
+        result = zillow_dict['SearchResults:searchresults']['response']['results']['result']
+        print result
+        prevhomesales = PrevHomeSales()
+        prevhomesales.beds = result.get('bedrooms', None)
+        print prevhomesales.beds
+        
+        print "DID THIS EXECUTE"
+        
+        prevhomesales.baths = result.get('bathrooms', None)
+        print prevhomesales.baths
+        
+        prevhomesales.sqft =result.get('finishedSqFt', None)
+        print prevhomesales.sqft
+        
+        prevhomesales.year_built =result.get('yearBuilt', None)
+        print prevhomesales.year_built
+        
+        prevhomesales.sale_price = Decimal(result.get('lastSoldPrice', None).get('#text', None))
+        print prevhomesales.sale_price
+        
+        prevhomesales.url = result.get('links', None).get('homedetails', None)
+        print prevhomesales.url
+        
+        prevhomesales.image_url = None
+        
+        prevhomesales.latitude = Decimal(result.get('address', None).get('latitude', None))
+        print prevhomesales.latitude
+        
+        prevhomesales.longitude = Decimal(result.get('address', None).get('longitude', None))
+        print prevhomesales.longitude
+        
+        prevhomesales.city = result['address']['city']
+        print prevhomesales.city
+        
+        prevhomesales.state = result['address']['state']
+        print prevhomesales.state
+        
+        prevhomesales.zipcode = result['address']['zipcode']
+        print prevhomesales.zipcode
+        
+        prevhomesales.address = result['address']['street']
+        print prevhomesales.address
+        
+        prevhomesales.home_type = result.get('useCose', None)
+        print prevhomesales.home_type
+        
+        #TODO
+        #prevhomesales.remodeled
+        #prevhomesales.interior_rating
+        #prevhomesales.interior_rating
+        #prevhomesales.elementary
+        #prevhomesales.middle
+        #prevhomesales.high
+        
+        prevhomesales.lot_size = result.get('lotSizeSqFt', None)
+        print prevhomesales.lot_size
+        
+        lastSoldDate = result.get('lastSoldDate', None)
+        if len(lastSoldDate) > 0:
+            prevhomesales.last_sale_date = datetime.datetime.strptime(lastSoldDate, '%m/%d/%Y').date()
+            print prevhomesales.last_sale_date
+        
+        prevhomesales.user_input = True
+        
+        
+        
+        prevhomesales.last_zestimate = Decimal(result.get('zestimate', None).get('amount', None).get('#text', None))
+        print prevhomesales.last_zestimate
+        
+        
+        from django.core.exceptions import ValidationError
+        try:
+            prevhomesales.full_clean()
+        except ValidationError as e:
+            print e
+            pass
+        prevhomesales.save()
+    except KeyError:
+        prevhomesales = None
+        #TODO: does not check if this record already exists just saves it
     return prevhomesales
     
 
