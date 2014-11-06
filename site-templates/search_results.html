@@ -36,9 +36,9 @@
             <h1 class="page-header"> Home Estimate Report: {{ subject_home.address }} </h1>
           
         <h3>{% if result.estimated_price %}${% endif %}
-        {{result.estimated_price | intcomma}}</h3>
+        {{result.estimated_price | intdiv:1 |floatformat:"0"|intcomma}}</h3>
         <p><strong>{{ subject_home.address }}</strong>
-        <br>Alternate Estimate: <strong>{{ subject_home.last_zestimate | intcomma }}</strong>
+        <br>Alternate Estimate: <strong>${{ subject_home.last_zestimate | intcomma }}</strong>
         <br><br>
           
           
