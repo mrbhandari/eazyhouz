@@ -7,14 +7,13 @@ def geolocate(address):
     location = geolocator.geocode(address)
     loc = {}
     try:
-        print(location.latitude, location.longitude)
+        #print(location.latitude, location.longitude)
         
         formatted_address = location.address
-        print formatted_address
+        #print formatted_address
 
         alist = formatted_address.split(",")
         
-        print alist
         
         loc['firstline'] = alist[0].strip()
         loc['city'] = alist[1].strip()
@@ -23,9 +22,11 @@ def geolocate(address):
         loc['latitude'] = location.latitude
         loc['longitude'] = location.longitude
         
-        print loc.get('firstline'), loc.get('city'), loc.get('state'), loc.get('zipcode')
+        #print loc.get('firstline'), loc.get('city'), loc.get('state'), loc.get('zipcode')
 
     except (AttributeError, IndexError) as e: #catches if Geolocation fails
         pass
     
     return loc
+
+#https://maps.googleapis.com/maps/api/streetview?size=400x400&location=37.561667,-122.318908&key=AIzaSyBYVngMReah5qDa3j-ZZqpwkvxJ-7gYecs

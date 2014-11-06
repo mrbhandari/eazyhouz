@@ -11,7 +11,7 @@ from zillowrequest import return_zhome_attr
 from django.forms.models import model_to_dict
 import heapq
 from decimal import *
-from social_data import nearby_insta, nearby_yelp, nearby_twitter, nearby_foursquare, nearby_eventful
+from social_data import nearby_insta, nearby_yelp, nearby_twitter, nearby_foursquare, nearby_eventful, nearby_image
 import django_tables2 as tables
 from django.template import RequestContext
 from django_tables2 import RequestConfig
@@ -64,8 +64,8 @@ def search(request):
 
       if result.count() > 0:
         result = result[0]
-        print result
-        print result.id
+        #print result
+        #print result.id
 
       else:
         try:
@@ -177,13 +177,13 @@ def more_info_page(request):
 def update_prevhome(request, query, query2):
       if request.method== 'POST':
         try:     
-          print "XXXXXXX XXXXXXX"
+          print "XXXXXXX XXXXXXX Getting id"
           print request.POST.get('id')
           u = PrevHomeSales.objects.get(id=request.POST.get('id')) #TODO figure out a unique key
           form = PrevHomeSalesForm(request.POST, instance=u)
         except: #TODO FIX blanket except clause PrevHomeSales.DoesNotExist, AttributeError:
           form = PrevHomeSalesForm(request.POST)
-          print form
+          #print form
           form.id = -1
         if form.is_valid():
           requesthome = form.save(commit=False)
@@ -201,12 +201,12 @@ def update_prevhome(request, query, query2):
           if result == None:
 	    raise AttributeError
           form = PrevHomeSalesForm(instance=result)
-          print form
+          #print form
         except AttributeError: #catches if Zillow Fails
           try:
             loc = geolocate(query + ' ' +query2)
             print loc['latitude'] #throws exception if the geolocate fails
-            print pprint.pprint(loc)
+            #print pprint.pprint(loc)
             form = PrevHomeSalesForm( initial={'address': loc.get('firstline'),
                                                'city': loc.get('city'),
                                                'zipcode': loc.get('zipcode'),
@@ -221,19 +221,36 @@ def update_prevhome(request, query, query2):
 	return render_to_response('detailed_more_info.html', #Render normal page
 		  {'form': form,
 		   })
+      
+
 
 def gen_appraisal_page(request):
   result = []
   if 'pid' in request.GET: #All correct vars exist load page
     pid = request.GET.get('pid','')  
     r = PrevHomeSales.objects.get(id=pid)
-    print r
-    app_data = gen_appraisal(r)
-    print app_data
 
-    print r.latitude, r.longitude
+
+    print "Target home image url as exists in DB: %s" % (r.image_url)
+    if r.image_url == None or r.image_url == '':
+      r.image_url = nearby_image(r.latitude, r.longitude)
+
+    app_data = gen_appraisal(r)
+    
+    #print "XXXXXX"
+    #print app_data
+    
+    try:
+      result_objects= [app_data['home1'], app_data['home2'], app_data['home3']]
+      for h in result_objects:
+	if h['image_url'] == None or h['image_url'] == '':
+	  h['image_url'] = nearby_image(h.get('latitude'), h.get('longitude'))
+    except KeyError, e:
+      print "%s does not exist" % (e)
+
+    #print r.latitude, r.longitude
     instagram_r = nearby_insta(r.latitude, r.longitude)
-    print instagram_r
+    #print instagram_r
     
     yelp_r = nearby_yelp(r.latitude, r.longitude)
     
@@ -276,8 +293,8 @@ def gen_appraisal(subject_home):
   #TODO make sure to not fetch the subject home itself.
   comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city).exclude(user_input__exact=1)
   
-  print "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-  print comp_candidates
+  #print "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  #print comp_candidates
   
   h = []
   if len(comp_candidates) < 3:
