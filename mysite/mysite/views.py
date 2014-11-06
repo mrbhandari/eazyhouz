@@ -290,9 +290,8 @@ def gen_appraisal(subject_home):
   
   for i in range(1,k+1):
     sim_score,home = heapq.heappop(h)
-    avg_sqft_price = 0
     try: #RAHUL: I added this
-      avg_sqft_price = home.sale_price/home.sqft
+      avg_sqft_price += (home.sale_price + 0.0)/home.sqft
     except TypeError:
       pass
     data['home' + str(i)] = model_to_dict(home)
