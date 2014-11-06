@@ -275,7 +275,7 @@ def gen_appraisal(subject_home):
   max_sqft = sqft * 1.2
   last_sale_date_threshold = "2014-01-01"
   #TODO make sure to not fetch the subject home itself.
-  comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold).exclude(user_input__exact=1)
+  comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold).exclude(user_input__exact=1).exclude(id__exact=subject_home.id)
   
   print "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
   print comp_candidates
@@ -303,25 +303,25 @@ def gen_appraisal(subject_home):
     adjustment['sqft'] = avg_sqft_price * (subject_home.sqft - data['home'+str(i)]['sqft'])
     data['adjustment' + str(i)] = adjustment
   return data
-#  house = {}
-#  house['beds'] = 3
-#  house['baths'] = 2
-#  house['sqft'] = 1234
-#  house['address'] = "120 Main st, Mountain view, CA"
-#  house['city'] = "Mountain View"
-#  house['price'] = 250000
-#  adjustments = {}
-#  adjustments['sqft'] = -10000
-#  data['price'] = 240000
-#  data['target_house'] = house
-#  data['house1'] = house
-#  data['adjustment1'] = adjustments
-#  data['house2'] = house
-#  data['adjustment2'] = adjustments
-#  data['house3'] = house
-#  data['adjustment3'] = adjustments
-#  return json.dumps(data)
-  #input = model id
-  #new PreviousHomeSale()
-  #new adjustment
-  # output = [(model, adjustment), ...]
+
+def get_recent_sales(subject_home):
+  city = subject_home.city
+  beds = subject_home.beds
+  baths = subject_home.baths
+  sqft = subject_home.sqft
+  min_baths = Decimal(baths) - Decimal(0.5)
+  max_baths = Decimal(baths) + Decimal(0.5)
+  min_sqft = sqft * 0.8
+  max_sqft = sqft * 1.2
+  last_sale_date_threshold = "2014-01-01"
+  h = []
+  comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold).exclude(user_input__exact=1).exclude(id__exact=subject_home.id)[:20]
+  for c in comp_candidates:
+    sim_score = home_similarity(c,subject_home)
+    heapq.heappush(h,(sim_score,c))
+  comp_candidates_with_sim = []
+  for i in range(0,len(comp_candidates)):
+    sim_score,home = heapq.heappop(h)
+    comp_candidates_with_sim.append((sim_score,home))
+  return comp_candidates_with_sim
+
