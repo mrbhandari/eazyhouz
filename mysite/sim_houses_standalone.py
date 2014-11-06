@@ -16,7 +16,7 @@ from search.models import *
 django.setup()
 
 def home_similarity(home,subject_home):
-  return 10 * abs(home.sqft - subject_home.sqft) + 800 * abs(home.sqft - subject_home.sqft)
+  return 10 * abs(home.sqft - subject_home.sqft) + 800 * abs(float(home.baths) - float(subject_home.baths)) #+ 10 * abs(home.year_built - subject_home.year_built)
 
 def gen_appraisal(subject_home):
   data = {}
