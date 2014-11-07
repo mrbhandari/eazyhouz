@@ -31,6 +31,24 @@ class FoursquareTable(tables.Table):
       attrs = {"class": "table table-striped"}
       order_by_field = True
       order_by = '-repeatRatio'
+      
+class RecentSalesTable(tables.Table):
+   home_type = tables.Column(verbose_name="Type")
+   address = tables.Column(verbose_name="Address")
+   city = tables.Column(verbose_name="City")
+   zipcode = tables.Column(verbose_name="Zipcode")
+   beds = tables.Column(verbose_name="Beds")
+   #image_url | interior_rating |
+   last_sale_date = tables.Column()
+   distance = tables.Column()
+   sale_price = tables.Column()
+   sqft = tables.Column()
+   year_built = tables.Column()
+   class Meta:
+    attrs = {"class": "table table-striped"}
+    order_by_field = True
+    order_by = '-repeatRatio'
+
 
 def autosuggest(request):
 #Takes an autosuggest input and returns matching address line1s from the prevHomeSales model database
@@ -237,8 +255,11 @@ def gen_appraisal_page(request):
       r.image_url = nearby_image(r.latitude, r.longitude)
 
     app_data = gen_appraisal(r)
+    recent_sales = get_recent_sales(r)
     
-    #print "XXXXXX"
+    print "XXXXXX"
+    print recent_sales
+    
     #print app_data
     
     try:
@@ -264,6 +285,8 @@ def gen_appraisal_page(request):
       eventful_r = nearby_eventful(r.latitude, r.longitude)
     except: #TODO remove general except clause (Rahul)
       print "Could not get eventful"
+      
+    
     return render_to_response(
 		  'search_results.html',
 		  {'result': app_data,
@@ -342,5 +365,6 @@ def get_recent_sales(subject_home):
   for i in range(0,len(comp_candidates)):
     sim_score,home = heapq.heappop(h)
     comp_candidates_with_sim.append((sim_score,home))
+
   return comp_candidates_with_sim
 
