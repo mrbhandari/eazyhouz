@@ -30,6 +30,7 @@ class FoursquareTable(tables.Table):
     class Meta:
       attrs = {"class": "table table-striped"}
       order_by_field = True
+      order_by = '-repeatRatio'
 
 def autosuggest(request):
 #Takes an autosuggest input and returns matching address line1s from the prevHomeSales model database
@@ -259,9 +260,10 @@ def gen_appraisal_page(request):
     foursquare_r = nearby_foursquare(r.latitude, r.longitude)
     foursquare_table = FoursquareTable(foursquare_r)
     RequestConfig(request).configure(foursquare_table)
-    
-    eventful_r = nearby_eventful(r.latitude, r.longitude)
-    
+    try:
+      eventful_r = nearby_eventful(r.latitude, r.longitude)
+    except: #TODO remove general except clause (Rahul)
+      print "Could not get eventful"
     return render_to_response(
 		  'search_results.html',
 		  {'result': app_data,

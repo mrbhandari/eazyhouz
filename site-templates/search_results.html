@@ -11,25 +11,28 @@
 
 
     <div class="container-fluid">
-      <div class="row">
+        <div class="row">
         
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar" id="sidenav">
             <li class="active"><a href="#">Overview</a></li> <!--TODO: active does not move-->
-            <li><a href="#estimate_explanation">Estimate Explanation</a></li>
-            <li><a href="#recent_sales">Recent Sales</a></li>
+            <li><a href="#estimate_explanation">Market Value Explanation</a></li>
+            <li><a href="#recent_sales">Other Recent Sales</a></li>
+        <!--<li><a href="#ask_sell">Asking vs Selling Prices*</a></li>
+            <li><a href="#">Home's Sales History*</a></li>-->
+            <li><a href="#market_temp">Market Temperature*</a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="#instagram">Instagram</a></li>
-            <li><a href="#yelp">Yelp</a></li>
-            <li><a href="#twitter">Recent Tweets</a></li>
+            <!--<li><a>Local Scoop</a></li>-->
             <li><a href="#foursquare">Foursquare</a></li>
-            <li><a href="#eventful">Eventful</a></li>
+            <li><a href="#yelp">Yelp</a></li>
+            <li><a href="#instagram">Instagram</a></li>
+            <li><a href="#twitter">Recent Tweets</a></li>
+            <li><a href="#eventful">Events</a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="#">Nav item again</a></li>
-            <li><a href="#">One more nav</a></li>
-            <li><a href="#">Another nav item</a></li>
+            <li><a href="#">Evaluate Neighborhood*</a></li>
+            <li><a href="#">Professinal Services*</a></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -69,7 +72,7 @@
           
           
         <h2 class="sub-header" id="estimate_explanation">Estimate Explanation</h2>
-        <div class="table-responsive">
+        <div class="table-responsive"> <!--Estimate explanation table-->
             <table class="table table-striped">
               <thead>
                 <tr>
@@ -145,8 +148,8 @@
          
          
         
-        <h2 class="sub-header" id="recent_sales">Recent Sales</h2>
-        <div class="table-responsive">
+        <h2 class="sub-header" id="recent_sales">Other Recent Sales</h2>
+        <div class="table-responsive"> <!--Recent sales table-->
             <table class="table table-striped">
               <thead>
                 <tr>
@@ -155,6 +158,7 @@
                   <th>Stat #1</th>
                   <th>Stat #2</th>
                   <th>Stat #3</th>
+                  <th>Reason not included in Comps</th>
                 </tr>
               </thead>
               <tbody>
@@ -163,24 +167,97 @@
                   <td>100</td>
                   <td>2002</td>
                   <td>300</td>
-                  <td>400</td>                  
+                  <td>400</td>
+                  <td>Different schools</td>
                 </tr>
                 <tr>
                   <td>Home 2</td>
                   <td>100</td>
                   <td>200</td>
                   <td>300</td>
-                  <td>400</td>                  
+                  <td>400</td>
+                  <td>Extreme outlier for property</td>
+                </tr>
+                                <tr>
+                  <td>Home 3</td>
+                  <td>100</td>
+                  <td>200</td>
+                  <td>300</td>
+                  <td>400</td>
+                  <td>Included in Comps</td>
                 </tr>
               </tbody>
             </table>
-          </div>
+        </div>
         
         
         
        
+
+       
+        
+
+        <h2 class="sub-header" id="market_temp">Market Temperature*</h2>
+        
+        <p><strong>[DUMMY DATA] Extreme Seller's Market:</strong> more buyers are hunting for homes than there are homes to buy.</p>
+        <p><strong>Reasons:</strong> <ul>
+            <li>Low inventory</li>
+            <li>Increasing prices</li>
+            <li>Fast moving homes</li>
+            <li>Upward trendin sales volume</li>
+            <li>Limited time bidding</li>
+        </ul></p>
+
+        
+        <p><strong>Tips to give you an edge:</strong> <ul>
+            <li>Get pre-approved</li>
+            <li>Don't be demanding</li>
+            <li>Don't expect a counteroffer</li>
+            <li>Offer to close quickly</li>
+            <li>Add a personal touch</li>
+        </ul></p>        
+        <h2 class="sub-header" id=foursquare>Foursquare within 1000m</h2>
+        {% render_table table %} <!--Foursquare view-->
+        
+        <h2 class="sub-header" id="yelp">Yelp within 1000m</h2>
+
+           
+        <div class="row list-group"> <!--Yelp view-->
+            {% for r in yelp_r.businesses %}
+            <div class="item  col-xs-3 col-lg-3" style="height:300px; overflow: auto;">
+                <div class="img-responsive">
+                    <img class="img-thumbnail" style="height: 175px" src="{{r.image_url}}" alt="{{r.snippet_text}}" />
+                    <div class="caption">
+                        <h4 class="group inner list-group-item-heading">
+                            <a href="{{r.url}}">{{r.name}}</a> ({{r.distance|intdiv:1 |floatformat:"0"}} m)</h4>
+                        <p class="group inner list-group-item-text">
+                            {% for i in r.categories %}
+                            {% with i|first as first_doc %}{{ first_doc }}{% endwith %}
+                            {% endfor %}</p>
+                        <div class="row">
+                            
+                            <div class="col-xs-12 col-md-12">
+                                <p><img class="img-responsive" src="{{r.rating_img_url_large}}"></a>({{r.review_count}})</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>                        
+            {% endfor %}                    
+           
+    
+
+       
+
+
+        
+        
+        </div>
+
+        
+                
         <h2 class="sub-header" id=instagram>Instagram posts within 1000m</h2>
-        <div class="table-responsive">
+        <div class="table-responsive"> <!--Instragram view-->
             <table class="table table-striped">
                 <tbody>
                     {% for r in instagram_r %}
@@ -190,40 +267,11 @@
                     {% endfor %}
                 </tbody>
             </table>
-        </div> <!--table div ends-->
-       
+        </div> <!--table div ends-->      
+      
         
-        <h2 class="sub-header" id="yelp">Yelp within 1000m</h2>
-
-            <!--alternate view-->
-                <div class="row list-group">
-                    {% for r in yelp_r.businesses %}
-                    <div class="item  col-xs-3 col-lg-3" style="height:300px; overflow: auto;">
-                        <div class="img-responsive">
-                            <img class="img-thumbnail" style="height: 175px" src="{{r.image_url}}" alt="{{r.snippet_text}}" />
-                            <div class="caption">
-                                <h4 class="group inner list-group-item-heading">
-                                    <a href="{{r.url}}">{{r.name}}</a> ({{r.distance|intdiv:1 |floatformat:"0"}} m)</h4>
-                                <p class="group inner list-group-item-text">
-                                    {% for i in r.categories %}
-                                    {% with i|first as first_doc %}{{ first_doc }}{% endwith %}
-                                    {% endfor %}</p>
-                                <div class="row">
-                                    
-                                    <div class="col-xs-12 col-md-12">
-                                        <p><img class="img-responsive" src="{{r.rating_img_url_large}}"></a>({{r.review_count}})</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>                        
-                    {% endfor %}                    
-                </div> <!--end alternate view-->
-            
-
-       
         <h2 class="sub-header" id=twitter>Recent Tweets</h2>
-        <div class="table-responsive">
+        <div class="table-responsive"> <!--Twitter view-->
             <table class="table table-striped">
                 <tbody>
                     {% for r in twitter_r %}
@@ -233,52 +281,32 @@
                     {% endfor %}
                 </tbody>
             </table>
-        </div> <!--table div ends-->
+        </div> <!--table div ends-->        
 
+        <h2 class="sub-header" id="eventful">Events within 1000m</h2>
+        <div class="row list-group"> <!--Eventful view-->
+            {% for r in eventful_r %}
+            <div class="item  col-xs-3 col-lg-3" style="height:300px; overflow: auto;">
+                <div class="img-responsive">
+                    <img class="img-thumbnail" style="height: 175px" src="{{r.image_url}}" alt="{{r.description}}" />
+                    <div class="caption">
+                        <h4 class="group inner list-group-item-heading">
+                            <a href="{{r.url}}">{{r.title}}</a></h4>
+                        <p class="group inner list-group-item-text">
+                            {{ r.start_time }} <br> {{ r.calendar_count }}
 
-        <h2 class="sub-header" id=foursquare>Foursquare within 1000m</h2>
-        
-        {% render_table table %}
-        
-        
-        
-        <h2 class="sub-header" id="eventful">Eventful within 1000m</h2>
+                        <div class="row">
 
-            <!--alternate view-->
-                <div class="row list-group">
-                    {% for r in eventful_r %}
-                    <div class="item  col-xs-3 col-lg-3" style="height:300px; overflow: auto;">
-                        <div class="img-responsive">
-                            <img class="img-thumbnail" style="height: 175px" src="{{r.image_url}}" alt="{{r.description}}" />
-                            <div class="caption">
-                                <h4 class="group inner list-group-item-heading">
-                                    <a href="{{r.url}}">{{r.title}}</a></h4>
-                                <p class="group inner list-group-item-text">
-                                    {{ r.start_time }} <br> {{ r.calendar_count }}
-
-                                <div class="row">
-
-                                </div>
-                            </div>
                         </div>
-                    </div>                        
-                    {% endfor %}                    
-                </div> <!--end alternate view-->
-            
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+                    </div>
+                </div>
+            </div>                        
+            {% endfor %}                    
+        </div> <!--end alternate view-->
         
         </div>
-      </div>
+    
+        </div>
     </div>
     
        
