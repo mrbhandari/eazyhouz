@@ -364,7 +364,9 @@ def get_recent_sales(subject_home):
   comp_candidates_with_sim = []
   for i in range(0,len(comp_candidates)):
     sim_score,home = heapq.heappop(h)
-    comp_candidates_with_sim.append((sim_score,home))
-
+    dhome = {}
+    dhome = model_to_dict(home)
+    dhome['sim_score'] = sim_score
+    comp_candidates_with_sim.append(dhome)
   return comp_candidates_with_sim
 
