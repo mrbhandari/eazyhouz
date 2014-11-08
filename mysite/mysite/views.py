@@ -33,10 +33,10 @@ class FoursquareTable(tables.Table):
       order_by = '-repeatRatio'
       
 class RecentSalesTable(tables.Table):
-   home_type = tables.Column(verbose_name="Type")
+   #home_type = tables.Column(verbose_name="Type")
    address = tables.Column(verbose_name="Address")
-   city = tables.Column(verbose_name="City")
-   zipcode = tables.Column(verbose_name="Zipcode")
+   #city = tables.Column(verbose_name="City")
+   #zipcode = tables.Column(verbose_name="Zipcode")
    beds = tables.Column(verbose_name="Beds")
    #image_url | interior_rating |
    last_sale_date = tables.Column()
@@ -44,10 +44,12 @@ class RecentSalesTable(tables.Table):
    sale_price = tables.Column()
    sqft = tables.Column()
    year_built = tables.Column()
+   reason_excluded = tables.Column()
+   sim_score = tables.Column(verbose_name="Similarity Score")
    class Meta:
     attrs = {"class": "table table-striped"}
     order_by_field = True
-    order_by = '-repeatRatio'
+    order_by = 'sim_score'
 
 
 def autosuggest(request):
@@ -259,7 +261,8 @@ def gen_appraisal_page(request):
     
     print "XXXXXX"
     print recent_sales
-    
+    recent_sales_table = RecentSalesTable(recent_sales)
+    RequestConfig(request).configure(recent_sales_table)
     #print app_data
     
     try:
@@ -296,6 +299,7 @@ def gen_appraisal_page(request):
 		   'twitter_r': twitter_r,
 		   'foursquare_r': foursquare_r,
 		   'table': foursquare_table,
+		   'recent_sales_table': recent_sales_table,
 		   'eventful_r': eventful_r,
 		   },
 		  RequestContext(request))

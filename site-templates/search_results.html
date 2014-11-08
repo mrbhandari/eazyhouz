@@ -150,44 +150,7 @@
         
         <h2 class="sub-header" id="recent_sales">Other Recent Sales</h2>
         <div class="table-responsive"> <!--Recent sales table-->
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Original</th>
-                  <th>Stat #1</th>
-                  <th>Stat #2</th>
-                  <th>Stat #3</th>
-                  <th>Reason not included in Comps</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Home 1</td>
-                  <td>100</td>
-                  <td>2002</td>
-                  <td>300</td>
-                  <td>400</td>
-                  <td>Different schools</td>
-                </tr>
-                <tr>
-                  <td>Home 2</td>
-                  <td>100</td>
-                  <td>200</td>
-                  <td>300</td>
-                  <td>400</td>
-                  <td>Extreme outlier for property</td>
-                </tr>
-                                <tr>
-                  <td>Home 3</td>
-                  <td>100</td>
-                  <td>200</td>
-                  <td>300</td>
-                  <td>400</td>
-                  <td>Included in Comps</td>
-                </tr>
-              </tbody>
-            </table>
+        {% render_table recent_sales_table %}
         </div>
         
         
