@@ -265,7 +265,7 @@ def gen_appraisal_page(request):
       for i in recent_sales:
 	total_sale_price = i.get('sale_price') + total_sale_price
 	total_sqft = i.get('sqft') + total_sqft
-	total_year_built = i.get('year_built') + total_year_built
+	#total_year_built = i.get('year_built') + total_year_built
 	#total_sim_score = i.get('sim_score') +total_sim_score
 	
       n = len(recent_sales)
@@ -278,10 +278,8 @@ def gen_appraisal_page(request):
       
       recent_sales.append(average_recent_sales)
       print "here are the averages for recent sales %s, %s, %s" % (total_sale_price/n, total_year_built/n, total_sim_score/n)
-    except ZeroDivisionError, e:
+    except (ZeroDivisionError, TypeError), e:
       print "could not find any recent sales, %s" % e
-      
-    
     
     recent_sales_table = RecentSalesTable(recent_sales)
     
@@ -299,13 +297,15 @@ def gen_appraisal_page(request):
 	  h['image_url'] = nearby_image(h.get('latitude'), h.get('longitude'))
     except KeyError, e:
       print "%s does not exist" % (e)
-
+    eventful_r, instagram_r, yelp_r, foursquare_r, twitter_r = {}, {}, {}, {}, {}
+    
     instagram_r = nearby_insta(r.latitude, r.longitude)
     yelp_r = nearby_yelp(r.latitude, r.longitude)
     twitter_r = nearby_twitter(r.latitude, r.longitude)
     foursquare_r = nearby_foursquare(r.latitude, r.longitude)
     foursquare_table = FoursquareTable(foursquare_r)
     RequestConfig(request).configure(foursquare_table)
+    
     try:
       eventful_r = nearby_eventful(r.latitude, r.longitude)
     except: #TODO remove general except clause (Rahul)
@@ -343,7 +343,9 @@ def gen_appraisal(subject_home):
   max_sqft = sqft * 1.2
   last_sale_date_threshold = "2014-01-01"
   #TODO make sure to not fetch the subject home itself.
-  comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold).exclude(user_input__exact=1).exclude(id__exact=subject_home.id)
+  comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
+  baths__lte=max_baths, baths__gte=min_baths,
+  sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode)
   
   #print "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
   #print comp_candidates
