@@ -10,11 +10,11 @@ from django.http import HttpResponse
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-                       (r'^$', search),
+                       (r'^$', gen_homepage), #search to go to landing page
                        (r'^admin/', include(admin.site.urls)),
-                       (r'^search/$', search),
-                       (r'^autosuggest/$', autosuggest),
-                       (r'^gen_results/$', gen_results),
+                       (r'^search/$', more_info_page), #search to go to landing page search
+                       #(r'^autosuggest/$', autosuggest),
+                       (r'^gen_results/$', gen_appraisal_page), # to gen_results for landing page search
                        (r'^home/$', gen_homepage),
                        (r'^home/search/$', more_info_page),
                        (r'^home/genappraisal/$', gen_appraisal_page),

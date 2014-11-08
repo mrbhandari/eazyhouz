@@ -49,7 +49,6 @@ class RecentSalesTable(tables.Table):
    class Meta:
     attrs = {"class": "table table-striped"}
     order_by_field = True
-    order_by = 'sim_score'
 
 
 def autosuggest(request):
@@ -257,13 +256,41 @@ def gen_appraisal_page(request):
       r.image_url = nearby_image(r.latitude, r.longitude)
 
     app_data = gen_appraisal(r)
-    recent_sales = get_recent_sales(r)
     
-    print "XXXXXX"
-    print recent_sales
+    
+    recent_sales = get_recent_sales(r)
+
+    try:    
+      total_sale_price, total_sqft, total_year_built, total_sim_score = 0, 0, 0, 0
+      for i in recent_sales:
+	total_sale_price = i.get('sale_price') + total_sale_price
+	total_sqft = i.get('sqft') + total_sqft
+	total_year_built = i.get('year_built') + total_year_built
+	#total_sim_score = i.get('sim_score') +total_sim_score
+	
+      n = len(recent_sales)
+      average_recent_sales = {}
+      average_recent_sales['sale_price'] = total_sale_price/n
+      average_recent_sales['sqft'] = total_sqft/n
+      average_recent_sales['year_built'] = total_year_built/n
+      average_recent_sales['sim_score'] = total_sim_score/n
+      average_recent_sales['address'] = "Average"
+      
+      recent_sales.append(average_recent_sales)
+      print "here are the averages for recent sales %s, %s, %s" % (total_sale_price/n, total_year_built/n, total_sim_score/n)
+    except ZeroDivisionError, e:
+      print "could not find any recent sales, %s" % e
+      
+    
+    
     recent_sales_table = RecentSalesTable(recent_sales)
+    
+    
+    
+    
     RequestConfig(request).configure(recent_sales_table)
-    #print app_data
+    print "xxxxx appraisal data:"
+    print app_data
     
     try:
       result_objects= [app_data['home1'], app_data['home2'], app_data['home3']]
@@ -273,14 +300,9 @@ def gen_appraisal_page(request):
     except KeyError, e:
       print "%s does not exist" % (e)
 
-    #print r.latitude, r.longitude
     instagram_r = nearby_insta(r.latitude, r.longitude)
-    #print instagram_r
-    
     yelp_r = nearby_yelp(r.latitude, r.longitude)
-    
     twitter_r = nearby_twitter(r.latitude, r.longitude)
-    
     foursquare_r = nearby_foursquare(r.latitude, r.longitude)
     foursquare_table = FoursquareTable(foursquare_r)
     RequestConfig(request).configure(foursquare_table)
