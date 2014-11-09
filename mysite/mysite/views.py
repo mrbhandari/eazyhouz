@@ -31,6 +31,25 @@ class FoursquareTable(tables.Table):
       attrs = {"class": "table table-striped"}
       order_by_field = True
       order_by = '-repeatRatio'
+      
+class RecentSalesTable(tables.Table):
+   #home_type = tables.Column(verbose_name="Type")
+   address = tables.Column(verbose_name="Address")
+   #city = tables.Column(verbose_name="City")
+   #zipcode = tables.Column(verbose_name="Zipcode")
+   beds = tables.Column(verbose_name="Beds")
+   #image_url | interior_rating |
+   last_sale_date = tables.Column()
+   distance = tables.Column()
+   sale_price = tables.Column()
+   sqft = tables.Column()
+   year_built = tables.Column()
+   reason_excluded = tables.Column()
+   sim_score = tables.Column(verbose_name="Similarity Score")
+   class Meta:
+    attrs = {"class": "table table-striped"}
+    order_by_field = True
+
 
 def autosuggest(request):
 #Takes an autosuggest input and returns matching address line1s from the prevHomeSales model database
@@ -238,8 +257,38 @@ def gen_appraisal_page(request):
 
     app_data = gen_appraisal(r)
     
-    #print "XXXXXX"
-    #print app_data
+    
+    recent_sales = get_recent_sales(r)
+
+    try:    
+      total_sale_price, total_sqft, total_year_built, total_sim_score = 0, 0, 0, 0
+      for i in recent_sales:
+	total_sale_price = i.get('sale_price') + total_sale_price
+	total_sqft = i.get('sqft') + total_sqft
+	#total_year_built = i.get('year_built') + total_year_built
+	#total_sim_score = i.get('sim_score') +total_sim_score
+	
+      n = len(recent_sales)
+      average_recent_sales = {}
+      average_recent_sales['sale_price'] = total_sale_price/n
+      average_recent_sales['sqft'] = total_sqft/n
+      average_recent_sales['year_built'] = total_year_built/n
+      average_recent_sales['sim_score'] = total_sim_score/n
+      average_recent_sales['address'] = "Average"
+      
+      recent_sales.append(average_recent_sales)
+      print "here are the averages for recent sales %s, %s, %s" % (total_sale_price/n, total_year_built/n, total_sim_score/n)
+    except (ZeroDivisionError, TypeError), e:
+      print "could not find any recent sales, %s" % e
+    
+    recent_sales_table = RecentSalesTable(recent_sales)
+    
+    
+    
+    
+    RequestConfig(request).configure(recent_sales_table)
+    print "xxxxx appraisal data:"
+    print app_data
     
     try:
       result_objects= [app_data['home1'], app_data['home2'], app_data['home3']]
@@ -248,22 +297,21 @@ def gen_appraisal_page(request):
 	  h['image_url'] = nearby_image(h.get('latitude'), h.get('longitude'))
     except KeyError, e:
       print "%s does not exist" % (e)
-
-    #print r.latitude, r.longitude
+    eventful_r, instagram_r, yelp_r, foursquare_r, twitter_r = {}, {}, {}, {}, {}
+    
     instagram_r = nearby_insta(r.latitude, r.longitude)
-    #print instagram_r
-    
     yelp_r = nearby_yelp(r.latitude, r.longitude)
-    
     twitter_r = nearby_twitter(r.latitude, r.longitude)
-    
     foursquare_r = nearby_foursquare(r.latitude, r.longitude)
     foursquare_table = FoursquareTable(foursquare_r)
     RequestConfig(request).configure(foursquare_table)
+    
     try:
       eventful_r = nearby_eventful(r.latitude, r.longitude)
     except: #TODO remove general except clause (Rahul)
       print "Could not get eventful"
+      
+    
     return render_to_response(
 		  'search_results.html',
 		  {'result': app_data,
@@ -273,6 +321,7 @@ def gen_appraisal_page(request):
 		   'twitter_r': twitter_r,
 		   'foursquare_r': foursquare_r,
 		   'table': foursquare_table,
+		   'recent_sales_table': recent_sales_table,
 		   'eventful_r': eventful_r,
 		   },
 		  RequestContext(request))
@@ -294,7 +343,9 @@ def gen_appraisal(subject_home):
   max_sqft = sqft * 1.2
   last_sale_date_threshold = "2014-01-01"
   #TODO make sure to not fetch the subject home itself.
-  comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold).exclude(user_input__exact=1).exclude(id__exact=subject_home.id)
+  comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
+  baths__lte=max_baths, baths__gte=min_baths,
+  sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode)
   
   #print "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
   #print comp_candidates

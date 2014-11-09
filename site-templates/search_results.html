@@ -73,7 +73,7 @@
           
         <h2 class="sub-header" id="estimate_explanation">Estimate Explanation</h2>
         <div class="table-responsive"> <!--Estimate explanation table-->
-            <table class="table table-striped">
+            <table class="table table-striped" caption="This table explains how we came up with the home price estimate.">
               <thead>
                 <tr>
                   <th>#</th>
@@ -97,20 +97,6 @@
                   <td>{{result.home1.city}}</td>
                   <td>{{result.home2.city}}</td>
                   <td>{{result.home3.city}}</td>                  
-                </tr>
-                <tr>
-                  <td>Last Sale Price</td>
-                  <td>${{subject_home.sale_price | intcomma}}</td>
-                  <td>${{result.home1.sale_price | intcomma}}</td>
-                  <td>${{result.home2.sale_price | intcomma}}</td>
-                  <td>${{result.home3.sale_price | intcomma}}</td>                  
-                </tr>
-                <tr>
-                  <td>Last Sale Date</td>
-                  <td>{{subject_home.last_sale_date}}</td>
-                  <td>{{result.home1.last_sale_date}}</td>
-                  <td>{{result.home2.last_sale_date}}</td>
-                  <td>{{result.home3.last_sale_date}}</td> 
                 </tr>
                 <tr>
                   <td>Beds</td>
@@ -140,6 +126,43 @@
                   <td>{{result.home2.year_built}}</td>
                   <td>{{result.home3.year_built}}</td> 
                 </tr>
+                <tr>
+                  <td>Last Sale Date</td>
+                  <td>{{subject_home.last_sale_date}}</td>
+                  <td>{{result.home1.last_sale_date}}</td>
+                  <td>{{result.home2.last_sale_date}}</td>
+                  <td>{{result.home3.last_sale_date}}</td> 
+                </tr>
+                <tr>
+                  <td>Last Sale Price</td>
+                  <td>${{subject_home.sale_price | intcomma}}</td>
+                  <td>${{result.home1.sale_price | intcomma}}</td>
+                  <td>${{result.home2.sale_price | intcomma}}</td>
+                  <td>${{result.home3.sale_price | intcomma}}</td>                  
+                </tr>
+                {% if result.home3.sale_price %} <!--to avoid an error if you are adding-->
+                <tr>
+                  <td>Sqft Adjustments</td>
+                  <td>-</td>
+                  <td>{{result.adjustment1.sqft | intdiv:1 |floatformat:"0"|intcomma}}</td>
+                  <td>{{result.adjustment2.sqft | intdiv:1 |floatformat:"0"|intcomma}}</td>
+                  <td>{{result.adjustment3.sqft | intdiv:1 |floatformat:"0"|intcomma}}</td>                  
+                </tr>
+                <tr>
+                  <td>Other Adjustments</td>
+                  <td>-</td>
+                  <td>To come</td>
+                  <td>To come</td>
+                  <td>To come</td>
+                </tr>
+                <tr class="success">
+                  <td>Total</td>
+                  <td>-</td>
+                  <td>${{result.adjustment1.sqft | add:result.home1.sale_price|intdiv:1 |floatformat:"0"|intcomma}}</td>
+                  <td>${{result.adjustment2.sqft | add:result.home2.sale_price|intdiv:1 |floatformat:"0"|intcomma}}</td>
+                  <td>${{result.adjustment3.sqft | add:result.home3.sale_price|intdiv:1 |floatformat:"0"|intcomma}}</td>                  
+                </tr>
+                {% endif %}
               </tbody>
             </table>
           </div> <!-- end responsive table-->
@@ -150,44 +173,7 @@
         
         <h2 class="sub-header" id="recent_sales">Other Recent Sales</h2>
         <div class="table-responsive"> <!--Recent sales table-->
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Original</th>
-                  <th>Stat #1</th>
-                  <th>Stat #2</th>
-                  <th>Stat #3</th>
-                  <th>Reason not included in Comps</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Home 1</td>
-                  <td>100</td>
-                  <td>2002</td>
-                  <td>300</td>
-                  <td>400</td>
-                  <td>Different schools</td>
-                </tr>
-                <tr>
-                  <td>Home 2</td>
-                  <td>100</td>
-                  <td>200</td>
-                  <td>300</td>
-                  <td>400</td>
-                  <td>Extreme outlier for property</td>
-                </tr>
-                                <tr>
-                  <td>Home 3</td>
-                  <td>100</td>
-                  <td>200</td>
-                  <td>300</td>
-                  <td>400</td>
-                  <td>Included in Comps</td>
-                </tr>
-              </tbody>
-            </table>
+        {% render_table recent_sales_table %}
         </div>
         
         
@@ -199,7 +185,7 @@
 
         <h2 class="sub-header" id="market_temp">Market Temperature*</h2>
         
-        <p><strong>[DUMMY DATA] Extreme Seller's Market:</strong> more buyers are hunting for homes than there are homes to buy.</p>
+        <p><strong>Extreme Seller's Market:</strong> more buyers are hunting for homes than there are homes to buy.</p>
         <p><strong>Reasons:</strong> <ul>
             <li>Low inventory</li>
             <li>Increasing prices</li>
