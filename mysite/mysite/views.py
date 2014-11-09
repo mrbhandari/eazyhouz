@@ -356,7 +356,7 @@ def gen_appraisal(subject_home):
   #TODO make sure to not fetch the subject home itself.
   comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
   baths__lte=max_baths, baths__gte=min_baths,
-  sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode)
+  sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active")
   
   #print "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
   #print comp_candidates
@@ -425,7 +425,7 @@ def get_recent_sales(subject_home):
   max_sqft = sqft * 1.2
   last_sale_date_threshold = "2014-01-01"
   h = []
-  comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold).exclude(user_input__exact=1).exclude(id__exact=subject_home.id)
+  comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(curr_status__exact="active")
   for c in comp_candidates:
     sim_score = home_similarity(c,subject_home)
     comp_house = model_to_dict(c)
