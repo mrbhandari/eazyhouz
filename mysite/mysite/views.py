@@ -13,8 +13,9 @@ import heapq
 from decimal import *
 from social_data import nearby_insta, nearby_yelp, nearby_twitter, nearby_foursquare, nearby_eventful, nearby_image
 import django_tables2 as tables
-from django.template import RequestContext
 from django_tables2 import RequestConfig
+from django_tables2 import A
+from django.template import RequestContext
 from geolatlong import geolocate
 import pprint
 from django.db.models import Count
@@ -34,6 +35,17 @@ class FoursquareTable(tables.Table):
       order_by_field = True
       order_by = '-repeatRatio'
       
+class BestValueTable(tables.Table):
+  home_address = tables.LinkColumn('home', args=[A('home.id')], verbose_name="Address", empty_values=()) #accessor="name.address" A('home.address')
+  list_price = tables.Column()
+  predicted_price = tables.Column()
+  error = tables.Column(verbose_name="Value Score")
+  
+  class Meta:
+    attrs = {"class": "table table-striped"}
+    order_by_field = True
+    order_by = '-error'
+    
 class RecentSalesTable(tables.Table):
    #home_type = tables.Column(verbose_name="Type")
    address = tables.Column(verbose_name="Address")
@@ -284,11 +296,8 @@ def gen_appraisal_page(request):
       print "could not find any recent sales, %s" % e
     
     recent_sales_table = RecentSalesTable(recent_sales)
-    
-    
-    
-    
     RequestConfig(request).configure(recent_sales_table)
+    
     print "xxxxx appraisal data:"
     print app_data
     
@@ -432,7 +441,7 @@ def get_recent_sales(subject_home):
 
 
 def gen_best_value_search(request):
-  list_of_zips = get_distinct_zipcodes()
+  list_of_zips = get_distinct_zipcodes_with_k_active_houses()
   #error = None
   #if 'error' in request.GET:
   #  error = request.GET.get('error','')
@@ -442,11 +451,17 @@ def gen_best_value_search(request):
 
 
 def gen_best_value_res(request, zipcode):
-  homes = zipcode
-  #error = None
-
+  best_homes = get_best_value_homes(zipcode, -10000, 10000)
+  
+  print "XXXXXXXXXXXXX Best Homes"
+  print best_homes
+  
+  best_homes_table = BestValueTable(best_homes)
+  RequestConfig(request).configure(best_homes_table)
   return render_to_response('best_value_homes_res.html',
-                            {'homes':  zipcode})
+                            {'best_homes_table':  best_homes_table,
+			     'best_homes': best_homes,},
+			    RequestContext(request))
 
 def get_distinct_zipcodes():
 	return PrevHomeSales.objects.values_list('zipcode', flat=True).distinct()

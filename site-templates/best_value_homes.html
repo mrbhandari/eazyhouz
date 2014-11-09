@@ -31,7 +31,7 @@
                             <tbody>
                                 {% for r in zips %}
                                     {% cycle '<tr>' '' '' '' %}
-                                    <td><a href="search/{{r}}">{{ r }}</a></td>
+                                    <td><a href="search/{{r.zipcode}}">{{ r.zipcode }}</a> ({{r.total}} homes)</td>
                                     {% cycle '' '' '' '</tr>' %}
                                 {% endfor %}
                             </tbody>
