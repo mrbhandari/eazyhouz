@@ -87,11 +87,12 @@ def nearby_foursquare(latitude, longitude, radius=rdist):
     #totaluserCount = response.get('venues')[0]
     #print totaluserCount
     #actual_venues = response.get('venues')[2:len(response.get('venues'))]#skips the first response which is always meta data
-    
+    print response
     for i in response.get('venues'): 
         fsvenue = {}
         userCount = i.get('stats').get('usersCount')
         if userCount > 30:
+            print i
             fsvenue['name'] = i.get('name')
             fsvenue['usersCount'] = userCount
             fsvenue['checkinsCount'] = i.get('stats').get('checkinsCount')
@@ -104,7 +105,7 @@ def nearby_foursquare(latitude, longitude, radius=rdist):
             #print i.get('photos')
             try:
                 index_value = i.get('categories')[0].get('shortName')
-            except ValueError:
+            except (ValueError, IndexError):
                 index_value = None
             fsvenue['category'] = index_value
             fscheckins.append(fsvenue)
