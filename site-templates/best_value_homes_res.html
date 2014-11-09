@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-
+{% load render_table from django_tables2 %}
+{% load humanize %}
 {% block content %}
 <!--
 <head>
@@ -28,14 +29,21 @@
                     <h1>Best Value Bay Area Homes by Zipcode</h1>
                     <div class="table-responsive"> <!--Twitter view-->
                         <table class="table table-striped">
+                            <thead>
+                              <tr>
+                                <th>Home Address</th>
+                                <th>List Price</th>
+                                <th>EazyHouz Estimate</th>
+                                <th>Value Score</th>
+                              </tr>
+                            </thead>
                             <tbody>
-                                {% for r in homes %}
-                                    {% cycle '<tr>' '' '' '' %}
-                                    <td><a href="search/{{r}}">{{ r }}</a></td>
-                                    {% cycle '' '' '' '</tr>' %}
+                                {% for h in best_homes %}
+                                    <tr><td><a href="/home/genappraisal/?pid={{h.home.id}}">{{ h.home.address }}</a></td><td>{{ h.list_price |floatformat:"0" |intcomma}}</td><td>{{ h.predicted_price|floatformat:"0" |intcomma }}</td><td>{{ h.error|floatformat:"1" }}</td></tr>
                                 {% endfor %}
                             </tbody>
                         </table>
+                        
                     </div> <!--table div ends-->  
                 </div>
             </div>
