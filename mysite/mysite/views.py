@@ -428,6 +428,9 @@ def get_recent_sales(subject_home):
     comp_candidates_with_sim.append(comp_home)
   return comp_candidates_with_sim
 
+def get_distinct zipcodes():
+	return PrevHomeSales.objects.values_list('zipcode', flat=True).distinct()
+
 
 def get_best_value_homes(zipcode, low_percent, high_percent, multiplier = 1):
 	all_homes_in_zip = PrevHomeSales.objects.filter(curr_status__exact="active",zipcode__exact=zipcode)
