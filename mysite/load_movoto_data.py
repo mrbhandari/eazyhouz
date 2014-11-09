@@ -42,6 +42,8 @@ for house in houses:
 			            sqft = sqft.replace(",","").replace(" sqft","").replace("-","")
 			        if sqft:
 			            prevhomesales.sqft = sqft
+					if not sqft and sqft == 0:
+						continue
 			        year_built = house.get("year")
 			        if year_built:
 			            year_built = year_built.replace(",","").replace("-","")
@@ -64,6 +66,10 @@ for house in houses:
 				    		prevhomesales.last_sale_date = datetime.datetime.strptime(last_sale_date,'%m/%d/%y').date()
 					if len(last_sale_date) == 10:
 				    		prevhomesales.last_sale_date = datetime.datetime.strptime(last_sale_date,'%m/%d/%Y').date()
+				curr_status = house.get("status")
+				prevhomesales.curr_status = "sold"
+				if curr_status and "active" in curr_status.lower():
+						prevhomesales.curr_status = "active"
 				if description:
 					prevhomesales.remodeled = 1 if (("remodel" in description.lower()) or ("updated" in description.lower())) else 0
 				print "GOOD HOME:" + str(prevhomesales)
