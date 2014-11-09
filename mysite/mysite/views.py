@@ -286,11 +286,11 @@ def gen_appraisal_page(request):
       average_recent_sales = {}
       average_recent_sales['sale_price'] = total_sale_price/n
       average_recent_sales['sqft'] = total_sqft/n
-      average_recent_sales['year_built'] = total_year_built/n
-      average_recent_sales['sim_score'] = total_sim_score/n
+      average_recent_sales['year_built'] = '--'
+      average_recent_sales['sim_score'] = '--'
       average_recent_sales['address'] = "Average"
       
-      recent_sales.append(average_recent_sales)
+      recent_sales.insert(0, average_recent_sales)
       print "here are the averages for recent sales %s, %s, %s" % (total_sale_price/n, total_year_built/n, total_sim_score/n)
     except (ZeroDivisionError, TypeError), e:
       print "could not find any recent sales, %s" % e
@@ -453,8 +453,8 @@ def gen_best_value_search(request):
 def gen_best_value_res(request, zipcode):
   best_homes = get_best_value_homes(zipcode, -10000, 10000)
   
-  print "XXXXXXXXXXXXX Best Homes"
-  print best_homes
+  #print "XXXXXXXXXXXXX Best Homes"
+  #print best_homes
   
   best_homes_table = BestValueTable(best_homes)
   RequestConfig(request).configure(best_homes_table)
