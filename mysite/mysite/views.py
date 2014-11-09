@@ -374,6 +374,35 @@ def gen_appraisal(subject_home):
     data['adjustment' + str(i)] = adjustment
   return data
 
+def distance_on_unit_sphere(lat1, long1, lat2, long2):
+    # Convert latitude and longitude to 
+    # spherical coordinates in radians.
+    degrees_to_radians = math.pi/180.0
+        
+    # phi = 90 - latitude
+    phi1 = (90.0 - lat1)*degrees_to_radians
+    phi2 = (90.0 - lat2)*degrees_to_radians
+        
+    # theta = longitude
+    theta1 = long1*degrees_to_radians
+    theta2 = long2*degrees_to_radians
+        
+    # Compute spherical distance from spherical coordinates.
+        
+    # For two locations in spherical coordinates 
+    # (1, theta, phi) and (1, theta, phi)
+    # cosine( arc length ) = 
+    #    sin phi sin phi' cos(theta-theta') + cos phi cos phi'
+    # distance = rho * arc length
+    
+    cos = (math.sin(phi1)*math.sin(phi2)*math.cos(theta1 - theta2) + 
+           math.cos(phi1)*math.cos(phi2))
+    cos = min(1,max(cos,-1))
+    arc = math.acos(cos)
+
+    # Remember to multiply arc by the radius of the earth 
+    # in your favorite set of units to get length.
+    return 3960*arc
 def get_recent_sales(subject_home):
   city = subject_home.city
   beds = subject_home.beds
@@ -388,15 +417,17 @@ def get_recent_sales(subject_home):
   comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold).exclude(user_input__exact=1).exclude(id__exact=subject_home.id)[:20]
   for c in comp_candidates:
     sim_score = home_similarity(c,subject_home)
-    heapq.heappush(h,(sim_score,c))
+    comp_house = model_to_dict(c)
+    comp_house["sim_score"] = sim_score
+    dist = distance_on_unit_sphere(subject_home.latitude,subject_home.longitude,home.latitude,home.longitude)
+    comp_house["distance"] = dist
+    heapq.heappush(h,(sim_score,comp_house))
   comp_candidates_with_sim = []
   for i in range(0,len(comp_candidates)):
-    sim_score,home = heapq.heappop(h)
-    dhome = {}
-    dhome = model_to_dict(home)
-    dhome['sim_score'] = sim_score
-    comp_candidates_with_sim.append(dhome)
+    sim_score,comp_home = heapq.heappop(h)
+    comp_candidates_with_sim.append(comp_home)
   return comp_candidates_with_sim
+
 
 
 def gen_best_value_search(request):
@@ -415,3 +446,32 @@ def gen_best_value_res(request):
 
   return render_to_response('best_value_homes_res.html',
                             {'zips':  'resultforthiszipcode'})
+
+def get_distinct zipcodes():
+	return PrevHomeSales.objects.values_list('zipcode', flat=True).distinct()
+
+
+def get_best_value_homes(zipcode, low_percent, high_percent, multiplier = 1):
+	all_homes_in_zip = PrevHomeSales.objects.filter(curr_status__exact="active",zipcode__exact=zipcode)
+	best_homes = []
+	h = []
+	ctr = 0
+	for home in all_homes_in_zip:
+		data = gen_appraisal(home)
+		list_price = home.sale_price
+		predicted_price = data.get("estimated_price")
+		if not predicted_price:
+			continue
+		error = list_price/(predicted_price + 0.0) - 1
+		if error >= low_percent and error <= high_percent:
+			heapq.heappush(h,(multiplier*error, error, predicted_price,home))
+			ctr += 1
+	for i in range(0,ctr):
+		error_key, error, predicted_price, home = heapq.heappop(h)
+		d = {}
+		d["home"] = home
+		d["list_price"] = home.sale_price
+		d["error"] = error
+		d["predicted_price"] = predicted_price
+		best_homes.append(d)
+	return best_homes
