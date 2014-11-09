@@ -475,7 +475,7 @@ def get_best_value_homes(zipcode, low_percent, high_percent, multiplier = 1):
 		error_key, error, predicted_price, home = heapq.heappop(h)
 		d = {}
 		
-        if home.image_url == None or home.image_url == '':
+		if home.image_url == None or home.image_url == '':
 			home.image_url = nearby_image(home.latitude, home.longitude)
 		d["home"] = home
 		d["list_price"] = home.sale_price
