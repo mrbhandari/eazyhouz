@@ -19,6 +19,7 @@ from django.template import RequestContext
 from geolatlong import geolocate
 import pprint
 from django.db.models import Count
+import math
 
 class FoursquareTable(tables.Table):
     name = tables.Column(verbose_name="Venue Name")
@@ -424,16 +425,16 @@ def get_recent_sales(subject_home):
   max_sqft = sqft * 1.2
   last_sale_date_threshold = "2014-01-01"
   h = []
-  comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold).exclude(user_input__exact=1).exclude(id__exact=subject_home.id)[:20]
+  comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold).exclude(user_input__exact=1).exclude(id__exact=subject_home.id)
   for c in comp_candidates:
     sim_score = home_similarity(c,subject_home)
     comp_house = model_to_dict(c)
     comp_house["sim_score"] = sim_score
-    dist = distance_on_unit_sphere(subject_home.latitude,subject_home.longitude,home.latitude,home.longitude)
+    dist = distance_on_unit_sphere(float(subject_home.latitude),float(subject_home.longitude),float(c.latitude),float(c.longitude))
     comp_house["distance"] = dist
     heapq.heappush(h,(sim_score,comp_house))
   comp_candidates_with_sim = []
-  for i in range(0,len(comp_candidates)):
+  for i in range(0,min(20,len(comp_candidates))):
     sim_score,comp_home = heapq.heappop(h)
     comp_candidates_with_sim.append(comp_home)
   return comp_candidates_with_sim
@@ -488,6 +489,9 @@ def get_best_value_homes(zipcode, low_percent, high_percent, multiplier = 1):
 	for i in range(0,ctr):
 		error_key, error, predicted_price, home = heapq.heappop(h)
 		d = {}
+		
+        if home.image_url == None or home.image_url == '':
+			home.image_url = nearby_image(home.latitude, home.longitude)
 		d["home"] = home
 		d["list_price"] = home.sale_price
 		d["error"] = error

@@ -40,8 +40,10 @@
           
         <h3>{% if result.estimated_price %}${% endif %}
         {{result.estimated_price | intdiv:1 |floatformat:"0"|intcomma}}</h3>
-        <p><strong>{{ subject_home.address }}</strong>
-        <br>Alternate Estimate: <strong>${{ subject_home.last_zestimate | intcomma }}</strong>
+	    <p><strong>{{ subject_home.address }}</strong>
+		{% if subject_home.last_zestimate %}
+		<br>Zestimate: <strong>${{ subject_home.last_zestimate | intcomma }}</strong>
+		{% endif %}
         <br><br>
           
           
