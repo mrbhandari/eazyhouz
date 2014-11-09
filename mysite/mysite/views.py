@@ -398,3 +398,20 @@ def get_recent_sales(subject_home):
     comp_candidates_with_sim.append(dhome)
   return comp_candidates_with_sim
 
+
+def gen_best_value_search(request):
+  list_of_zips = ['94401', '94401']
+  #error = None
+  #if 'error' in request.GET:
+  #  error = request.GET.get('error','')
+  return render_to_response('best_value_homes.html',
+                            {'zips':  list_of_zips})
+  
+
+
+def gen_best_value_res(request):
+  list_of_zips = ['94401', '94401']
+  #error = None
+
+  return render_to_response('best_value_homes_res.html',
+                            {'zips':  'resultforthiszipcode'})
