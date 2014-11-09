@@ -29,7 +29,7 @@
                     <div class="table-responsive"> <!--Twitter view-->
                         <table class="table table-striped">
                             <tbody>
-                                {% for r in zips %}
+                                {% for r in homes %}
                                     {% cycle '<tr>' '' '' '' %}
                                     <td><a href="search/{{r}}">{{ r }}</a></td>
                                     {% cycle '' '' '' '</tr>' %}

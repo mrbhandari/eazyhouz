@@ -40,7 +40,7 @@ class PrevHomeSales(models.Model):
     last_sale_date = models.DateField(null=True, blank=True)
     user_input = models.NullBooleanField()
     last_zestimate = models.IntegerField(null=True, blank=True)
-    curr_status = models.CharField(max_length=512,null=True, blank=False)
+    curr_status = models.CharField(max_length=512,null=True, blank=True)
 
     def __unicode__(self):
         return "%s, %s, %s %s" % (self.address, self.city, self.state, self.zipcode)

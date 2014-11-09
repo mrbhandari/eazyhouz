@@ -431,7 +431,7 @@ def get_recent_sales(subject_home):
 
 
 def gen_best_value_search(request):
-  list_of_zips = ['94401', '94401']
+  list_of_zips = get_distinct_zipcodes()
   #error = None
   #if 'error' in request.GET:
   #  error = request.GET.get('error','')
@@ -440,14 +440,14 @@ def gen_best_value_search(request):
   
 
 
-def gen_best_value_res(request):
-  list_of_zips = ['94401', '94401']
+def gen_best_value_res(request, zipcode):
+  homes = zipcode
   #error = None
 
   return render_to_response('best_value_homes_res.html',
-                            {'zips':  'resultforthiszipcode'})
+                            {'homes':  zipcode})
 
-def get_distinct zipcodes():
+def get_distinct_zipcodes():
 	return PrevHomeSales.objects.values_list('zipcode', flat=True).distinct()
 
 
