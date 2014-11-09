@@ -428,3 +428,28 @@ def get_recent_sales(subject_home):
     comp_candidates_with_sim.append(comp_home)
   return comp_candidates_with_sim
 
+
+def get_best_value_homes(zipcode, low_percent, high_percent, multiplier = 1):
+	all_homes_in_zip = PrevHomeSales.objects.filter(curr_status__exact="active",zipcode__exact=zipcode)
+	best_homes = []
+	h = []
+	ctr = 0
+	for home in all_homes_in_zip:
+		data = gen_appraisal(home)
+		list_price = home.sale_price
+		predicted_price = data.get("estimated_price")
+		if not predicted_price:
+			continue
+		error = list_price/(predicted_price + 0.0) - 1
+		if error >= low_percent and error <= high_percent:
+			heapq.heappush(h,(multiplier*error, error, predicted_price,home))
+			ctr += 1
+	for i in range(0,ctr):
+		error_key, error, predicted_price, home = heapq.heappop(h)
+		d = {}
+		d["home"] = home
+		d["list_price"] = home.sale_price
+		d["error"] = error
+		d["predicted_price"] = predicted_price
+		best_homes.append(d)
+	return best_homes
