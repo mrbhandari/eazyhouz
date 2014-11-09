@@ -421,10 +421,10 @@ def get_recent_sales(subject_home):
     comp_house["sim_score"] = sim_score
     dist = distance_on_unit_sphere(subject_home.latitude,subject_home.longitude,home.latitude,home.longitude)
     comp_house["distance"] = dist
-    heapq.heappush(h,comp_house)
+    heapq.heappush(h,(sim_score,comp_house))
   comp_candidates_with_sim = []
   for i in range(0,len(comp_candidates)):
-    comp_home = heapq.heappop(h)
+    sim_score,comp_home = heapq.heappop(h)
     comp_candidates_with_sim.append(comp_home)
   return comp_candidates_with_sim
 
