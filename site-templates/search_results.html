@@ -36,11 +36,11 @@
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <h1 class="page-header"> Home Estimate Report: {{ subject_home.address }} </h1>
+            <h1 class="page-header"> Home Estimate Report: {{ subject_home.address |title}} </h1>
           
-        <h3>{% if result.estimated_price %}${% endif %}
+        <h3>{% if result.estimated_price %}EazyHouz Estimate: ${% endif %}
         {{result.estimated_price | intdiv:1 |floatformat:"0"|intcomma}}</h3>
-	    <p><strong>{{ subject_home.address }}</strong>
+	    <p><strong>Based on closest comparables adjusted sale price:</strong>
 		{% if subject_home.last_zestimate %}
 		<br>Zestimate: <strong>${{ subject_home.last_zestimate | intcomma }}</strong>
 		{% endif %}
@@ -58,22 +58,29 @@
             <div class="col-xs-6 col-sm-3 placeholder">
               <img src="{{result.home1.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
               <a href="/home/genappraisal/?pid={{ result.home1.id }}"><h4>{{ result.home1.address }}</h4></a>
-              <span class="text-muted">Comparable #1</span>
+              <span class="text-muted">Comparable #1<br>Last Sale Price: ${{result.home1.sale_price | intcomma}}</span>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
               <img src="{{result.home2.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
               <a href="/home/genappraisal/?pid={{ result.home2.id }}"><h4>{{ result.home2.address }}</h4></a>
-              <span class="text-muted">Comparable #2</span>
+              <span class="text-muted">Comparable #2<br>Last Sale Price: ${{result.home2.sale_price | intcomma}}</span>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
               <img src="{{result.home3.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
               <a href="/home/genappraisal/?pid={{ result.home3.id }}"><h4>{{ result.home3.address }}</h4></a>
-              <span class="text-muted">Comparable #3</span>
+              <span class="text-muted">Comparable #3<br>Last Sale Price: ${{result.home3.sale_price | intcomma}}</span>
             </div>
           </div> <!--images row-->
           
           
         <h2 class="sub-header" id="estimate_explanation">Estimate Explanation</h2>
+        <p>
+            EazyHouz estimate is based on the closest recent comparable homes
+            computed based on hundreds of features including distance from the
+            original homes, beds, baths, square footage, date of sale, year
+            built etc. The estimate of is an average of the value of the closest
+            comparable sales.
+        </p>
         <div class="table-responsive"> <!--Estimate explanation table-->
             <table class="table table-striped" caption="This table explains how we came up with the home price estimate.">
               <thead>
@@ -95,10 +102,10 @@
                 </tr>
                 <tr>
                   <td>City</td>
-                  <td>{{subject_home.city}}</td>
-                  <td>{{result.home1.city}}</td>
-                  <td>{{result.home2.city}}</td>
-                  <td>{{result.home3.city}}</td>                  
+                  <td>{{subject_home.city|title}}</td>
+                  <td>{{result.home1.city|title}}</td>
+                  <td>{{result.home2.city|title}}</td>
+                  <td>{{result.home3.city|title}}</td>                  
                 </tr>
                 <tr>
                   <td>Beds</td>
@@ -158,7 +165,7 @@
                   <td>To come</td>
                 </tr>
                 <tr class="success">
-                  <td>Total</td>
+                  <td>Adj. Home Values</td>
                   <td>-</td>
                   <td>${{result.adjustment1.sqft | add:result.home1.sale_price|intdiv:1 |floatformat:"0"|intcomma}}</td>
                   <td>${{result.adjustment2.sqft | add:result.home2.sale_price|intdiv:1 |floatformat:"0"|intcomma}}</td>
@@ -174,6 +181,9 @@
          
         
         <h2 class="sub-header" id="recent_sales">Other Recent Sales</h2>
+        <p>
+            
+        </p>
         <div class="table-responsive"> <!--Recent sales table-->
         {% render_table recent_sales_table %}
         </div>
@@ -205,9 +215,15 @@
             <li>Add a personal touch</li>
         </ul></p>        
         <h2 class="sub-header" id=foursquare>Foursquare within 1000m</h2>
+        <p>
+            Here's what people are checking into nearby sorted by our proprietary <u>Loyalty Score</u> which helps you understand how often people are coming back there.
+        </p>
         {% render_table table %} <!--Foursquare view-->
         
         <h2 class="sub-header" id="yelp">Yelp within 1000m</h2>
+        <p>
+            Highest rated amenities nearby can make life pleasant and enhance your sense of community. Here's what people are Yelping about:
+        </p>
 
            
         <div class="row list-group"> <!--Yelp view-->
@@ -245,6 +261,9 @@
         
                 
         <h2 class="sub-header" id=instagram>Instagram posts within 1000m</h2>
+        <p>
+           More than any other factor, people define a neighborhood. Find out what your neighbors are like. Here are the people you'll chat with across the fence, invite over for coffee, and sit with at kids' soccer games. You want to live in a neighborhood where their lifestyles complement yours. Look for signs that neighbors share your interests in these photos."
+        </p>
         <div class="table-responsive"> <!--Instragram view-->
             <table class="table table-striped">
                 <tbody>
@@ -259,6 +278,9 @@
       
         
         <h2 class="sub-header" id=twitter>Recent Tweets</h2>
+        <p>
+           More than any other factor, people define a neighborhood. Find out what your neighbors are talking about on Twitter."
+        </p>
         <div class="table-responsive"> <!--Twitter view-->
             <table class="table table-striped">
                 <tbody>
@@ -272,6 +294,9 @@
         </div> <!--table div ends-->        
 
         <h2 class="sub-header" id="eventful">Events within 1000m</h2>
+        <p>
+           More than any other factor, people define a neighborhood. Find out kinds of events are being held in this community within a 1000 meters.
+        </p>
         <div class="row list-group"> <!--Eventful view-->
             {% for r in eventful_r %}
             <div class="item  col-xs-3 col-lg-3" style="height:300px; overflow: auto;">

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load render_table from django_tables2 %}
 {% load humanize %}
+{% load mathfilters %}
 {% block content %}
 <!--
 <head>
@@ -32,14 +33,24 @@
                             <thead>
                               <tr>
                                 <th>Home Address</th>
-                                <th>List Price</th>
-                                <th>EazyHouz Estimate</th>
-                                <th>Value Score</th>
+                                <th>List Price ($)</th>
+                                <th>EazyHouz Estimate ($)</th>
+                                <th>Discount from Value (Premium)</th>
                               </tr>
                             </thead>
                             <tbody>
                                 {% for h in best_homes %}
-                                    <tr><td><a href="/home/genappraisal/?pid={{h.home.id}}">{{ h.home.address }}</a></td><td>{{ h.list_price |floatformat:"0" |intcomma}}</td><td>{{ h.predicted_price|floatformat:"0" |intcomma }}</td><td>{{ h.error|floatformat:"1" }}</td></tr>
+                                    <tr
+                                        {% if h.error < 0 %}
+                                            class="success"
+                                            {% endif %}>
+                                        <td><a href="/home/genappraisal/?pid={{h.home.id}}">{{ h.home.address }}</a></td>
+                                        <td>{{ h.list_price |floatformat:"0" |intcomma}}</td>
+                                        <td>{{ h.predicted_price|floatformat:"0" |intcomma }}</td>
+                                        
+                                        <td
+                                            >{{ h.error|mul:-100|floatformat:"0" }}%</td></tr>
+                                        
                                 {% endfor %}
                             </tbody>
                         </table>
