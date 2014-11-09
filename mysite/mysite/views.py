@@ -429,8 +429,31 @@ def get_recent_sales(subject_home):
     comp_candidates_with_sim.append(comp_home)
   return comp_candidates_with_sim
 
+
+def gen_best_value_search(request):
+  list_of_zips = get_distinct_zipcodes()
+  #error = None
+  #if 'error' in request.GET:
+  #  error = request.GET.get('error','')
+  return render_to_response('best_value_homes.html',
+                            {'zips':  list_of_zips})
+  
+
+
+def gen_best_value_res(request, zipcode):
+  homes = zipcode
+  #error = None
+
+  return render_to_response('best_value_homes_res.html',
+                            {'homes':  zipcode})
+
+def get_distinct_zipcodes():
+	return PrevHomeSales.objects.values_list('zipcode', flat=True).distinct()
+
+
 def get_distinct_zipcodes_with_k_active_houses(k=10):
 	return PrevHomeSales.objects.filter(curr_status__exact="active").values('zipcode').annotate(total=Count('zipcode')).filter(total__gte=k)
+
 
 def get_best_value_homes(zipcode, low_percent, high_percent, multiplier = 1):
 	all_homes_in_zip = PrevHomeSales.objects.filter(curr_status__exact="active",zipcode__exact=zipcode)

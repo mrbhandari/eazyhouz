@@ -42,8 +42,8 @@ for house in houses:
 			            sqft = sqft.replace(",","").replace(" sqft","").replace("-","")
 			        if sqft:
 			            prevhomesales.sqft = sqft
-					if not sqft and sqft == 0:
-						continue
+				if not sqft or sqft == 0:
+					continue
 			        year_built = house.get("year")
 			        if year_built:
 			            year_built = year_built.replace(",","").replace("-","")

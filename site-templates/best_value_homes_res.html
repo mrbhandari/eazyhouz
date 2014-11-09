@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!--
+<head>
+    <title>Home Value Engine - Find the value of your home today</title>
+</head>-->
+<style>
+    body {
+  padding-top: 60px;
+}
+@media (max-width: 979px) {
+  body {
+    padding-top: 0px;
+  }
+}
+</style>
+
+
+<body>
+    <div class="container-fluid">
+              
+
+    
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>Best Value Bay Area Homes by Zipcode</h1>
+                    <div class="table-responsive"> <!--Twitter view-->
+                        <table class="table table-striped">
+                            <tbody>
+                                {% for r in homes %}
+                                    {% cycle '<tr>' '' '' '' %}
+                                    <td><a href="search/{{r}}">{{ r }}</a></td>
+                                    {% cycle '' '' '' '</tr>' %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div> <!--table div ends-->  
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container -->
+
+    </div>
+</body>
+
+
+
+{% endblock %}
