@@ -420,7 +420,7 @@ def get_recent_sales(subject_home):
     sim_score = home_similarity(c,subject_home)
     comp_house = model_to_dict(c)
     comp_house["sim_score"] = sim_score
-    dist = distance_on_unit_sphere(subject_home.latitude,subject_home.longitude,home.latitude,home.longitude)
+    dist = distance_on_unit_sphere(float(subject_home.latitude),float(subject_home.longitude),float(home.latitude),float(home.longitude))
     comp_house["distance"] = dist
     heapq.heappush(h,(sim_score,comp_house))
   comp_candidates_with_sim = []
