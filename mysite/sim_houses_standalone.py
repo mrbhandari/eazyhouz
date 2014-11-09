@@ -8,6 +8,7 @@ from django.forms.models import model_to_dict
 import pprint
 import math
 from random import shuffle
+from django.db.models import Count
 
 your_djangoproject_home="/Users/pradeep/eazyhouz/eazyhouz/mysite"
 
@@ -160,8 +161,11 @@ def get_best_value_homes(zipcode, low_percent, high_percent, multiplier=1):
 #	if ctr >= k:
 #		break
 #
-print "distinct zipcodes"
+def get_distinct_zipcodes():
+	return PrevHomeSales.objects.filter(curr_status__exact="active").values('zipcode').annotate(total=Count('zipcode')).filter(total__gte=10)
+			
 
-print PrevHomeSales.objects.values_list('zipcode', flat=True).distinct()
+print "distinct zipcodes"
+print get_distinct_zipcodes()
 
 print get_best_value_homes("94401", 0, 1, -1)

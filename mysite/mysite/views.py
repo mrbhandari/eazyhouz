@@ -17,6 +17,7 @@ from django.template import RequestContext
 from django_tables2 import RequestConfig
 from geolatlong import geolocate
 import pprint
+from django.db.models import Count
 
 class FoursquareTable(tables.Table):
     name = tables.Column(verbose_name="Venue Name")
@@ -429,7 +430,6 @@ def get_recent_sales(subject_home):
   return comp_candidates_with_sim
 
 
-
 def gen_best_value_search(request):
   list_of_zips = get_distinct_zipcodes()
   #error = None
@@ -449,6 +449,10 @@ def gen_best_value_res(request, zipcode):
 
 def get_distinct_zipcodes():
 	return PrevHomeSales.objects.values_list('zipcode', flat=True).distinct()
+
+
+def get_distinct_zipcodes_with_k_active_houses(k=10):
+	return PrevHomeSales.objects.filter(curr_status__exact="active").values('zipcode').annotate(total=Count('zipcode')).filter(total__gte=k)
 
 
 def get_best_value_homes(zipcode, low_percent, high_percent, multiplier = 1):
