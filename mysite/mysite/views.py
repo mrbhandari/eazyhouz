@@ -338,7 +338,8 @@ def gen_appraisal_page(request):
 		  RequestContext(request))
 
 def home_similarity(home, subject_home):
-  return 10 * abs(home.sqft - subject_home.sqft) + 800 * abs(float(home.baths) - float(subject_home.baths)) #+ 10 * abs(home.year_built - subject_home.year_built)
+	distance = distance_on_unit_sphere(float(home.latitude), float(home.longitude), float(subject_home.latitude), float(home.longitude))
+  return 10 * abs(home.sqft - subject_home.sqft) + 800 * abs(float(home.baths) - float(subject_home.baths)) + 50 * distance #+ 10 * abs(home.year_built - subject_home.year_built)
 
 
 def gen_appraisal(subject_home):
@@ -356,7 +357,7 @@ def gen_appraisal(subject_home):
   #TODO make sure to not fetch the subject home itself.
   comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
   baths__lte=max_baths, baths__gte=min_baths,
-  sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active")
+  sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold, property_type__exact=subject.property_type).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active")
   
   #print "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
   #print comp_candidates
