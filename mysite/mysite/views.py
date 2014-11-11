@@ -468,7 +468,7 @@ def get_distinct_zipcodes():
 	return PrevHomeSales.objects.values_list('zipcode', flat=True).distinct()
 
 
-def get_distinct_zipcodes_with_k_active_houses(k=10):
+def get_distinct_zipcodes_with_k_active_houses(k=3):
 	return PrevHomeSales.objects.filter(curr_status__exact="active").values('zipcode').annotate(total=Count('zipcode')).filter(total__gte=k)
 
 
