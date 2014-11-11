@@ -15,8 +15,8 @@
         
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar" id="sidenav">
-            <li class="active"><a href="#">Overview</a></li> <!--TODO: active does not move-->
-            <li><a href="#estimate_explanation">Market Value Explanation</a></li>
+            <li class="active"><a href="#top">Overview</a></li> <!--TODO: active does not move-->
+            <li><a href="#estimate_explanation">Estimate Explanation</a></li>
             <li><a href="#recent_sales">Other Recent Sales</a></li>
         <!--<li><a href="#ask_sell">Asking vs Selling Prices*</a></li>
             <li><a href="#">Home's Sales History*</a></li>-->
@@ -36,7 +36,7 @@
           </ul>-->
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <h1 class="page-header"> Home Estimate Report: {{ subject_home.address |title}} </h1>
+            <h1 class="page-header" id="top"> Home Estimate Report: {{ subject_home.address |title}} </h1>
           
         <h3>{% if result.estimated_price %}EazyHouz Estimate: ${% endif %}
         {{result.estimated_price | intdiv:1 |floatformat:"0"|intcomma}}</h3>
@@ -75,11 +75,11 @@
           
         <h2 class="sub-header" id="estimate_explanation">Estimate Explanation</h2>
         <p>
-            EazyHouz estimate is based on the closest recent comparable homes
-            computed based on hundreds of features including distance from the
-            original homes, beds, baths, square footage, date of sale, year
-            built etc. The estimate of is an average of the value of the closest
-            comparable sales.
+            EazyHouz Estimate is based on the comparable homes that have
+            recently sold in the neighborhood. EazyHouz computes which homes are
+            most similar using dozens of features including distance from the
+            original home, bedrooms, square footage, age and more. The estimate
+            is an average of the value of the closest comparable sales.
         </p>
         <div class="table-responsive"> <!--Estimate explanation table-->
             <table class="table table-striped" caption="This table explains how we came up with the home price estimate.">
@@ -182,7 +182,10 @@
         
         <h2 class="sub-header" id="recent_sales">Other Recent Sales</h2>
         <p>
-            Know the values for a broader set of recent sales in the neighborhood. Ranked by our proprietary Similarity Score (lower is more similar). The Average at the bottom will help you figure out if the home is reasonably  priced  for  its size, condition, and area. 
+            Know the values for a broader set of recent sales in the
+            neighborhood. Ranked by our proprietary Similarity Score (lower is
+            more similar). The average (at the top) give you an idea if
+            the home is reasonably priced for its size, condition, and area. 
         </p>
         <div class="table-responsive"> <!--Recent sales table-->
         {% render_table recent_sales_table %}
@@ -198,7 +201,8 @@
         <h2 class="sub-header" id="market_temp">Market Temperature*</h2>
         
         <p><strong>Extreme Seller's Market:</strong> more buyers are hunting for homes than there are homes to buy.</p>
-        <p><strong>Reasons:</strong> <ul>
+        <br>
+        <p><strong>Conditions:</strong> <ul>
             <li>Low inventory</li>
             <li>Increasing prices</li>
             <li>Fast moving homes</li>
@@ -222,7 +226,7 @@
         
         <h2 class="sub-header" id="yelp">Yelp within 1000m</h2>
         <p>
-            Highest rated amenities nearby can make life pleasant and enhance your sense of community. Here's what people are Yelping about:
+            Highly rated local businesses can make life pleasant and enhance your sense of community. Here's what people are Yelping about:
         </p>
 
            
@@ -262,7 +266,7 @@
                 
         <h2 class="sub-header" id=instagram>Instagram posts within 1000m</h2>
         <p>
-           More than any other factor, people define a neighborhood. Find out what your neighbors are like. Here are the people you'll chat with across the fence, invite over for coffee, and sit with at kids' soccer games. You want to live in a neighborhood where their lifestyles complement yours. Look for signs that neighbors share your interests in these photos."
+           More than any other factor, people define a neighborhood. Find out what your neighbors are like. Look for signs that neighbors share your interests in these Instagram photos taken within a 1,000m.
         </p>
         <div class="table-responsive"> <!--Instragram view-->
             <table class="table table-striped">
@@ -279,7 +283,7 @@
         
         <h2 class="sub-header" id=twitter>Recent Tweets</h2>
         <p>
-           More than any other factor, people define a neighborhood. Find out what your neighbors are talking about on Twitter."
+           More than any other factor, people define a neighborhood. Find out what your neighbors are talking about on Twitter.
         </p>
         <div class="table-responsive"> <!--Twitter view-->
             <table class="table table-striped">
@@ -295,7 +299,7 @@
 
         <h2 class="sub-header" id="eventful">Events within 1000m</h2>
         <p>
-           More than any other factor, people define a neighborhood. Find out kinds of events are being held in this community within a 1000 meters.
+           More than any other factor, people define a neighborhood. Find out kinds of events are being held in this community within a 1,000 meters.
         </p>
         <div class="row list-group"> <!--Eventful view-->
             {% for r in eventful_r %}
@@ -336,20 +340,21 @@
     <script>
             $( document ).ready(function() {
             console.log("TEST1")
-            $("#sidenav ul li a[href^='#']").on('click', function(e) {
+            $(".nav-sidebar li a[href^='#']").on('click', function(e) {
             console.log("TEST")
             // prevent default anchor click behavior
             e.preventDefault();
             
             // store hash
+            $(".nav-sidebar li").removeClass("active");
             var hash = this.hash;
-            
-            console.log(this.hash)
+            $(this).parent().addClass("active");
             
             // animate
             $('html, body').animate({
-            scrollTop: $(this.hash).offset().top
+            scrollTop: $(this.hash).offset().top-60
             }, 300, function(){
+            
             
             // when done, add hash to url
             // (default click behaviour)
