@@ -41,6 +41,7 @@ class PrevHomeSales(models.Model):
     user_input = models.NullBooleanField()
     last_zestimate = models.IntegerField(null=True, blank=True)
     curr_status = models.CharField(max_length=512,null=True, blank=True)
+    property_type = models.CharField(max_length=512,null=True, blank=True)
 
     def __unicode__(self):
         return "%s, %s, %s %s" % (self.address, self.city, self.state, self.zipcode)

@@ -339,7 +339,7 @@ def gen_appraisal_page(request):
 
 def home_similarity(home, subject_home):
 	distance = distance_on_unit_sphere(float(home.latitude), float(home.longitude), float(subject_home.latitude), float(home.longitude))
-  return 10 * abs(home.sqft - subject_home.sqft) + 800 * abs(float(home.baths) - float(subject_home.baths)) + 50 * distance #+ 10 * abs(home.year_built - subject_home.year_built)
+ 	return 10 * abs(home.sqft - subject_home.sqft) + 800 * abs(float(home.baths) - float(subject_home.baths)) + 50 * distance #+ 10 * abs(home.year_built - subject_home.year_built)
 
 
 def gen_appraisal(subject_home):
