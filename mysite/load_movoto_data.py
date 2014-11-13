@@ -28,6 +28,8 @@ def get_property_type(house):
  		for k in house.get("house_features").keys():
 			if re.match(r'.*condo.*|.*townhome.*|.*condominium.*|.*townhouse.*',house.get("house_features").get(k).lower()):
 				return "Condo/Townhouse"
+	if re.match(r'.*#[0-9].*',house.get("address")):
+		return "Condo/Townhouse"
 	return ptype
 
 num_good_houses = 0
@@ -88,7 +90,7 @@ for house in houses:
 				prevhomesales.property_type = get_property_type(house)
 				print "GOOD HOME:" + str(prevhomesales)
 				print str(prevhomesales.beds) + "\t" + str(prevhomesales.baths) + "\t" + str(prevhomesales.sqft) + "\t" + str(prevhomesales.year_built) + "\t" + str(prevhomesales.sale_price) + "\t" + str(prevhomesales.city) + "\t" + str(prevhomesales.image_url) + "\t" + str(prevhomesales.zipcode) + "\t" + str(prevhomesales.lot_size) + "\t" + str(prevhomesales.state) + "\t" + str(prevhomesales.remodeled) + "\t" + str(prevhomesales.latitude) + "\t" + str(prevhomesales.longitude)
-				#prevhomesales.save()
+				prevhomesales.save()
 		else:
 			print "BAD HOME:" + str(house)
 	except (InvalidOperation,ValueError) as e:
