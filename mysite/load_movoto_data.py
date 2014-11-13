@@ -28,6 +28,8 @@ def get_property_type(house):
  		for k in house.get("house_features").keys():
 			if re.match(r'.*condo.*|.*townhome.*|.*condominium.*|.*townhouse.*',house.get("house_features").get(k).lower()):
 				return "Condo/Townhouse"
+	if re.match(r'.*#[0-9].*',house.get("address")):
+		return "Condo/Townhouse"
 	return ptype
 
 num_good_houses = 0

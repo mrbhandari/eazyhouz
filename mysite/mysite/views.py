@@ -337,6 +337,14 @@ def gen_appraisal_page(request):
 		   },
 		  RequestContext(request))
 
+def biggest_dissimilarity_factor(home, subject_home):
+	distance = distance_on_unit_sphere(float(home.latitude), float(home.longitude), float(subject_home.latitude), float(home.longitude))
+ 	factors = [10 * abs(home.sqft - subject_home.sqft), 800 * abs(float(home.baths) - float(subject_home.baths)), 50 * distance]
+	factor_names = ["Difference in Sqft","Difference in number of baths","Distance from subject property"]
+	return factor_names[factors.index(max(factors))]
+
+
+
 def home_similarity(home, subject_home):
 	distance = distance_on_unit_sphere(float(home.latitude), float(home.longitude), float(subject_home.latitude), float(home.longitude))
  	return 10 * abs(home.sqft - subject_home.sqft) + 800 * abs(float(home.baths) - float(subject_home.baths)) + 50 * distance #+ 10 * abs(home.year_built - subject_home.year_built)
@@ -351,13 +359,13 @@ def gen_appraisal(subject_home):
   sqft = subject_home.sqft
   min_baths = Decimal(baths) - Decimal(0.5)
   max_baths = Decimal(baths) + Decimal(0.5)
-  min_sqft = sqft * 0.8
-  max_sqft = sqft * 1.2
+  min_sqft = sqft * 0.7
+  max_sqft = sqft * 1.3
   last_sale_date_threshold = "2014-01-01"
   #TODO make sure to not fetch the subject home itself.
   comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
   baths__lte=max_baths, baths__gte=min_baths,
-  sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold, property_type__exact=subject.property_type).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active")
+  sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,property_type__exact=subject_home.property_type).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active")
   
   #print "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
   #print comp_candidates
@@ -422,8 +430,8 @@ def get_recent_sales(subject_home):
   sqft = subject_home.sqft
   min_baths = Decimal(baths) - Decimal(0.5)
   max_baths = Decimal(baths) + Decimal(0.5)
-  min_sqft = sqft * 0.8
-  max_sqft = sqft * 1.2
+  min_sqft = sqft * 0.7
+  max_sqft = sqft * 1.3
   last_sale_date_threshold = "2014-01-01"
   h = []
   comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(curr_status__exact="active")
@@ -433,6 +441,7 @@ def get_recent_sales(subject_home):
     comp_house["sim_score"] = sim_score
     dist = distance_on_unit_sphere(float(subject_home.latitude),float(subject_home.longitude),float(c.latitude),float(c.longitude))
     comp_house["distance"] = dist
+    comp_house["reason_excluded"] = biggest_dissimilarity_factor(c,subject_home)
     heapq.heappush(h,(sim_score,comp_house))
   comp_candidates_with_sim = []
   for i in range(0,min(20,len(comp_candidates))):
