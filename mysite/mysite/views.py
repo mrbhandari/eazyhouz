@@ -54,7 +54,7 @@ class RecentSalesTable(tables.Table):
    beds = tables.Column(verbose_name="Beds")
    #image_url | interior_rating |
    last_sale_date = tables.Column()
-   distance = tables.Column()
+   distance = tables.Column(verbose_name="Distance (miles)")
    sale_price = tables.Column()
    sqft = tables.Column()
    year_built = tables.Column()
@@ -437,9 +437,11 @@ def get_recent_sales(subject_home):
   comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(curr_status__exact="active")
   for c in comp_candidates:
     sim_score = home_similarity(c,subject_home)
+    sim_score = "{0:.2f}".format(round(sim_score,2))
     comp_house = model_to_dict(c)
     comp_house["sim_score"] = sim_score
     dist = distance_on_unit_sphere(float(subject_home.latitude),float(subject_home.longitude),float(c.latitude),float(c.longitude))
+    dist = "{0:.2f}".format(round(dist,2))
     comp_house["distance"] = dist
     comp_house["reason_excluded"] = biggest_dissimilarity_factor(c,subject_home)
     heapq.heappush(h,(sim_score,comp_house))

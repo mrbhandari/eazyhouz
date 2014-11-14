@@ -34,15 +34,15 @@ class PrevHomeSalesForm(ModelForm):
     #middle.label = "Middle School rating 1-10"
     #high.label = "High School rating 1-10"
     
-    HOME_TYPE_CHOICES = ((1, 'Single Family Home'), (0, 'Condo/Townhouse'), )
-    home_type = forms.TypedChoiceField(choices=HOME_TYPE_CHOICES,
+    HOME_TYPE_CHOICES = (('Single Family Residence', 'Single Family Residence'), ('Condo/Townhouse', 'Condo/Townhouse'), )
+    property_type = forms.TypedChoiceField(choices=HOME_TYPE_CHOICES,
                                             widget=forms.Select,
                                             empty_value = None,
                                             )
     helper = FormHelper()
     helper.form_method = 'POST'
     helper.layout = Layout(
-        Field('home_type', css_class='input-sm'),
+        Field('property_type', css_class='input-sm'),
         Field('address', css_class='input-sm'),
         Field('city', css_class='input-sm'),
         Field('state', css_class='input-sm'),
