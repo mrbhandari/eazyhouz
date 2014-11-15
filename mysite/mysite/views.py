@@ -383,10 +383,7 @@ def gen_appraisal(subject_home):
     comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
     baths__lte=max_baths, baths__gte=min_baths,
     sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,property_type__exact=subject_home.property_type).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active")
-  
-  #print "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-  print "CAndidates!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",comp_candidates
-  
+   
   h = []
   if len(comp_candidates) < 3:
      return data
