@@ -16,6 +16,14 @@ filename = sys.argv[1]
 houses = []
 houses.extend(json.load(open(filename)))
 
+rating = {}
+if len(sys.argv) > 2:
+	filename = sys.argv[2]
+	lines = [line.strip() for line in open(filename)]
+	for l in lines:
+		if not "N" in l.split("\t")[6].split(" ")[0]:
+			rating[l.split("\t")[1]] = l.split("\t")[6].split(" ")[0]
+
 def good_house(house):
     return bool(house.get("beds")) and bool(house.get("baths")) and bool(house.get("address")) and bool(house.get("zipcode")) and bool(house.get("state")) and bool(house.get("city")) and bool(house.get("price")) and bool(house.get("sqft")) and bool(house.get("last_sold_date")) and bool(house.get("latitude")) and bool(house.get("longitude"))
 
@@ -76,6 +84,8 @@ for house in houses:
 				prevhomesales.latitude = house.get("latitude")
 				prevhomesales.longitude = house.get("longitude")
 				last_sale_date = house.get("last_sold_date")
+				if rating.get(house.get("url")):
+					prevhomesales.interior_rating=rating[house.get("url")]
 				if last_sale_date:
 					if len(last_sale_date) == 8:
 						prevhomesales.last_sale_date = datetime.datetime.strptime(last_sale_date,'%m/%d/%y').date()
@@ -89,7 +99,7 @@ for house in houses:
 					prevhomesales.remodeled = 1 if (("remodel" in description.lower()) or ("updated" in description.lower())) else 0
 				prevhomesales.property_type = get_property_type(house)
 				print "GOOD HOME:" + str(prevhomesales)
-				print str(prevhomesales.beds) + "\t" + str(prevhomesales.baths) + "\t" + str(prevhomesales.sqft) + "\t" + str(prevhomesales.year_built) + "\t" + str(prevhomesales.sale_price) + "\t" + str(prevhomesales.city) + "\t" + str(prevhomesales.image_url) + "\t" + str(prevhomesales.zipcode) + "\t" + str(prevhomesales.lot_size) + "\t" + str(prevhomesales.state) + "\t" + str(prevhomesales.remodeled) + "\t" + str(prevhomesales.latitude) + "\t" + str(prevhomesales.longitude)
+				print str(prevhomesales.beds) + "\t" + str(prevhomesales.baths) + "\t" + str(prevhomesales.sqft) + "\t" + str(prevhomesales.year_built) + "\t" + str(prevhomesales.sale_price) + "\t" + str(prevhomesales.city) + "\t" + str(prevhomesales.image_url) + "\t" + str(prevhomesales.zipcode) + "\t" + str(prevhomesales.lot_size) + "\t" + str(prevhomesales.state) + "\t" + str(prevhomesales.remodeled) + "\t" + str(prevhomesales.latitude) + "\t" + str(prevhomesales.longitude),"\t",prevhomesales.interior_rating
 				prevhomesales.save()
 		else:
 			print "BAD HOME:" + str(house)
