@@ -1,18 +1,18 @@
-python load_movoto_data.py /Applications/MAMP/htdocs/realdata/1/sample_bay_area.json > /tmp/log1.txt
-python load_movoto_data.py /Applications/MAMP/htdocs/realdata/2/sample_bay_area.json > /tmp/log2.txt
-python load_movoto_data.py /Applications/MAMP/htdocs/realdata/3/sample_bay_area.json > /tmp/log3.txt
-python load_movoto_data.py /Applications/MAMP/htdocs/realdata/4/sample_bay_area.json > /tmp/log4.txt
-python load_movoto_data.py /Applications/MAMP/htdocs/realdata/5/sample_bay_area.json > /tmp/log5.txt
-python load_movoto_data.py /Applications/MAMP/htdocs/realdata/6/sample_bay_area.json > /tmp/log6.txt
-python load_movoto_data.py /Applications/MAMP/htdocs/realdata/7/sample_bay_area.json > /tmp/log7.txt
-python load_movoto_data.py /Applications/MAMP/htdocs/realdata/8/sample_bay_area.json > /tmp/log8.txt
-python load_movoto_data.py /Applications/MAMP/htdocs/realdata/9/sample_bay_area.json > /tmp/log9.txt
-python load_movoto_data.py /Applications/MAMP/htdocs/realdata/10/sample_bay_area.json > /tmp/log10.txt
-python load_movoto_data.py /Applications/MAMP/htdocs/realdata/11/sample_bay_area.json > /tmp/log11.txt
-python load_movoto_data.py /Applications/MAMP/htdocs/realdata/12/sample_bay_area.json > /tmp/log12.txt
-python load_movoto_data.py /Applications/MAMP/htdocs/realdata/13/sample_bay_area.json > /tmp/log13.txt
-python load_movoto_data.py /Applications/MAMP/htdocs/realdata/14/sample_bay_area.json > /tmp/log14.txt
-python load_movoto_data.py /Applications/MAMP/htdocs/realdata/15/sample_bay_area.json > /tmp/log15.txt
-python load_movoto_data.py /Applications/MAMP/htdocs/realdata/16/sample_bay_area.json > /tmp/log16.txt
-python load_movoto_data.py /Applications/MAMP/htdocs/realdata/17/sample_bay_area.json > /tmp/log17.txt
-python load_movoto_data.py /Applications/MAMP/htdocs/realdata/18/sample_bay_area.json > /tmp/log18.txt
+python load_movoto_data.py /data/bay_area/1/sample_bay_area.json /data/sunnyvale_cupertino.csv > /data/log1.txt
+python load_movoto_data.py /data/bay_area/2/sample_bay_area.json /data/sunnyvale_cupertino.csv > /data/log2.txt
+python load_movoto_data.py /data/bay_area/3/sample_bay_area.json /data/sunnyvale_cupertino.csv > /data/log3.txt
+python load_movoto_data.py /data/bay_area/4/sample_bay_area.json /data/sunnyvale_cupertino.csv > /data/log4.txt
+python load_movoto_data.py /data/bay_area/5/sample_bay_area.json /data/sunnyvale_cupertino.csv > /data/log5.txt
+python load_movoto_data.py /data/bay_area/6/sample_bay_area.json /data/sunnyvale_cupertino.csv > /data/log6.txt
+python load_movoto_data.py /data/bay_area/7/sample_bay_area.json /data/sunnyvale_cupertino.csv > /data/log7.txt
+python load_movoto_data.py /data/bay_area/8/sample_bay_area.json /data/sunnyvale_cupertino.csv > /data/log8.txt
+python load_movoto_data.py /data/bay_area/9/sample_bay_area.json /data/sunnyvale_cupertino.csv > /data/log9.txt
+python load_movoto_data.py /data/bay_area/10/sample_bay_area.json /data/sunnyvale_cupertino.csv > /data/log10.txt
+python load_movoto_data.py /data/bay_area/11/sample_bay_area.json /data/sunnyvale_cupertino.csv > /data/log11.txt
+python load_movoto_data.py /data/bay_area/12/sample_bay_area.json /data/sunnyvale_cupertino.csv > /data/log12.txt
+python load_movoto_data.py /data/bay_area/13/sample_bay_area.json /data/sunnyvale_cupertino.csv > /data/log13.txt
+python load_movoto_data.py /data/bay_area/14/sample_bay_area.json /data/sunnyvale_cupertino.csv > /data/log14.txt
+python load_movoto_data.py /data/bay_area/15/sample_bay_area.json /data/sunnyvale_cupertino.csv > /data/log15.txt
+python load_movoto_data.py /data/bay_area/16/sample_bay_area.json /data/sunnyvale_cupertino.csv > /data/log16.txt
+python load_movoto_data.py /data/bay_area/17/sample_bay_area.json /data/sunnyvale_cupertino.csv > /data/log17.txt
+python load_movoto_data.py /data/bay_area/18/sample_bay_area.json /data/sunnyvale_cupertino.csv > /data/log18.txt
