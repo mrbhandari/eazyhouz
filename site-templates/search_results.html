@@ -56,17 +56,17 @@
               <span class="text-muted">Subject Property</span>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="{{result.home1.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
+              <a href="/home/genappraisal/?pid={{ result.home1.id }}"><img src="{{result.home1.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail"></a>
               <a href="/home/genappraisal/?pid={{ result.home1.id }}"><h4>{{ result.home1.address }}</h4></a>
               <span class="text-muted">Comparable #1<br>Last Sale Price: ${{result.home1.sale_price | intcomma}}</span>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="{{result.home2.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
+              <a href="/home/genappraisal/?pid={{ result.home2.id }}"><img src="{{result.home2.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail"></a>
               <a href="/home/genappraisal/?pid={{ result.home2.id }}"><h4>{{ result.home2.address }}</h4></a>
               <span class="text-muted">Comparable #2<br>Last Sale Price: ${{result.home2.sale_price | intcomma}}</span>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="{{result.home3.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
+              <a href="/home/genappraisal/?pid={{ result.home3.id }}"><img src="{{result.home3.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail"></a>
               <a href="/home/genappraisal/?pid={{ result.home3.id }}"><h4>{{ result.home3.address }}</h4></a>
               <span class="text-muted">Comparable #3<br>Last Sale Price: ${{result.home3.sale_price | intcomma}}</span>
             </div>
@@ -93,6 +93,20 @@
                 </tr>
               </thead>
               <tbody>
+                <tr class="info">
+                  <td><b>Property Detail</b></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td> 
+                </tr>
+                <tr>
+                  <td>Distance from Original (mi)</td>
+                  <td>na</td>
+                  <td>{{result.distance1|floatformat:"1"|intcomma}}</td>
+                  <td>{{result.distance2|floatformat:"1"|intcomma}}</td>
+                  <td>{{result.distance3|floatformat:"1"|intcomma}}</td> 
+                </tr>
                 <tr>
                   <td>Address</td>
                   <td>{{subject_home.address}}</td>
@@ -107,6 +121,20 @@
                   <td>{{result.home2.city|title}}</td>
                   <td>{{result.home3.city|title}}</td>                  
                 </tr>
+                <tr>
+                  <td>Zipcode</td>
+                  <td>{{subject_home.zipcode}}</td>
+                  <td>{{result.home1.zipcode}}</td>
+                  <td>{{result.home2.zipcode}}</td>
+                  <td>{{result.home3.zipcode}}</td> 
+                </tr>
+                <tr>
+                  <td>Property Type</td>
+                  <td>{{subject_home.property_type}}</td>
+                  <td>{{result.home1.property_type}}</td>
+                  <td>{{result.home2.property_type}}</td>
+                  <td>{{result.home3.property_type}}</td> 
+                </tr>             
                 <tr>
                   <td>Beds</td>
                   <td>{{subject_home.beds}}</td>
@@ -129,12 +157,41 @@
                   <td>{{result.home3.sqft|intcomma}}</td> 
                 </tr>
                 <tr>
-                  <td id="goreport">Year Built</td>
+                  <td>Lot Size</td>
+                  <td>{{subject_home.lot_size |intcomma}}</td>
+                  <td>{{result.home1.lot_size |intcomma}}</td>
+                  <td>{{result.home2.lot_size|intcomma}}</td>
+                  <td>{{result.home3.lot_size|intcomma}}</td> 
+                </tr>
+                <tr>
+                  <td>Year Built</td>
                   <td>{{subject_home.year_built}}</td>
                   <td>{{result.home1.year_built}}</td>
                   <td>{{result.home2.year_built}}</td>
                   <td>{{result.home3.year_built}}</td> 
                 </tr>
+                <tr>
+                  <td>Interior Rating</td>
+                  <td>{{subject_home.interior_rating| intdiv:1 |floatformat:"0"|intcomma}}/5</td>
+                  <td>{{result.home1.interior_rating| intdiv:1 |floatformat:"0"|intcomma}}/5</td>
+                  <td>{{result.home2.interior_rating| intdiv:1 |floatformat:"0"|intcomma}}/5</td>
+                  <td>{{result.home3.interior_rating| intdiv:1 |floatformat:"0"|intcomma}}/5</td> 
+                </tr>
+                <tr class="warning">
+                  <td>Similarity Score</td>
+                  <td>na</td>
+                  <td>{{result.similarity1|intdiv:1 |floatformat:"0"|intcomma}}</td>
+                  <td>{{result.similarity2|intdiv:1 |floatformat:"0"|intcomma}}</td>
+                  <td>{{result.similarity3 | intdiv:1 |floatformat:"0"|intcomma}}</td> 
+                </tr>                  
+                <tr class="info">
+                  <td><b>Valuation</b></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td> 
+                </tr>
+              <br>
                 <tr>
                   <td>Last Sale Date</td>
                   <td>{{subject_home.last_sale_date}}</td>
@@ -153,9 +210,9 @@
                 <tr>
                   <td>Sqft Adjustments</td>
                   <td>-</td>
-                  <td>{{result.adjustment1.sqft | intdiv:1 |floatformat:"0"|intcomma}}</td>
-                  <td>{{result.adjustment2.sqft | intdiv:1 |floatformat:"0"|intcomma}}</td>
-                  <td>{{result.adjustment3.sqft | intdiv:1 |floatformat:"0"|intcomma}}</td>                  
+                  <td>${{result.adjustment1.sqft | intdiv:1 |floatformat:"0"|intcomma}}</td>
+                  <td>${{result.adjustment2.sqft | intdiv:1 |floatformat:"0"|intcomma}}</td>
+                  <td>${{result.adjustment3.sqft | intdiv:1 |floatformat:"0"|intcomma}}</td>                  
                 </tr>
                 <tr>
                   <td>Other Adjustments</td>
@@ -164,14 +221,21 @@
                   <td>To come</td>
                   <td>To come</td>
                 </tr>
-                <tr class="success">
+                <tr class="warning">
                   <td>Adjusted Home Values</td>
                   <td>-</td>
                   <td>${{result.adjustment1.sqft | add:result.home1.sale_price|intdiv:1 |floatformat:"0"|intcomma}}</td>
                   <td>${{result.adjustment2.sqft | add:result.home2.sale_price|intdiv:1 |floatformat:"0"|intcomma}}</td>
                   <td>${{result.adjustment3.sqft | add:result.home3.sale_price|intdiv:1 |floatformat:"0"|intcomma}}</td>                  
                 </tr>
-                {% endif %}
+            {% endif %}
+                <tr>
+                  <td>Weighting</td>
+                  <td>-</td>
+                  <td>{{result.home1.comp_used }}</td>
+                  <td>{{result.home2.comp_used }}</td>
+                  <td>{{result.home3.comp_used }}</td>
+                </tr>
               </tbody>
             </table>
           </div> <!-- end responsive table-->

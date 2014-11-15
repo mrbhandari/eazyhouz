@@ -58,11 +58,13 @@ class RecentSalesTable(tables.Table):
    sale_price = tables.Column()
    sqft = tables.Column()
    year_built = tables.Column()
+   interior_rating = tables.Column()
    reason_excluded = tables.Column()
    sim_score = tables.Column(verbose_name="Similarity Score")
    class Meta:
     attrs = {"class": "table table-striped"}
     order_by_field = True
+    order_by = '-sim_score'
 
 
 def autosuggest(request):
