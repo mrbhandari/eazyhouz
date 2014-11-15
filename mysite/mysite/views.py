@@ -351,8 +351,10 @@ def home_similarity(home, subject_home):
 
 
 def gen_appraisal(subject_home):
+  use_interior_rating = False
+  if subject_home.interior_rating:
+    use_interior_rating = True
   data = {}
-
   city = subject_home.city
   beds = subject_home.beds
   baths = subject_home.baths
@@ -363,12 +365,27 @@ def gen_appraisal(subject_home):
   max_sqft = sqft * 1.3
   last_sale_date_threshold = "2014-01-01"
   #TODO make sure to not fetch the subject home itself.
-  comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
-  baths__lte=max_baths, baths__gte=min_baths,
-  sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,property_type__exact=subject_home.property_type).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active")
+  if use_interior_rating:
+    if subject_home.interior_rating == 3:
+      comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
+      baths__lte=max_baths, baths__gte=min_baths,
+      sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,property_type__exact=subject_home.property_type,remodeled__exact=subject_home.remodeled,interior_rating__exact=subject_home.interior_rating).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active").exclude(interior_rating__isnull=True)
+    if subject_home.interior_rating == 1:
+      comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
+      baths__lte=max_baths, baths__gte=min_baths,
+      sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,property_type__exact=subject_home.property_type,remodeled__exact=subject_home.remodeled).filter(Q(interior_rating__exact=1) | Q(interior_rating__exact=2)).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active").exclude(interior_rating__isnull=True)
+    if subject_home.interior_rating == 4:
+      comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
+      baths__lte=max_baths, baths__gte=min_baths,
+      sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,property_type__exact=subject_home.property_type,remodeled__exact=subject_home.remodeled).filter(Q(interior_rating__exact=4) | Q(interior_rating__exact=5)).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active").exclude(interior_rating__isnull=True)
+
+  else:
+    comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
+    baths__lte=max_baths, baths__gte=min_baths,
+    sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,property_type__exact=subject_home.property_type).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active")
   
   #print "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-  #print comp_candidates
+  print "CAndidates!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",comp_candidates
   
   h = []
   if len(comp_candidates) < 3:
@@ -378,15 +395,28 @@ def gen_appraisal(subject_home):
     heapq.heappush(h,(sim_score,c))
   k = 3
   avg_sqft_price = 0
-  
+  use_low_sim_homes = False
+  num_low_sim_homes = 0
+  low_sim_score_threshold = 10
   for i in range(1,k+1):
     sim_score,home = heapq.heappop(h)
+    if sim_score <= low_sim_score_threshold:
+      avg_sqft_price = avg_sqft_price + (home.sale_price + 0.0)/home.sqft if use_low_sim_homes else (home.sale_price + 0.0)/home.sqft
+      num_low_sim_homes += 1
+      use_low_sim_homes = True
     try: #RAHUL: I added this
-      avg_sqft_price += (home.sale_price + 0.0)/home.sqft
+      if not use_low_sim_homes:
+        avg_sqft_price += (home.sale_price + 0.0)/home.sqft
     except TypeError:
       pass
     data['home' + str(i)] = model_to_dict(home)
-  avg_sqft_price /= k
+    data['similarity' + str(i)] = sim_score
+  if use_low_sim_homes:
+    avg_sqft_price /= num_low_sim_homes
+    data["use_low_sim_homes"] = True
+  else:
+    avg_sqft_price /= k
+  
   data['estimated_price'] = avg_sqft_price * subject_home.sqft
   for i in range(1,k+1):
     adjustment = {}
