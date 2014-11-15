@@ -407,7 +407,7 @@ def gen_appraisal(subject_home):
     except TypeError:
       pass
     data['home' + str(i)] = model_to_dict(home)
-    data['similarity' + str(i)] = sim_score
+    data['similarity' + str(i)] = 1/(1.0+sim_score/100)
   if use_low_sim_homes:
     avg_sqft_price /= num_low_sim_homes
     data["use_low_sim_homes"] = True
@@ -466,7 +466,7 @@ def get_recent_sales(subject_home):
     sim_score = home_similarity(c,subject_home)
     sim_score = "{0:.2f}".format(round(sim_score,2))
     comp_house = model_to_dict(c)
-    comp_house["sim_score"] = sim_score
+    comp_house["sim_score"] = 1/(1.0 + sim_score/100)
     dist = distance_on_unit_sphere(float(subject_home.latitude),float(subject_home.longitude),float(c.latitude),float(c.longitude))
     dist = "{0:.2f}".format(round(dist,2))
     comp_house["distance"] = dist
