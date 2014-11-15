@@ -407,15 +407,24 @@ def gen_appraisal(subject_home):
     except TypeError:
       pass
     data['home' + str(i)] = model_to_dict(home)
-    data['similarity' + str(i)] = 1/(1.0+sim_score/100)
+    data['similarity' + str(i)] = 100/(1.0+sim_score/100)
+    dist = distance_on_unit_sphere(float(subject_home.latitude),float(subject_home.longitude),float(home.latitude),float(home.longitude))
+    dist = "{0:.2f}".format(round(dist,2))
+    data["distance" + str(i)] = dist
   if use_low_sim_homes:
     avg_sqft_price /= num_low_sim_homes
     data["use_low_sim_homes"] = True
   else:
     avg_sqft_price /= k
-  
+   
   data['estimated_price'] = avg_sqft_price * subject_home.sqft
   for i in range(1,k+1):
+    if use_low_sim_homes:
+      if 1.1*data['similarity' + str(i)] <= 100:
+        data["home" + str(i)]["comp_used"] = True
+    else:
+      data["home" + str(i)]["comp_used"] = True
+    data["similarity" + str(i)] =  "{0:.2f}".format(round(data["similarity" + str(i)],2))
     adjustment = {}
     adjustment['sqft'] = avg_sqft_price * (subject_home.sqft - data['home'+str(i)]['sqft'])
     data['adjustment' + str(i)] = adjustment
