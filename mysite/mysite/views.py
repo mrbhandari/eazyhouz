@@ -422,7 +422,7 @@ def gen_appraisal(subject_home):
   data['estimated_price'] = avg_sqft_price * subject_home.sqft
   for i in range(1,k+1):
     if use_low_sim_homes:
-      if 1.1*data['similarity' + str(i)] <= 100:
+      if 1.1 * data['similarity' + str(i)] >= 100:
         data["home" + str(i)]["comp_used"] = True
     else:
       data["home" + str(i)]["comp_used"] = True
