@@ -347,7 +347,7 @@ def gen_appraisal_page(request):
 
 def biggest_dissimilarity_factor(home, subject_home):
 	distance = distance_on_unit_sphere(float(home.latitude), float(home.longitude), float(subject_home.latitude), float(home.longitude))
- 	factors = [10 * abs(home.sqft - subject_home.sqft), 80 * abs(float(home.baths) - float(subject_home.baths)), 200 * distance]
+ 	factors = [5 * abs(home.sqft - subject_home.sqft), 80 * abs(float(home.baths) - float(subject_home.baths)), 200 * distance]
 	factor_names = ["Difference in Sqft","Difference in number of baths","Distance from subject property"]
 	return factor_names[factors.index(max(factors))]
 
@@ -355,7 +355,7 @@ def biggest_dissimilarity_factor(home, subject_home):
 
 def home_similarity(home, subject_home):
 	distance = distance_on_unit_sphere(float(home.latitude), float(home.longitude), float(subject_home.latitude), float(home.longitude))
- 	return 10 * abs(home.sqft - subject_home.sqft) + 80 * abs(float(home.baths) - float(subject_home.baths)) + 200 * distance #+ 10 * abs(home.year_built - subject_home.year_built)
+ 	return 5 * abs(home.sqft - subject_home.sqft) + 80 * abs(float(home.baths) - float(subject_home.baths)) + 200 * distance #+ 10 * abs(home.year_built - subject_home.year_built)
 
 
 def get_candidates(subject_home):
