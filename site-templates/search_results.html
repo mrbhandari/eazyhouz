@@ -6,7 +6,75 @@
 {% load mathfilters %}
 {% load render_table from django_tables2 %}
 <link href="{% static 'dashboard.css' %}" rel="stylesheet" media="screen">
+<link href="{% static 'bootstrap-tagsinput/bootstrap-tagsinput.css' %}" rel="stylesheet" media="screen">
+<script src="{% static 'bootstrap-tagsinput/bootstrap-tagsinput.js' %}"></script>
 
+
+<style>
+    .icon-github {
+    background: no-repeat url('../img/github-16px.png');
+    width: 16px;
+    height: 16px;
+    }
+    
+    .bootstrap-tagsinput { width: 100%; }
+    
+    .accordion {
+            margin-bottom:-3px;
+    }
+    
+    .accordion-group { 
+            border: none;
+    }
+    
+    .twitter-typeahead .tt-query,
+    .twitter-typeahead .tt-hint {
+      margin-bottom: 0;
+    }
+    
+    .twitter-typeahead .tt-hint
+    {
+        display: none;
+    }
+    
+    .tt-dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 1000;
+      display: none;
+      float: left;
+      min-width: 160px;
+      padding: 5px 0;
+      margin: 2px 0 0;
+      list-style: none;
+      font-size: 14px;
+      background-color: #ffffff;
+      border: 1px solid #cccccc;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      border-radius: 4px;
+      -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+      background-clip: padding-box;
+    }
+    .tt-suggestion > p {
+      display: block;
+      padding: 3px 20px;
+      clear: both;
+      font-weight: normal;
+      line-height: 1.428571429;
+      color: #333333;
+      white-space: nowrap;
+    }
+    .tt-suggestion > p:hover,
+    .tt-suggestion > p:focus,
+    .tt-suggestion.tt-cursor p {
+      color: #ffffff;
+      text-decoration: none;
+      outline: 0;
+      background-color: #428bca;
+    }
+</style>
 <body>
 
 
@@ -38,15 +106,16 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header" id="top"> Home Estimate Report: {{ subject_home.address |title}} </h1>
           
-        <h3>{% if result.estimated_price %}EazyHouz Estimate: ${% endif %}
-        {{result.estimated_price | intdiv:1 |floatformat:"0"|intcomma}}</h3>
-	    <p><strong>Based on closest comparables adjusted sale price:</strong>
+        <h3 id='eazy_estimate'>
+            {% if result.estimated_price %}EazyHouz Estimate: $
+            {{result.estimated_price | intdiv:1 |floatformat:"0"|intcomma}}
+            {% endif %}
+        </h3>
 		{% if subject_home.last_zestimate %}
 		<br>Zestimate: <strong>${{ subject_home.last_zestimate | intcomma }}</strong>
 		{% endif %}
-        <br><br>
-          
-          
+        
+        <br><br>  
           
           
           <div class="row placeholders">
@@ -71,8 +140,66 @@
               <span class="text-muted">Comparable #3<br>Last Sale Price: ${{result.home3.sale_price | intcomma}}</span>
             </div>
           </div> <!--images row-->
-          
-          
+        <h5>DEMO Only: Start typing to improve the estimate. Tell us about this house (e.g., pool, kitchen to see options)</h5>
+        <div class="bs-example">
+            <form role="form" class="form-inline">
+                <input data-role="tagsinput" class="bootstrap-tagsinput" name="q" autocomplete="off" id="tagtest" type="text" >
+                    <!--<button type="submit" class="btn btn-default">Submit</button>-->
+            </form>
+        </div>          
+        
+
+        
+            
+            <script>
+        Number.prototype.formatMoney = function(c, d, t){
+        var n = this, 
+        c = isNaN(c = Math.abs(c)) ? 2 : c, 
+        d = d == undefined ? "." : d, 
+        t = t == undefined ? "," : t, 
+        s = n < 0 ? "-" : "", 
+        i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
+        j = (j = i.length) > 3 ? j % 3 : 0;
+       return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+     };
+         $('#tagtest').tagsinput({
+            typeahead: {
+                local: ['Carpet flooring - new','Hardwood flooring - New', 'Walls  - Stained', 'Walls - Freshly Painted', 'Natural lighting', 'Water damage', 'Fireplace - gas',
+                        'Fireplace - woodburning', 'Stairs - creeky', 'Closet - walk-in', 'Closet - his/hers', 'Granite counters in kitchen', 'Stainless steel appliances in kitchen',
+                        'Island kitchen', 'Eating area or breakfast nook', 'Basement - finished', 'Basement - not enough head room', 'Basement - signs of water damage', 'Garage -1 car',
+                        'Garage - 2 car', 'Garage - 3 car', 'Driveway - cracked', 'Garage - finished', 'Roof - needs replacing', 'Roof - no signs of leakage, discoloration',
+                        'Siding - brick', 'Siding - Vinyl', 'Siding - Wood', 'Siding - Aluminum', 'Windows - insulated', 'Windows - need replacing', 'Outdoor - landscaping',
+                        'Outdoor - swimming pool', 'Outdoor - garden', 'Outdoor - Wood deck', 'Outdoor - patio', 'Outdoor - lack of privacy', 'City view', 'Nature view',
+                        'Signs of pests', 'Good curb appeal', 'Exterior - good paint job', 'Exterior - Attractive landscaping', 'Exterior - Fence', 'Furnace - needs replacing',
+                        'Air Conditioning - needs replacing', 'Bathrooms - Renovated', 'Bathrooms - Need renovation', 'High ceilings', 'Loft', 'High noise level', 'Quiet',
+                        'East facing', 'central A/C', 'No central heating', 'Eat-in kitchen', 'Hardwood floors under carpet', 'Exterior: Auto sprinkler system', 'Single story', 'Remodeled', 'Shed',
+                        'Tennis court']
+            }
+          });
+        $('#tagtest').on('itemAdded', function(event) {
+                console.log("Increase value 10")
+                $('#eazy_estimate').text("EazyHouz Estimate: $ " +
+                ({{result.estimated_price}} + 10000*$('#tagtest').tagsinput('items').length).formatMoney(0, '.', ',')
+                )
+        });
+        $('#tagtest').on('itemRemoved', function(event) {
+                console.log("Decrease value 10")
+                $('#eazy_estimate').text("EazyHouz Estimate: $ " +
+                ({{result.estimated_price}} + 10000*$('#tagtest').tagsinput('items').length).formatMoney(0, '.', ',')
+                )
+        });
+    </script>
+        
+<!--        <div class="bs-example">
+            <select multiple data-role="tagsinput">
+              <option value="Amsterdam">Amsterdam</option>
+              <option value="Washington">Washington</option>
+              <option value="Sydney">Sydney</option>
+              <option value="Beijing">Beijing</option>
+              <option value="Cairo">Cairo</option>
+            </select>
+        </div>
+        -->
         <h2 class="sub-header" id="estimate_explanation">Estimate Explanation</h2>
         <p>
             EazyHouz Estimate is based on the comparable homes that have
@@ -403,31 +530,40 @@
 
     <script>
             $( document ).ready(function() {
-            console.log("TEST1")
-            $(".nav-sidebar li a[href^='#']").on('click', function(e) {
-            console.log("TEST")
-            // prevent default anchor click behavior
-            e.preventDefault();
-            
-            // store hash
-            $(".nav-sidebar li").removeClass("active");
-            var hash = this.hash;
-            $(this).parent().addClass("active");
-            
-            // animate
-            $('html, body').animate({
-            scrollTop: $(this.hash).offset().top-60
-            }, 300, function(){
-            
-            
-            // when done, add hash to url
-            // (default click behaviour)
-            window.location.hash = hash;
-            });
-            
-            });//end nav element selector
+                
+                console.log("Document ready")
+                
+                $(".nav-sidebar li a[href^='#']").on('click', function(e) {
+                console.log("TEST")
+                // prevent default anchor click behavior
+                e.preventDefault();
+                
+                // store hash
+                $(".nav-sidebar li").removeClass("active");
+                var hash = this.hash;
+                $(this).parent().addClass("active");
+                
+                // animate
+                $('html, body').animate({
+                    scrollTop: $(this.hash).offset().top-60
+                    }, 300, function(){
+                    
+                    
+                    // when done, add hash to url
+                    // (default click behaviour)
+                    window.location.hash = hash;
+                    });
+                
+                });//end nav element selector
+                
             
             });//end document.ready
     </script>
+    <script type="text/javascript">
+    //    $( document ).ready(function() {
+    //    
+    //        
+    </script>    
 
+    
 {% endblock %}
