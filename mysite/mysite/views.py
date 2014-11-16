@@ -266,8 +266,13 @@ def gen_appraisal_page(request):
   if 'pid' in request.GET: #All correct vars exist load page
     pid = request.GET.get('pid','')  
     r = PrevHomeSales.objects.get(id=pid)
-
-
+    subject_interior_rating_display = "Unknown"
+    if r.interior_rating == 1 or r.interior_rating == 2:
+        subject_interior_rating_display = "Poor"
+    if r.interior_rating == 3:
+        subject_interior_rating_display = "Average"
+    if r.interior_rating == 4 or r.interior_rating == 5:
+        subject_interior_rating_display = "Excellent"
     print "Target home image url as exists in DB: %s" % (r.image_url)
     if r.image_url == None or r.image_url == '':
       r.image_url = nearby_image(r.latitude, r.longitude)
@@ -329,6 +334,7 @@ def gen_appraisal_page(request):
 		  'search_results.html',
 		  {'result': app_data,
 		   'subject_home': r,
+           'subject_home_interior_rating': subject_interior_rating_display,
 		   'instagram_r': instagram_r,
 		   'yelp_r': yelp_r,
 		   'twitter_r': twitter_r,
@@ -341,7 +347,7 @@ def gen_appraisal_page(request):
 
 def biggest_dissimilarity_factor(home, subject_home):
 	distance = distance_on_unit_sphere(float(home.latitude), float(home.longitude), float(subject_home.latitude), float(home.longitude))
- 	factors = [10 * abs(home.sqft - subject_home.sqft), 800 * abs(float(home.baths) - float(subject_home.baths)), 50 * distance]
+ 	factors = [10 * abs(home.sqft - subject_home.sqft), 80 * abs(float(home.baths) - float(subject_home.baths)), 200 * distance]
 	factor_names = ["Difference in Sqft","Difference in number of baths","Distance from subject property"]
 	return factor_names[factors.index(max(factors))]
 
@@ -349,14 +355,13 @@ def biggest_dissimilarity_factor(home, subject_home):
 
 def home_similarity(home, subject_home):
 	distance = distance_on_unit_sphere(float(home.latitude), float(home.longitude), float(subject_home.latitude), float(home.longitude))
- 	return 10 * abs(home.sqft - subject_home.sqft) + 800 * abs(float(home.baths) - float(subject_home.baths)) + 50 * distance #+ 10 * abs(home.year_built - subject_home.year_built)
+ 	return 10 * abs(home.sqft - subject_home.sqft) + 80 * abs(float(home.baths) - float(subject_home.baths)) + 200 * distance #+ 10 * abs(home.year_built - subject_home.year_built)
 
 
-def gen_appraisal(subject_home):
+def get_candidates(subject_home):
   use_interior_rating = False
   if subject_home.interior_rating:
     use_interior_rating = True
-  data = {}
   city = subject_home.city
   beds = subject_home.beds
   baths = subject_home.baths
@@ -366,7 +371,6 @@ def gen_appraisal(subject_home):
   min_sqft = sqft * 0.7
   max_sqft = sqft * 1.3
   last_sale_date_threshold = "2014-01-01"
-  #TODO make sure to not fetch the subject home itself.
   if use_interior_rating:
     if subject_home.interior_rating == 3:
       comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
@@ -385,8 +389,21 @@ def gen_appraisal(subject_home):
     comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
     baths__lte=max_baths, baths__gte=min_baths,
     sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,property_type__exact=subject_home.property_type).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active")
-   
+  return comp_candidates
+
+
+def gen_appraisal(subject_home):
+  data = {}
+  #TODO make sure to not fetch the subject home itself.
+  interior_rating_display_map = {} 
+  interior_rating_display_map[1] = "Poor"
+  interior_rating_display_map[2] = "Poor"
+  interior_rating_display_map[3] = "Average"
+  interior_rating_display_map[4] = "Excellent"
+  interior_rating_display_map[5] = "Excellent"
   h = []
+
+  comp_candidates = get_candidates(subject_home)
   if len(comp_candidates) < 3:
      return data
   data["number_of_homes_used"] = len(comp_candidates)
@@ -410,6 +427,11 @@ def gen_appraisal(subject_home):
     except TypeError:
       pass
     data['home' + str(i)] = model_to_dict(home)
+    if home.interior_rating:
+      data['home' + str(i)]['display_interior_rating'] = interior_rating_display_map.get(home.interior_rating)
+    else:
+      data['home' + str(i)]['display_interior_rating'] = "Unknown"
+
     data['similarity' + str(i)] = 100/(1.0+sim_score/100)
     dist = distance_on_unit_sphere(float(subject_home.latitude),float(subject_home.longitude),float(home.latitude),float(home.longitude))
     dist = "{0:.2f}".format(round(dist,2))
@@ -463,22 +485,13 @@ def distance_on_unit_sphere(lat1, long1, lat2, long2):
     # in your favorite set of units to get length.
     return 3960*arc
 def get_recent_sales(subject_home):
-  city = subject_home.city
-  beds = subject_home.beds
-  baths = subject_home.baths
-  sqft = subject_home.sqft
-  min_baths = Decimal(baths) - Decimal(0.5)
-  max_baths = Decimal(baths) + Decimal(0.5)
-  min_sqft = sqft * 0.7
-  max_sqft = sqft * 1.3
-  last_sale_date_threshold = "2014-01-01"
   h = []
-  comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds, baths__lte=max_baths, baths__gte=min_baths, sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(curr_status__exact="active")
+  comp_candidates = get_candidates(subject_home)
   for c in comp_candidates:
     sim_score = home_similarity(c,subject_home)
     comp_house = model_to_dict(c)
-    comp_house["sim_score"] = 1/(1.0 + float(sim_score/100))
-    sim_score = "{0:.2f}".format(round(sim_score,2))
+    comp_house["sim_score"] = int(100/(1.0 + sim_score/100))
+    #sim_score = "{0:.2f}".format(round(sim_score,2))
     dist = distance_on_unit_sphere(float(subject_home.latitude),float(subject_home.longitude),float(c.latitude),float(c.longitude))
     dist = "{0:.2f}".format(round(dist,2))
     comp_house["distance"] = dist
