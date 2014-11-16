@@ -87,12 +87,12 @@ def nearby_foursquare(latitude, longitude, radius=rdist):
     #totaluserCount = response.get('venues')[0]
     #print totaluserCount
     #actual_venues = response.get('venues')[2:len(response.get('venues'))]#skips the first response which is always meta data
-    print response
+    #print response
     for i in response.get('venues'): 
         fsvenue = {}
         userCount = i.get('stats').get('usersCount')
         if userCount > 30:
-            print i
+            #print i
             fsvenue['name'] = i.get('name')
             fsvenue['usersCount'] = userCount
             fsvenue['checkinsCount'] = i.get('stats').get('checkinsCount')
