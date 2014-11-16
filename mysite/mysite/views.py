@@ -301,7 +301,6 @@ def gen_appraisal_page(request):
     recent_sales_table = RecentSalesTable(recent_sales)
     RequestConfig(request).configure(recent_sales_table)
     
-    print "xxxxx appraisal data:"
     print app_data
     
     try:
@@ -390,6 +389,7 @@ def gen_appraisal(subject_home):
   h = []
   if len(comp_candidates) < 3:
      return data
+  data["number_of_homes_used"] = len(comp_candidates)
   for c in comp_candidates:
     sim_score = home_similarity(c,subject_home)
     heapq.heappush(h,(sim_score,c))

@@ -40,7 +40,7 @@
           
         <h3>{% if result.estimated_price %}EazyHouz Estimate: ${% endif %}
         {{result.estimated_price | intdiv:1 |floatformat:"0"|intcomma}}</h3>
-	    <p><strong>Based on closest comparables adjusted sale price:</strong>
+      <p><strong>Based on {{ result.number_of_homes_used }} closest comparables adjusted sale price:</strong>
 		{% if subject_home.last_zestimate %}
 		<br>Zestimate: <strong>${{ subject_home.last_zestimate | intcomma }}</strong>
 		{% endif %}
