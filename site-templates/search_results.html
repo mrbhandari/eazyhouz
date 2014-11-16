@@ -111,9 +111,11 @@
             {{result.estimated_price | intdiv:1 |floatformat:"0"|intcomma}}
             {% endif %}
         </h3>
-		{% if subject_home.last_zestimate %}
-		<br>Zestimate: <strong>${{ subject_home.last_zestimate | intcomma }}</strong>
-		{% endif %}
+        <p><strong>Based on {{ result.number_of_homes_used }} closest comparables adjusted sale price:</strong>
+
+            {% if subject_home.last_zestimate %}
+            <br>Zestimate: <strong>${{ subject_home.last_zestimate | intcomma }}</strong>
+            {% endif %}
         
         <br><br>  
           
@@ -299,10 +301,10 @@
                 </tr>
                 <tr>
                   <td>Interior Rating</td>
-                  <td>{{subject_home.interior_rating| intdiv:1 |floatformat:"0"|intcomma}}/5</td>
-                  <td>{{result.home1.interior_rating| intdiv:1 |floatformat:"0"|intcomma}}/5</td>
-                  <td>{{result.home2.interior_rating| intdiv:1 |floatformat:"0"|intcomma}}/5</td>
-                  <td>{{result.home3.interior_rating| intdiv:1 |floatformat:"0"|intcomma}}/5</td> 
+                  <td>{{subject_home_interior_rating}}</td>
+                  <td>{{result.home1.display_interior_rating}}</td>
+                  <td>{{result.home2.display_interior_rating}}</td>
+                  <td>{{result.home3.display_interior_rating}}</td> 
                 </tr>
                 <tr class="warning">
                   <td>Similarity Score</td>
@@ -375,7 +377,7 @@
         <p>
             Know the values for a broader set of recent sales in the
             neighborhood. Ranked by our proprietary Similarity Score (higher is
-            more similar). The average (at the top) give you an idea if
+            more similar). The average (at the top) gives you an idea if
             the home is reasonably priced for its size, condition, and area. 
         </p>
         <div class="table-responsive"> <!--Recent sales table-->
