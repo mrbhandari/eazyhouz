@@ -11,11 +11,7 @@
 
 
 <style>
-    .icon-github {
-    background: no-repeat url('../img/github-16px.png');
-    width: 16px;
-    height: 16px;
-    }
+
     
     .bootstrap-tagsinput { width: 100%; }
     
@@ -27,6 +23,12 @@
             border: none;
     }
     
+    .twitter-typeahead {
+        display: inline;
+        position: relative;
+        display: inline;
+        direction: ltr;
+    }
     .twitter-typeahead .tt-query,
     .twitter-typeahead .tt-hint {
       margin-bottom: 0;
@@ -34,8 +36,10 @@
     
     .twitter-typeahead .tt-hint
     {
-        display: none;
+        display: inline;
     }
+    
+
     
     .tt-dropdown-menu {
       position: absolute;
@@ -74,6 +78,7 @@
       outline: 0;
       background-color: #428bca;
     }
+    
 </style>
 <body>
 
@@ -89,6 +94,7 @@
         <!--<li><a href="#ask_sell">Asking vs Selling Prices*</a></li>
             <li><a href="#">Home's Sales History*</a></li>-->
             <li><a href="#market_temp">Market Temperature*</a></li>
+            <li><a href="#improve_estimate">Improve Your Estimate*</a></li>
           </ul>
           <ul class="nav nav-sidebar">
             <!--<li><a>Local Scoop</a></li>-->
@@ -111,7 +117,7 @@
             {{result.estimated_price | intdiv:1 |floatformat:"0"|intcomma}}
             {% endif %}
         </h3>
-        <p><strong>Based on {{ result.number_of_homes_used }} closest comparables adjusted sale price:</strong>
+        <p><strong>Closest comparables selected from {{ result.number_of_homes_used }} homes:</strong>
 
             {% if subject_home.last_zestimate %}
             <br>Zestimate: <strong>${{ subject_home.last_zestimate | intcomma }}</strong>
@@ -142,66 +148,13 @@
               <span class="text-muted">Comparable #3<br>Last Sale Price: ${{result.home3.sale_price | intcomma}}</span>
             </div>
           </div> <!--images row-->
-        <h5>DEMO Only: Start typing to improve the estimate. Tell us about this house (e.g., pool, kitchen to see options)</h5>
-        <div class="bs-example">
-            <form role="form" class="form-inline">
-                <input data-role="tagsinput" class="bootstrap-tagsinput" name="q" autocomplete="off" id="tagtest" type="text" >
-                    <!--<button type="submit" class="btn btn-default">Submit</button>-->
-            </form>
-        </div>          
+
         
 
         
-            
-            <script>
-        Number.prototype.formatMoney = function(c, d, t){
-        var n = this, 
-        c = isNaN(c = Math.abs(c)) ? 2 : c, 
-        d = d == undefined ? "." : d, 
-        t = t == undefined ? "," : t, 
-        s = n < 0 ? "-" : "", 
-        i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
-        j = (j = i.length) > 3 ? j % 3 : 0;
-       return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
-     };
-         $('#tagtest').tagsinput({
-            typeahead: {
-                local: ['Carpet flooring - new','Hardwood flooring - New', 'Walls  - Stained', 'Walls - Freshly Painted', 'Natural lighting', 'Water damage', 'Fireplace - gas',
-                        'Fireplace - woodburning', 'Stairs - creeky', 'Closet - walk-in', 'Closet - his/hers', 'Granite counters in kitchen', 'Stainless steel appliances in kitchen',
-                        'Island kitchen', 'Eating area or breakfast nook', 'Basement - finished', 'Basement - not enough head room', 'Basement - signs of water damage', 'Garage -1 car',
-                        'Garage - 2 car', 'Garage - 3 car', 'Driveway - cracked', 'Garage - finished', 'Roof - needs replacing', 'Roof - no signs of leakage, discoloration',
-                        'Siding - brick', 'Siding - Vinyl', 'Siding - Wood', 'Siding - Aluminum', 'Windows - insulated', 'Windows - need replacing', 'Outdoor - landscaping',
-                        'Outdoor - swimming pool', 'Outdoor - garden', 'Outdoor - Wood deck', 'Outdoor - patio', 'Outdoor - lack of privacy', 'City view', 'Nature view',
-                        'Signs of pests', 'Good curb appeal', 'Exterior - good paint job', 'Exterior - Attractive landscaping', 'Exterior - Fence', 'Furnace - needs replacing',
-                        'Air Conditioning - needs replacing', 'Bathrooms - Renovated', 'Bathrooms - Need renovation', 'High ceilings', 'Loft', 'High noise level', 'Quiet',
-                        'East facing', 'central A/C', 'No central heating', 'Eat-in kitchen', 'Hardwood floors under carpet', 'Exterior: Auto sprinkler system', 'Single story', 'Remodeled', 'Shed',
-                        'Tennis court']
-            }
-          });
-        $('#tagtest').on('itemAdded', function(event) {
-                console.log("Increase value 10")
-                $('#eazy_estimate').text("EazyHouz Estimate: $ " +
-                ({{result.estimated_price}} + 10000*$('#tagtest').tagsinput('items').length).formatMoney(0, '.', ',')
-                )
-        });
-        $('#tagtest').on('itemRemoved', function(event) {
-                console.log("Decrease value 10")
-                $('#eazy_estimate').text("EazyHouz Estimate: $ " +
-                ({{result.estimated_price}} + 10000*$('#tagtest').tagsinput('items').length).formatMoney(0, '.', ',')
-                )
-        });
-    </script>
+
         
-<!--        <div class="bs-example">
-            <select multiple data-role="tagsinput">
-              <option value="Amsterdam">Amsterdam</option>
-              <option value="Washington">Washington</option>
-              <option value="Sydney">Sydney</option>
-              <option value="Beijing">Beijing</option>
-              <option value="Cairo">Cairo</option>
-            </select>
-        </div>
-        -->
+
         <h2 class="sub-header" id="estimate_explanation">Estimate Explanation</h2>
         <p>
             EazyHouz Estimate is based on the comparable homes that have
@@ -410,7 +363,19 @@
             <li>Don't expect a counteroffer</li>
             <li>Offer to close quickly</li>
             <li>Add a personal touch</li>
-        </ul></p>        
+        </ul></p>
+        
+        <h2 class="sub-header" id=improve_estimate>Improve your estimate*</h2>
+        
+        <h5>DEMO Only: Start typing to improve the estimate. Tell us about this house (e.g., pool, kitchen to see options)</h5>
+<!--        <div class="progress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+        </div>-->
+        <div class="bs-example">
+                <input data-role="tagsinput" class="bootstrap-tagsinput" name="q" autocomplete="off" id="tagtest" type="text">
+                    <!--<button type="submit" class="btn btn-default">Submit</button>-->
+        </div>                  
+        
         <h2 class="sub-header" id=foursquare>Foursquare within 1000m</h2>
         <p>
             Here's what people are checking into nearby sorted by our proprietary <u>Loyalty Score</u> which helps you understand how often people are coming back there.
@@ -561,11 +526,53 @@
             
             });//end document.ready
     </script>
-    <script type="text/javascript">
-    //    $( document ).ready(function() {
-    //    
-    //        
-    </script>    
+            
+            <script>
+        Number.prototype.formatMoney = function(c, d, t){
+        var n = this, 
+        c = isNaN(c = Math.abs(c)) ? 2 : c, 
+        d = d == undefined ? "." : d, 
+        t = t == undefined ? "," : t, 
+        s = n < 0 ? "-" : "", 
+        i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
+        j = (j = i.length) > 3 ? j % 3 : 0;
+       return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+     };
+         $('#tagtest').tagsinput({
+            typeahead: {
+                local: ['Carpet flooring - new','Hardwood flooring - New', 'Walls  - Stained', 'Walls - Freshly Painted', 'Natural lighting', 'Water damage', 'Fireplace - gas',
+                        'Fireplace - woodburning', 'Stairs - creeky', 'Closet - walk-in', 'Closet - his/hers', 'Granite counters in kitchen', 'Stainless steel appliances in kitchen',
+                        'Island kitchen', 'Eating area or breakfast nook', 'Basement - finished', 'Basement - not enough head room', 'Basement - signs of water damage', 'Garage -1 car',
+                        'Garage - 2 car', 'Garage - 3 car', 'Driveway - cracked', 'Garage - finished', 'Roof - needs replacing', 'Roof - no signs of leakage, discoloration',
+                        'Siding - brick', 'Siding - Vinyl', 'Siding - Wood', 'Siding - Aluminum', 'Windows - insulated', 'Windows - need replacing', 'Outdoor - landscaping',
+                        'Outdoor - swimming pool', 'Outdoor - garden', 'Outdoor - Wood deck', 'Outdoor - patio', 'Outdoor - lack of privacy', 'City view', 'Nature view',
+                        'Signs of pests', 'Good curb appeal', 'Exterior - good paint job', 'Exterior - Attractive landscaping', 'Exterior - Fence', 'Furnace - needs replacing',
+                        'Air Conditioning - needs replacing', 'Bathrooms - Renovated', 'Bathrooms - Need renovation', 'High ceilings', 'Loft', 'High noise level', 'Quiet',
+                        'East facing', 'central A/C', 'No central heating', 'Eat-in kitchen', 'Hardwood floors under carpet', 'Exterior: Auto sprinkler system', 'Single story', 'Remodeled', 'Shed',
+                        'Tennis court']
+            }
+          });
+        $('#tagtest').on('itemAdded', function(event) {
+                console.log("Increase value 10")
+                $('#eazy_estimate').animate({
+                                    color: "#fff",
+                                    opacity:'0.5',
+                                  }, 400 );
+                $('#eazy_estimate').text("EazyHouz Estimate: $ " +
+                ({{result.estimated_price}} + 10000*$('#tagtest').tagsinput('items').length).formatMoney(0, '.', ',')
+                )
+                $('#eazy_estimate').animate({
+                                    color: "#333",
+                                    opacity:'1',
+                                  }, 400 );
+        });
+        $('#tagtest').on('itemRemoved', function(event) {
+                console.log("Decrease value 10")
+                $('#eazy_estimate').text("EazyHouz Estimate: $ " +
+                ({{result.estimated_price}} + 10000*$('#tagtest').tagsinput('items').length).formatMoney(0, '.', ',')
+                )
+        });
+    </script>
 
     
 {% endblock %}
