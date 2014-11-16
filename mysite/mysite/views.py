@@ -9,6 +9,7 @@ import json
 from forms import *
 from zillowrequest import return_zhome_attr
 from django.forms.models import model_to_dict
+from django.db.models import Q
 import heapq
 from decimal import *
 from social_data import nearby_insta, nearby_yelp, nearby_twitter, nearby_foursquare, nearby_eventful, nearby_image
@@ -489,17 +490,18 @@ def get_recent_sales(subject_home):
 
 
 def gen_best_value_search(request):
-  list_of_zips = get_distinct_zipcodes_with_k_active_houses()
+  list_of_cities = get_distinct_cities_with_k_active_houses()
+  print list_of_cities
   #error = None
   #if 'error' in request.GET:
   #  error = request.GET.get('error','')
   return render_to_response('best_value_homes.html',
-                            {'zips':  list_of_zips})
+                            {'cities':  list_of_cities})
   
 
 
-def gen_best_value_res(request, zipcode):
-  best_homes = get_best_value_homes(zipcode, -10000, 10000)
+def gen_best_value_res(request, city):
+  best_homes = get_best_value_homes(city, -10000, 10000)
   
   #print "XXXXXXXXXXXXX Best Homes"
   #print best_homes
@@ -511,20 +513,20 @@ def gen_best_value_res(request, zipcode):
 			     'best_homes': best_homes,},
 			    RequestContext(request))
 
-def get_distinct_zipcodes():
-	return PrevHomeSales.objects.values_list('zipcode', flat=True).distinct()
+def get_distinct_cities():
+	return PrevHomeSales.objects.values_list('city', flat=True).distinct()
 
 
-def get_distinct_zipcodes_with_k_active_houses(k=3):
-	return PrevHomeSales.objects.filter(curr_status__exact="active").values('zipcode').annotate(total=Count('zipcode')).filter(total__gte=k)
+def get_distinct_cities_with_k_active_houses(k=3):
+	return PrevHomeSales.objects.filter(curr_status__exact="active").values('city').annotate(total=Count('city')).filter(total__gte=k)
 
 
-def get_best_value_homes(zipcode, low_percent, high_percent, multiplier = 1):
-	all_homes_in_zip = PrevHomeSales.objects.filter(curr_status__exact="active",zipcode__exact=zipcode)
+def get_best_value_homes(city, low_percent, high_percent, multiplier = 1):
+	all_homes_in_city = PrevHomeSales.objects.filter(curr_status__exact="active",city__exact=city)
 	best_homes = []
 	h = []
 	ctr = 0
-	for home in all_homes_in_zip:
+	for home in all_homes_in_city:
 		data = gen_appraisal(home)
 		list_price = home.sale_price
 		predicted_price = data.get("estimated_price")

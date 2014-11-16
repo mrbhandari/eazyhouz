@@ -37,14 +37,14 @@
                     </p>
                     <br>
                     <p>
-                        Click on your zipcode below:
+                        Click on your city below:
                     </p>
                     <div class="table-responsive"> <!--Twitter view-->
                         <table class="table table-striped">
                             <tbody>
-                                {% for r in zips %}
+                                {% for r in cities %}
                                     {% cycle '<tr>' '' '' '' %}
-                                    <td><a href="search/{{r.zipcode}}">{{ r.zipcode }}</a> ({{r.total}} homes)</td>
+                                    <td><a href="search/{{r.city}}">{{ r.city }}</a> ({{r.total}} homes)</td>
                                     {% cycle '' '' '' '</tr>' %}
                                 {% endfor %}
                             </tbody>

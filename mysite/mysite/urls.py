@@ -18,7 +18,7 @@ urlpatterns = patterns('',
                        (r'^home/$', gen_homepage),
                        (r'^home/search/$', more_info_page),
                        (r'^best-value-homes/$', gen_best_value_search),
-                       (r'^best-value-homes/search/(?P<zipcode>\d{5})', gen_best_value_res),
+                       (r'^best-value-homes/search/(?P<city>.*)', gen_best_value_res),
                        (r'^home/genappraisal/$', gen_appraisal_page),
                        (r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow:", content_type="text/plain"))
 )
