@@ -282,26 +282,29 @@ def gen_appraisal_page(request):
     
     recent_sales = get_recent_sales(r)
 
-    try:    
-      total_sale_price, total_sqft, total_year_built, total_sim_score = 0, 0, 0, 0
-      for i in recent_sales:
-	total_sale_price = i.get('sale_price') + total_sale_price
-	total_sqft = i.get('sqft') + total_sqft
-	#total_year_built = i.get('year_built') + total_year_built
-	#total_sim_score = i.get('sim_score') +total_sim_score
-	
-      n = len(recent_sales)
-      average_recent_sales = {}
-      average_recent_sales['sale_price'] = total_sale_price/n
-      average_recent_sales['sqft'] = total_sqft/n
-      average_recent_sales['year_built'] = '--'
-      average_recent_sales['sim_score'] = '--'
-      average_recent_sales['address'] = "Average"
-      
-      recent_sales.insert(0, average_recent_sales)
-      print "here are the averages for recent sales %s, %s, %s" % (total_sale_price/n, total_year_built/n, total_sim_score/n)
-    except (ZeroDivisionError, TypeError), e:
-      print "could not find any recent sales, %s" % e
+#    try:    
+#      total_sale_price, total_sqft, total_year_built, total_sim_score = 0, 0, 0, 0
+#      for i in recent_sales:
+#	total_sale_price = i.get('sale_price') + total_sale_price
+#	total_sqft = i.get('sqft') + total_sqft
+#	#total_year_built = i.get('year_built') + total_year_built
+#	#total_sim_score = i.get('sim_score') +total_sim_score
+#	
+#      n = len(recent_sales)
+#      average_recent_sales = {}
+#      average_recent_sales['sale_price'] = total_sale_price/n
+#      average_recent_sales['sqft'] = total_sqft/n
+#      average_recent_sales['year_built'] = '--'
+#      average_recent_sales['sim_score'] = '--'
+#      average_recent_sales['address'] = "Average"
+#      
+      #recent_sales.insert(0, average_recent_sales)
+      #print "here are the averages for recent sales %s, %s, %s" % (total_sale_price/n, total_year_built/n, total_sim_score/n)
+    #except (ZeroDivisionError, TypeError), e:
+    #  print "could not find any recent sales, %s" % e
+    
+    print "XXXXXX"
+    print recent_sales
     
     recent_sales_table = RecentSalesTable(recent_sales)
     RequestConfig(request).configure(recent_sales_table)
@@ -318,7 +321,11 @@ def gen_appraisal_page(request):
     eventful_r, instagram_r, yelp_r, foursquare_r, twitter_r = {}, {}, {}, {}, {}
     
     instagram_r = nearby_insta(r.latitude, r.longitude)
-    yelp_r = nearby_yelp(r.latitude, r.longitude)
+    try:
+      yelp_r = nearby_yelp(r.latitude, r.longitude)
+    except:
+      pass
+      
     twitter_r = nearby_twitter(r.latitude, r.longitude)
     foursquare_r = nearby_foursquare(r.latitude, r.longitude)
     foursquare_table = FoursquareTable(foursquare_r)
@@ -341,6 +348,7 @@ def gen_appraisal_page(request):
 		   'foursquare_r': foursquare_r,
 		   'table': foursquare_table,
 		   'recent_sales_table': recent_sales_table,
+		   'recent_sales': recent_sales,
 		   'eventful_r': eventful_r,
 		   },
 		  RequestContext(request))
