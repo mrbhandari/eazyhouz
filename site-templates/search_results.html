@@ -268,10 +268,16 @@
         <h2 class="sub-header" id="recent_sales">Other Recent Sales</h2>
         <p>
             Know the values for a broader set of recent sales in the
-            neighborhood. Ranked by our proprietary Similarity Score (higher is
-            more similar). The average (at the top) gives you an idea if
-            the home is reasonably priced for its size, condition, and area. 
+            neighborhood. Ranked by our proprietary Similarity Score which
+            ranges from 0 to 100 (higher is more similar). Select your own homes
+            to get an idea if the home is reasonably priced for its size,
+            condition, and area. We've already select the 3 most similar homes
+            for you.
         </p>
+        
+        <h3>
+            Average sales price of selected homes: $<span id='recent_sales_est'></span>
+        </h3>
         <div class="table-responsive"> <!--Recent sales table-->
             <table id='recent_sales_table' class='table table-striped table-bordered'>
               <thead>
@@ -282,6 +288,7 @@
                   <th>Beds</th>
                   <th>Distance (mi)</th>
                   <th>Sqft</th>
+                  <th>Price/sqft</th>
                   <th>Similarity Score</th>
                   <th>Reason Excluded</th>
                 </tr>
@@ -294,18 +301,19 @@
                 </tr>
               </tfoot>
               
-              <tbody>
+              <tbody style="text-align: right">
                 
-                    {% for r in  recent_sales %}
+                    {% for r in recent_sales %}
                     <tr>
-                        <td><a href="/home/genappraisal/?pid={{ r.id }}">{{r.address}}</a></td>
+                        <td style="text-align: left"><a href="/home/genappraisal/?pid={{ r.id }}">{{r.address}}</a></td>
                         <td>{{r.last_sale_date}}</td>
                         <td>${{r.sale_price | intcomma}}</td>
                         <td>{{r.beds}}</td>
                         <td>{{r.distance}}</td>
                         <td>{{r.sqft | intcomma}}</td>
+                        <td>${{r.psft | intcomma}}</td>
                         <td>{{r.sim_score}}</td>
-                        <td>{{r.reason_excluded}}</td>
+                        <td style="text-align: left">{{r.reason_excluded}}</td>
                     </tr>
                     {% endfor %}
                 
@@ -482,6 +490,17 @@ u'http://101.mlsimages.movoto.com/074/21405074_0.jpg', 'home_type': None}, -->
 </body>
 
     <script>
+                Number.prototype.formatMoney = function(c, d, t){
+        var n = this, 
+        c = isNaN(c = Math.abs(c)) ? 2 : c, 
+        d = d == undefined ? "." : d, 
+        t = t == undefined ? "," : t, 
+        s = n < 0 ? "-" : "", 
+        i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
+        j = (j = i.length) > 3 ? j % 3 : 0;
+       return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+     };
+     
             $( document ).ready(function() {
                 
                 console.log("Document ready")
@@ -509,7 +528,8 @@ u'http://101.mlsimages.movoto.com/074/21405074_0.jpg', 'home_type': None}, -->
                 
                 });//end nav element selector
                 
-                //$('#recent_sales_table tbody tr').addClass('active')
+                //select first three rows
+                
                 
                 // Remove the formatting to get integer data for summation
                 var intVal = function ( i ) {
@@ -521,65 +541,72 @@ u'http://101.mlsimages.movoto.com/074/21405074_0.jpg', 'home_type': None}, -->
                 
                  var table = $('#recent_sales_table').DataTable({
                     "paging": false,
-                     "footerCallback": function ( row, data, start, end, display ) {
-                        var api = this.api(), data;
-             
-                        
-
-             
-                        // Total over all pages
-                        total = api
-                            .column( 2 )
-                            .data()
-                            .reduce( function (a, b) {
-                                return intVal(a) + intVal(b);
-                            } );
-             
-                        // Total over this page
-                        pageTotal = api
-                            .column( 2, { page: 'current'} )
-                            .data()
-                            .reduce( function (a, b) {
-                                return intVal(a) + intVal(b);
-                            }, 0 );
-             
-                        // Update footer
-                        $( api.column( 1 ).footer() ).html(
-                            'Average Sale Price: $' + (total/(data.length)).toFixed(0) 
-                        );
-                    }
+                    "order": [[ 7, "desc" ]],
+                    
+                    //"footerCallback": function ( row, data, start, end, display ) {
+                    //    var api = this.api(), data;
+                    //
+                    //    
+                    //
+                    //
+                    //    // Total over all pages
+                    //    total = api
+                    //        .column( 2 )
+                    //        .data()
+                    //        .reduce( function (a, b) {
+                    //            return intVal(a) + intVal(b);
+                    //        } );
+                    //
+                    //    // Total over this page
+                    //    pageTotal = api
+                    //        .column( 2, { page: 'current'} )
+                    //        .data()
+                    //        .reduce( function (a, b) {
+                    //            return intVal(a) + intVal(b);
+                    //        }, 0 );
+                    //
+                    //    // Update footer
+                    //    $( api.column( 1 ).footer() ).html(
+                    //        'Average Sale Price: $' + (total/(data.length)).toFixed(0) 
+                    //    );
+                    //}
                     
                  });
- 
+                
+                var get_average = function(x){
+                    var sum_prices = 0
+                    var arrayLength = x.length;
+                    for (var i = 0; i < arrayLength; i++) {
+                        sum_prices += intVal(x[i][2])
+                    }
+                    average_price = (sum_prices / arrayLength).formatMoney(0, '.', ',')
+                    
+                    //catch if there is no data for this
+                    if (average_price !== average_price) {
+                        average_price = 'na'
+                    }
+                    
+                    return average_price
+                }
+                var tabled = $('#recent_sales_table').DataTable()
                 $('#recent_sales_table tbody').on( 'click', 'tr', function () {
                     $(this).toggleClass('active');
-                    rows_selected = table.rows('.active').data().length 
-                    //alert( rows_selected +' row(s) selected' );
-                    footer_val = rows_selected
-                    //$( $('#recent_sales_table').dataTable().api().column(2).footer() ).html(footer_val);
+                    console.log( tabled.rows('.active').data().length +' row(s) selected' );
+                    selected_items = tabled.rows('.active').data()
+                    all_items = tabled.rows().data()
+                    footer_sel_val = get_average(selected_items)
+                    footer_all_val = get_average(all_items)
+                    $( $('#recent_sales_table').dataTable().api().column(2).footer() ).html(
+                        'Average for ' + selected_items.length +' selected homes: $' + footer_sel_val + '<br>(Overall average: $'+ footer_all_val +')'
+                                                                                            );
+                    $('#recent_sales_est').text(footer_sel_val)
                 } );
+                $('#recent_sales_table tbody').children('tr:lt(3)').click()
              
-                $('#avg_button').click( function () {
-                    console.log (table.column(2).data());
-                    alert( table.rows('.active').data().length +' row(s) selected' );
-                    footer_val = 'blah'
-                    $( $('#recent_sales_table').dataTable().api().column(2).footer() ).html(footer_val);
-                } );
             
             });//end document.ready
-    </script>
-            
-            <script>
-        Number.prototype.formatMoney = function(c, d, t){
-        var n = this, 
-        c = isNaN(c = Math.abs(c)) ? 2 : c, 
-        d = d == undefined ? "." : d, 
-        t = t == undefined ? "," : t, 
-        s = n < 0 ? "-" : "", 
-        i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
-        j = (j = i.length) > 3 ? j % 3 : 0;
-       return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
-     };
+
+
          $('#tagtest').tagsinput({
             typeahead: {
                 local: ['Carpet flooring - new','Hardwood flooring - New', 'Walls  - Stained', 'Walls - Freshly Painted', 'Natural lighting', 'Water damage', 'Fireplace - gas',

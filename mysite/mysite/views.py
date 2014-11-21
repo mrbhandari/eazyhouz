@@ -282,26 +282,16 @@ def gen_appraisal_page(request):
     
     recent_sales = get_recent_sales(r)
 
-#    try:    
-#      total_sale_price, total_sqft, total_year_built, total_sim_score = 0, 0, 0, 0
-#      for i in recent_sales:
-#	total_sale_price = i.get('sale_price') + total_sale_price
-#	total_sqft = i.get('sqft') + total_sqft
-#	#total_year_built = i.get('year_built') + total_year_built
-#	#total_sim_score = i.get('sim_score') +total_sim_score
-#	
-#      n = len(recent_sales)
-#      average_recent_sales = {}
-#      average_recent_sales['sale_price'] = total_sale_price/n
-#      average_recent_sales['sqft'] = total_sqft/n
-#      average_recent_sales['year_built'] = '--'
-#      average_recent_sales['sim_score'] = '--'
-#      average_recent_sales['address'] = "Average"
-#      
-      #recent_sales.insert(0, average_recent_sales)
-      #print "here are the averages for recent sales %s, %s, %s" % (total_sale_price/n, total_year_built/n, total_sim_score/n)
-    #except (ZeroDivisionError, TypeError), e:
-    #  print "could not find any recent sales, %s" % e
+    try:    
+      psft = 'na'
+      for i in recent_sales:
+	total_sale_price = i.get('sale_price') 
+	total_sqft = i.get('sqft')
+	psft = int(total_sale_price / total_sqft)
+	indexof = recent_sales.index(i)
+	recent_sales[indexof]['psft'] = psft
+    except ZeroDivisionError:
+      pass
     
     print "XXXXXX"
     print recent_sales
@@ -309,7 +299,7 @@ def gen_appraisal_page(request):
     recent_sales_table = RecentSalesTable(recent_sales)
     RequestConfig(request).configure(recent_sales_table)
     
-    print app_data
+    #print app_data
     
     try:
       result_objects= [app_data['home1'], app_data['home2'], app_data['home3']]
