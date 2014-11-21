@@ -223,7 +223,7 @@ pip install geopy
 #ALTER TABLE `medicare` ADD INDEX `hcpcs_code` (`hcpcs_code`);
 
 
-
+pip install django-leaflet
 
 
 

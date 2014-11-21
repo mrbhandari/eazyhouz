@@ -279,6 +279,8 @@ def gen_appraisal_page(request):
 
     app_data = gen_appraisal(r)
     
+    print app_data
+    
     
     recent_sales = get_recent_sales(r)
 
@@ -293,8 +295,6 @@ def gen_appraisal_page(request):
     except ZeroDivisionError:
       pass
     
-    print "XXXXXX"
-    print recent_sales
     
     recent_sales_table = RecentSalesTable(recent_sales)
     RequestConfig(request).configure(recent_sales_table)
@@ -454,7 +454,7 @@ def gen_appraisal(subject_home):
     num_months = diff_month(datetime.datetime.now(), home_sale_date)
     adjusted_home_value = data["home" + str(i)].get("sale_price") + sqft_adjustment
     time_adjustment = adjusted_home_value * (1.01)**num_months - adjusted_home_value
-    adjustment['Market adjustment'] = time_adjustment
+    adjustment['market_adjustment'] = time_adjustment
     data['adjusted_home_value' + str(i)] = adjusted_home_value + time_adjustment
     print num_months
     data['adjustment' + str(i)] = adjustment
