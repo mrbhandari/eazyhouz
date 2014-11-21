@@ -39,6 +39,8 @@ def nearby_yelp(latitude, longitude):
     ytoken_secret = 'z9pDq7T0Pa_CwfQOMmF1XM4dhhQ'
     max_yelp_radius = 10000
     
+    print YelpAPI(yconsumer_key, yconsumer_secret, ytoken, ytoken_secret)
+    
     yelp_api = YelpAPI(yconsumer_key, yconsumer_secret, ytoken, ytoken_secret)
     llvar = str(latitude) + ',' + str(longitude)
     

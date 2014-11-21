@@ -10,71 +10,14 @@
 <script src="{% static 'bootstrap-tagsinput/bootstrap-tagsinput.js' %}"></script>
 
 
-<style>
-    .icon-github {
-    background: no-repeat url('../img/github-16px.png');
-    width: 16px;
-    height: 16px;
-    }
-    
-    .bootstrap-tagsinput { width: 100%; }
-    
-    .accordion {
-            margin-bottom:-3px;
-    }
-    
-    .accordion-group { 
-            border: none;
-    }
-    
-    .twitter-typeahead .tt-query,
-    .twitter-typeahead .tt-hint {
-      margin-bottom: 0;
-    }
-    
-    .twitter-typeahead .tt-hint
-    {
-        display: none;
-    }
-    
-    .tt-dropdown-menu {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      z-index: 1000;
-      display: none;
-      float: left;
-      min-width: 160px;
-      padding: 5px 0;
-      margin: 2px 0 0;
-      list-style: none;
-      font-size: 14px;
-      background-color: #ffffff;
-      border: 1px solid #cccccc;
-      border: 1px solid rgba(0, 0, 0, 0.15);
-      border-radius: 4px;
-      -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-      background-clip: padding-box;
-    }
-    .tt-suggestion > p {
-      display: block;
-      padding: 3px 20px;
-      clear: both;
-      font-weight: normal;
-      line-height: 1.428571429;
-      color: #333333;
-      white-space: nowrap;
-    }
-    .tt-suggestion > p:hover,
-    .tt-suggestion > p:focus,
-    .tt-suggestion.tt-cursor p {
-      color: #ffffff;
-      text-decoration: none;
-      outline: 0;
-      background-color: #428bca;
-    }
-</style>
+<!-- DataTables CSS -->
+<!--<link rel="stylesheet" type="text/css" href="{% static 'DataTables-1.10.4/media/css/jquery.dataTables.css' %}">-->
+<link rel="stylesheet" type="text/css" href="{% static 'DataTables-1.10.4/dataTables.bootstrap.css' %}">
+
+<!-- DataTables -->
+<script type="text/javascript" charset="utf8" src="{% static 'DataTables-1.10.4/media/js/jquery.dataTables.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'DataTables-1.10.4/dataTables.bootstrap.js' %}"></script>
+
 <body>
 
 
@@ -89,6 +32,7 @@
         <!--<li><a href="#ask_sell">Asking vs Selling Prices*</a></li>
             <li><a href="#">Home's Sales History*</a></li>-->
             <li><a href="#market_temp">Market Temperature*</a></li>
+            <li><a href="#improve_estimate">Improve Your Estimate*</a></li>
           </ul>
           <ul class="nav nav-sidebar">
             <!--<li><a>Local Scoop</a></li>-->
@@ -111,7 +55,8 @@
             {{result.estimated_price | intdiv:1 |floatformat:"0"|intcomma}}
             {% endif %}
         </h3>
-        <p><strong>Based on {{ result.number_of_homes_used }} closest comparables adjusted sale price:</strong>
+        
+        <p><strong>Closest comparables selected from {{ result.number_of_homes_used }} homes:</strong></p>
 
             {% if subject_home.last_zestimate %}
             <br>Zestimate: <strong>${{ subject_home.last_zestimate | intcomma }}</strong>
@@ -142,66 +87,13 @@
               <span class="text-muted">Comparable #3<br>Last Sale Price: ${{result.home3.sale_price | intcomma}}</span>
             </div>
           </div> <!--images row-->
-        <h5>DEMO Only: Start typing to improve the estimate. Tell us about this house (e.g., pool, kitchen to see options)</h5>
-        <div class="bs-example">
-            <form role="form" class="form-inline">
-                <input data-role="tagsinput" class="bootstrap-tagsinput" name="q" autocomplete="off" id="tagtest" type="text" >
-                    <!--<button type="submit" class="btn btn-default">Submit</button>-->
-            </form>
-        </div>          
+
         
 
         
-            
-            <script>
-        Number.prototype.formatMoney = function(c, d, t){
-        var n = this, 
-        c = isNaN(c = Math.abs(c)) ? 2 : c, 
-        d = d == undefined ? "." : d, 
-        t = t == undefined ? "," : t, 
-        s = n < 0 ? "-" : "", 
-        i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
-        j = (j = i.length) > 3 ? j % 3 : 0;
-       return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
-     };
-         $('#tagtest').tagsinput({
-            typeahead: {
-                local: ['Carpet flooring - new','Hardwood flooring - New', 'Walls  - Stained', 'Walls - Freshly Painted', 'Natural lighting', 'Water damage', 'Fireplace - gas',
-                        'Fireplace - woodburning', 'Stairs - creeky', 'Closet - walk-in', 'Closet - his/hers', 'Granite counters in kitchen', 'Stainless steel appliances in kitchen',
-                        'Island kitchen', 'Eating area or breakfast nook', 'Basement - finished', 'Basement - not enough head room', 'Basement - signs of water damage', 'Garage -1 car',
-                        'Garage - 2 car', 'Garage - 3 car', 'Driveway - cracked', 'Garage - finished', 'Roof - needs replacing', 'Roof - no signs of leakage, discoloration',
-                        'Siding - brick', 'Siding - Vinyl', 'Siding - Wood', 'Siding - Aluminum', 'Windows - insulated', 'Windows - need replacing', 'Outdoor - landscaping',
-                        'Outdoor - swimming pool', 'Outdoor - garden', 'Outdoor - Wood deck', 'Outdoor - patio', 'Outdoor - lack of privacy', 'City view', 'Nature view',
-                        'Signs of pests', 'Good curb appeal', 'Exterior - good paint job', 'Exterior - Attractive landscaping', 'Exterior - Fence', 'Furnace - needs replacing',
-                        'Air Conditioning - needs replacing', 'Bathrooms - Renovated', 'Bathrooms - Need renovation', 'High ceilings', 'Loft', 'High noise level', 'Quiet',
-                        'East facing', 'central A/C', 'No central heating', 'Eat-in kitchen', 'Hardwood floors under carpet', 'Exterior: Auto sprinkler system', 'Single story', 'Remodeled', 'Shed',
-                        'Tennis court']
-            }
-          });
-        $('#tagtest').on('itemAdded', function(event) {
-                console.log("Increase value 10")
-                $('#eazy_estimate').text("EazyHouz Estimate: $ " +
-                ({{result.estimated_price}} + 10000*$('#tagtest').tagsinput('items').length).formatMoney(0, '.', ',')
-                )
-        });
-        $('#tagtest').on('itemRemoved', function(event) {
-                console.log("Decrease value 10")
-                $('#eazy_estimate').text("EazyHouz Estimate: $ " +
-                ({{result.estimated_price}} + 10000*$('#tagtest').tagsinput('items').length).formatMoney(0, '.', ',')
-                )
-        });
-    </script>
+
         
-<!--        <div class="bs-example">
-            <select multiple data-role="tagsinput">
-              <option value="Amsterdam">Amsterdam</option>
-              <option value="Washington">Washington</option>
-              <option value="Sydney">Sydney</option>
-              <option value="Beijing">Beijing</option>
-              <option value="Cairo">Cairo</option>
-            </select>
-        </div>
-        -->
+
         <h2 class="sub-header" id="estimate_explanation">Estimate Explanation</h2>
         <p>
             EazyHouz Estimate is based on the comparable homes that have
@@ -376,15 +268,70 @@
         <h2 class="sub-header" id="recent_sales">Other Recent Sales</h2>
         <p>
             Know the values for a broader set of recent sales in the
-            neighborhood. Ranked by our proprietary Similarity Score (higher is
-            more similar). The average (at the top) gives you an idea if
-            the home is reasonably priced for its size, condition, and area. 
+            neighborhood. Ranked by our proprietary Similarity Score which
+            ranges from 0 to 100 (higher is more similar). Select your own homes
+            to get an idea if the home is reasonably priced for its size,
+            condition, and area. We've already select the 3 most similar homes
+            for you.
         </p>
+        
+        <h3>
+            Average sales price of selected homes: $<span id='recent_sales_est'></span>
+        </h3>
         <div class="table-responsive"> <!--Recent sales table-->
-        {% render_table recent_sales_table %}
+            <table id='recent_sales_table' class='table table-striped table-bordered'>
+              <thead>
+                <tr>
+                  <th>Address</th>
+                  <th>Last Sale Date</th>
+                  <th>Sale Price</th>
+                  <th>Beds</th>
+                  <th>Distance (mi)</th>
+                  <th>Sqft</th>
+                  <th>Price/sqft</th>
+                  <th>Similarity Score</th>
+                  <th>Reason Excluded</th>
+                </tr>
+              </thead>
+              
+              <tfoot>
+                <tr>
+                <th colspan="4" style="text-align:right">Total:</th>
+                <th></th>
+                </tr>
+              </tfoot>
+              
+              <tbody style="text-align: right">
+                
+                    {% for r in recent_sales %}
+                    <tr>
+                        <td style="text-align: left"><a href="/home/genappraisal/?pid={{ r.id }}">{{r.address}}</a></td>
+                        <td>{{r.last_sale_date}}</td>
+                        <td>${{r.sale_price | intcomma}}</td>
+                        <td>{{r.beds}}</td>
+                        <td>{{r.distance}}</td>
+                        <td>{{r.sqft | intcomma}}</td>
+                        <td>${{r.psft | intcomma}}</td>
+                        <td>{{r.sim_score}}</td>
+                        <td style="text-align: left">{{r.reason_excluded}}</td>
+                    </tr>
+                    {% endfor %}
+                
+              </tbody>
+            </table>
         </div>
         
-        
+<!--{'user_input': None, 'address': u'1150 W K St', 'high': None, 'middle': None,
+'lot_size': None, 'baths': Decimal('4.0'), 'elementary': None, 'property_type':
+u'Single Family Residence', u'id': 411483L, 'city': u'benicia',
+'last_zestimate': None, 'reason_excluded': 'Difference in Sqft', 'view_rating':
+None, 'remodeled': None, 'zipcode': u'94510', 'state': u'CA', 'curr_status':
+u'sold', 'sim_score': 9, 'latitude': Decimal('38.062527000'), 'sale_price':
+1389000L, 'last_sale_date': datetime.date(2014, 4, 5), 'exterior_rating': None,
+'interior_rating': None, 'distance': '1.89', 'year_built': None, 'url':
+u'http://www.movoto.com/benicia-ca/1150-w-k-st-benicia-ca-94510-101_21405074/',
+'sqft': 3357L, 'longitude': Decimal('-122.177795000'), 'beds': 4L, 'image_url':
+u'http://101.mlsimages.movoto.com/074/21405074_0.jpg', 'home_type': None}, -->
         
        
 
@@ -410,7 +357,19 @@
             <li>Don't expect a counteroffer</li>
             <li>Offer to close quickly</li>
             <li>Add a personal touch</li>
-        </ul></p>        
+        </ul></p>
+        
+        <h2 class="sub-header" id=improve_estimate>Improve your estimate*</h2>
+        
+        <h5>DEMO Only: Start typing to improve the estimate. Tell us about this house (e.g., pool, kitchen to see options)</h5>
+<!--        <div class="progress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+        </div>-->
+        <div class="bs-example">
+                <input data-role="tagsinput" class="bootstrap-tagsinput" name="q" autocomplete="off" id="tagtest" type="text">
+                    <!--<button type="submit" class="btn btn-default">Submit</button>-->
+        </div>                  
+        
         <h2 class="sub-header" id=foursquare>Foursquare within 1000m</h2>
         <p>
             Here's what people are checking into nearby sorted by our proprietary <u>Loyalty Score</u> which helps you understand how often people are coming back there.
@@ -531,6 +490,17 @@
 </body>
 
     <script>
+                Number.prototype.formatMoney = function(c, d, t){
+        var n = this, 
+        c = isNaN(c = Math.abs(c)) ? 2 : c, 
+        d = d == undefined ? "." : d, 
+        t = t == undefined ? "," : t, 
+        s = n < 0 ? "-" : "", 
+        i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
+        j = (j = i.length) > 3 ? j % 3 : 0;
+       return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+     };
+     
             $( document ).ready(function() {
                 
                 console.log("Document ready")
@@ -558,14 +528,120 @@
                 
                 });//end nav element selector
                 
+                //select first three rows
+                
+                
+                // Remove the formatting to get integer data for summation
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                    i.replace(/[\$,]/g, '')*1 :
+                    typeof i === 'number' ?
+                    i : 0;
+                    };
+                
+                 var table = $('#recent_sales_table').DataTable({
+                    "paging": false,
+                    "order": [[ 7, "desc" ]],
+                    
+                    //"footerCallback": function ( row, data, start, end, display ) {
+                    //    var api = this.api(), data;
+                    //
+                    //    
+                    //
+                    //
+                    //    // Total over all pages
+                    //    total = api
+                    //        .column( 2 )
+                    //        .data()
+                    //        .reduce( function (a, b) {
+                    //            return intVal(a) + intVal(b);
+                    //        } );
+                    //
+                    //    // Total over this page
+                    //    pageTotal = api
+                    //        .column( 2, { page: 'current'} )
+                    //        .data()
+                    //        .reduce( function (a, b) {
+                    //            return intVal(a) + intVal(b);
+                    //        }, 0 );
+                    //
+                    //    // Update footer
+                    //    $( api.column( 1 ).footer() ).html(
+                    //        'Average Sale Price: $' + (total/(data.length)).toFixed(0) 
+                    //    );
+                    //}
+                    
+                 });
+                
+                var get_average = function(x){
+                    var sum_prices = 0
+                    var arrayLength = x.length;
+                    for (var i = 0; i < arrayLength; i++) {
+                        sum_prices += intVal(x[i][2])
+                    }
+                    average_price = (sum_prices / arrayLength).formatMoney(0, '.', ',')
+                    
+                    //catch if there is no data for this
+                    if (average_price !== average_price) {
+                        average_price = 'na'
+                    }
+                    
+                    return average_price
+                }
+                var tabled = $('#recent_sales_table').DataTable()
+                $('#recent_sales_table tbody').on( 'click', 'tr', function () {
+                    $(this).toggleClass('active');
+                    console.log( tabled.rows('.active').data().length +' row(s) selected' );
+                    selected_items = tabled.rows('.active').data()
+                    all_items = tabled.rows().data()
+                    footer_sel_val = get_average(selected_items)
+                    footer_all_val = get_average(all_items)
+                    $( $('#recent_sales_table').dataTable().api().column(2).footer() ).html(
+                        'Average for ' + selected_items.length +' selected homes: $' + footer_sel_val + '<br>(Overall average: $'+ footer_all_val +')'
+                                                                                            );
+                    $('#recent_sales_est').text(footer_sel_val)
+                } );
+                $('#recent_sales_table tbody').children('tr:lt(3)').click()
+             
             
             });//end document.ready
+
+
+         $('#tagtest').tagsinput({
+            typeahead: {
+                local: ['Carpet flooring - new','Hardwood flooring - New', 'Walls  - Stained', 'Walls - Freshly Painted', 'Natural lighting', 'Water damage', 'Fireplace - gas',
+                        'Fireplace - woodburning', 'Stairs - creeky', 'Closet - walk-in', 'Closet - his/hers', 'Granite counters in kitchen', 'Stainless steel appliances in kitchen',
+                        'Island kitchen', 'Eating area or breakfast nook', 'Basement - finished', 'Basement - not enough head room', 'Basement - signs of water damage', 'Garage -1 car',
+                        'Garage - 2 car', 'Garage - 3 car', 'Driveway - cracked', 'Garage - finished', 'Roof - needs replacing', 'Roof - no signs of leakage, discoloration',
+                        'Siding - brick', 'Siding - Vinyl', 'Siding - Wood', 'Siding - Aluminum', 'Windows - insulated', 'Windows - need replacing', 'Outdoor - landscaping',
+                        'Outdoor - swimming pool', 'Outdoor - garden', 'Outdoor - Wood deck', 'Outdoor - patio', 'Outdoor - lack of privacy', 'City view', 'Nature view',
+                        'Signs of pests', 'Good curb appeal', 'Exterior - good paint job', 'Exterior - Attractive landscaping', 'Exterior - Fence', 'Furnace - needs replacing',
+                        'Air Conditioning - needs replacing', 'Bathrooms - Renovated', 'Bathrooms - Need renovation', 'High ceilings', 'Loft', 'High noise level', 'Quiet',
+                        'East facing', 'central A/C', 'No central heating', 'Eat-in kitchen', 'Hardwood floors under carpet', 'Exterior: Auto sprinkler system', 'Single story', 'Remodeled', 'Shed',
+                        'Tennis court']
+            }
+          });
+        $('#tagtest').on('itemAdded', function(event) {
+                console.log("Increase value 10")
+                $('#eazy_estimate').animate({
+                                    color: "#fff",
+                                    opacity:'0.5',
+                                  }, 400 );
+                $('#eazy_estimate').text("EazyHouz Estimate: $ " +
+                ({{result.estimated_price}} + 10000*$('#tagtest').tagsinput('items').length).formatMoney(0, '.', ',')
+                )
+                $('#eazy_estimate').animate({
+                                    color: "#333",
+                                    opacity:'1',
+                                  }, 400 );
+        });
+        $('#tagtest').on('itemRemoved', function(event) {
+                console.log("Decrease value 10")
+                $('#eazy_estimate').text("EazyHouz Estimate: $ " +
+                ({{result.estimated_price}} + 10000*$('#tagtest').tagsinput('items').length).formatMoney(0, '.', ',')
+                )
+        });
     </script>
-    <script type="text/javascript">
-    //    $( document ).ready(function() {
-    //    
-    //        
-    </script>    
 
     
 {% endblock %}
