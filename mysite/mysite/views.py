@@ -369,26 +369,30 @@ def get_candidates(subject_home):
   min_sqft = sqft * 0.7
   max_sqft = sqft * 1.3
   last_sale_date_threshold = "2014-01-01"
+  last_sale_date_max_threshold = subject_home.last_sale_date
   if use_interior_rating:
     if subject_home.interior_rating == 3:
       comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
       baths__lte=max_baths, baths__gte=min_baths,
-      sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,property_type__exact=subject_home.property_type,remodeled__exact=subject_home.remodeled,interior_rating__exact=subject_home.interior_rating).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active").exclude(interior_rating__isnull=True)
+      sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,last_sale_date__lt=last_sale_date_max_threshold,property_type__exact=subject_home.property_type,remodeled__exact=subject_home.remodeled,interior_rating__exact=subject_home.interior_rating).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active").exclude(interior_rating__isnull=True)
     if subject_home.interior_rating == 1:
       comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
       baths__lte=max_baths, baths__gte=min_baths,
-      sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,property_type__exact=subject_home.property_type,remodeled__exact=subject_home.remodeled).filter(Q(interior_rating__exact=1) | Q(interior_rating__exact=2)).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active").exclude(interior_rating__isnull=True)
+      sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,last_sale_date__lt=last_sale_date_max_threshold,property_type__exact=subject_home.property_type,remodeled__exact=subject_home.remodeled).filter(Q(interior_rating__exact=1) | Q(interior_rating__exact=2)).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active").exclude(interior_rating__isnull=True)
     if subject_home.interior_rating == 4:
       comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
       baths__lte=max_baths, baths__gte=min_baths,
-      sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,property_type__exact=subject_home.property_type,remodeled__exact=subject_home.remodeled).filter(Q(interior_rating__exact=4) | Q(interior_rating__exact=5)).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active").exclude(interior_rating__isnull=True)
+      sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,last_sale_date__lt=last_sale_date_max_threshold,property_type__exact=subject_home.property_type,remodeled__exact=subject_home.remodeled).filter(Q(interior_rating__exact=4) | Q(interior_rating__exact=5)).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active").exclude(interior_rating__isnull=True)
 
   else:
     comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
     baths__lte=max_baths, baths__gte=min_baths,
-    sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,property_type__exact=subject_home.property_type).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active")
+    sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,last_sale_date__lt=last_sale_date_max_threshold,property_type__exact=subject_home.property_type).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active")
   return comp_candidates
 
+
+def diff_month(d1, d2):
+  return (d1.year - d2.year)*12 + d1.month - d2.month
 
 def gen_appraisal(subject_home):
   data = {}
@@ -439,18 +443,36 @@ def gen_appraisal(subject_home):
     data["use_low_sim_homes"] = True
   else:
     avg_sqft_price /= k
-   
-  data['estimated_price'] = avg_sqft_price * subject_home.sqft
+  avg_sqft_price /= 2
+  #data['estimated_price'] = avg_sqft_price * subject_home.sqft
+  estimated_price = 0
   for i in range(1,k+1):
+    adjustment = {}
+    sqft_adjustment = avg_sqft_price * (subject_home.sqft - data['home'+str(i)]['sqft'])
+    adjustment['sqft'] = sqft_adjustment
+    home_sale_date = data['home' + str(i)]['last_sale_date']
+    num_months = diff_month(datetime.datetime.now(), home_sale_date)
+    adjusted_home_value = data["home" + str(i)].get("sale_price") + sqft_adjustment
+    time_adjustment = adjusted_home_value * (1.01)**num_months - adjusted_home_value
+    adjustment['Market adjustment'] = time_adjustment
+    data['adjusted_home_value' + str(i)] = adjusted_home_value + time_adjustment
+    print num_months
+    data['adjustment' + str(i)] = adjustment
     if use_low_sim_homes:
       if 1.1 * data['similarity' + str(i)] >= 100:
         data["home" + str(i)]["comp_used"] = True
+        estimated_price += (adjusted_home_value + time_adjustment)
     else:
       data["home" + str(i)]["comp_used"] = True
+      estimated_price += (adjusted_home_value + time_adjustment)
     data["similarity" + str(i)] =  "{0:.2f}".format(round(data["similarity" + str(i)],2))
-    adjustment = {}
-    adjustment['sqft'] = avg_sqft_price * (subject_home.sqft - data['home'+str(i)]['sqft'])
-    data['adjustment' + str(i)] = adjustment
+  
+  if use_low_sim_homes:
+    estimated_price /= num_low_sim_homes
+  else:
+    estimated_price /= k
+
+  data["estimated_price"] = estimated_price
   return data
 
 def distance_on_unit_sphere(lat1, long1, lat2, long2):
