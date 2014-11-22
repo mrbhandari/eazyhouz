@@ -301,8 +301,9 @@
                                     var home3marker = L.marker([{{ result.home3.latitude }}, {{ result.home3.longitude }}], {icon: greenIcon}).addTo(detail.map);
                                     home3marker.bindPopup("<b>${{result.adjusted_home_value3| intdiv:1 |floatformat:"0"|intcomma}}</b><br>{{ result.home3.address }}");
                                     
-                                    
                                     detail.map.setView([{{ subject_home.latitude }}, {{ subject_home.longitude }}], 13);
+                                    
+                                    detail.map.scrollWheelZoom.disable();
                                 }, false);
                                 </script>
                                 
@@ -441,13 +442,9 @@
 					<table class="table table-striped">
 						<tbody>
 							{% for r in instagram_r %}
-							{% cycle '
-							<tr>
-								' '' '' '' %}
-								<td><a href="{{r.sri}}"><img data-src="holder.js/200x200" src="{{r.lri}}" class="img-thumbnail" alt="Instagram Img"></a></td>
-								{% cycle '' '' '' '
-							</tr>
-							' %}
+							{% cycle '<tr>' '' '' '' %}
+							    <td><a href="{{r.sri}}"><img data-src="holder.js/200x200" src="{{r.lri}}" class="img-thumbnail" alt="Instagram Img"></a></td>
+							{% cycle '' '' '' '</tr>' %}
 							{% endfor %}
 						</tbody>
 					</table>
@@ -462,13 +459,9 @@
 					<table class="table table-striped">
 						<tbody>
 							{% for r in twitter_r %}
-							{% cycle '
-							<tr>
-								' '' '' '' %}
-								<td>{{ r }}</td>
-								{% cycle '' '' '' '
-							</tr>
-							' %}
+							{% cycle '<tr>' '' '' '' %}
+							    <td>{{ r }}</td>
+							{% cycle '' '' '' '</tr>' %}
 							{% endfor %}
 						</tbody>
 					</table>
