@@ -21,6 +21,7 @@ from geolatlong import geolocate
 import pprint
 from django.db.models import Count
 import math
+import time
 
 class FoursquareTable(tables.Table):
     name = tables.Column(verbose_name="Venue Name")
@@ -66,6 +67,89 @@ class RecentSalesTable(tables.Table):
     attrs = {"class": "table table-striped"}
     order_by_field = True
     order_by = '-sim_score'
+
+
+import json
+import urllib
+import ast
+
+
+
+def gen_maps_page(request):
+  #geocode_school = []
+  #response = json.load(urllib.urlopen("https://www.kimonolabs.com/api/4ceghc6y?apikey=rVx4sgzRC30aoGzhQKMQVFMDR0Z3J1TD"))
+  #print response
+  #for i in response.get('results').get('school'):
+  #  try:
+  #    print i
+  #    address = i.get('address') + " " + i.get('zip')
+  #    print address
+  #    loc = geolocate(address)
+  #    
+  #    print loc['latitude'] #throws exception if the geolocate fails
+  #    print loc['longitude']
+  #    i['location'] = loc
+  #    geocode_school.append(i)
+  #    print geocode_school      
+  #  except KeyError:
+  #    pass
+  #  time.sleep(.25)
+  #
+  #with open('testfile1', 'wb') as outfile:
+  #  json.dump(geocode_school, outfile)
+  #
+  school_ratings = {"Bishop Elementary": 4,
+  "Braly Elementary": 5,
+  "Cherry Chase Elementary": 10,
+  "Chester W. Nimitz Elementary": 8,
+  "Cumberland Elementary": 10,
+  "Ellis Elementary": 7,
+  "Fairwood Elementary": 7,
+  "George Mayne Elementary": 7,
+  "L. P. Collins Elementary": 10,
+  "Lakewood Elementary": 4,
+  "Ponderosa Elementary": 7,
+  "San Miguel Elementary": 4,
+  "Vargas Elementary": 4,
+  "West Valley Elementary": 10}
+  
+  school_ratings_color = ["#a50026",
+"#d73027",
+"#f46d43",
+"#fdae61",
+"#fee08b",
+"#d9ef8b",
+"#a6d96a",
+"#66bd63",
+"#1a9850",
+"#006837"]
+
+  with open('testfile1') as json_data:
+    bbb = json_data.read()
+    bbblist =  ast.literal_eval(bbb)
+
+  appended_bbblist = []
+  
+  for i in bbblist:
+    school = i.get('school')
+    if school != '':
+      new_school = school.replace("School: ", "")
+      print new_school
+      print school_ratings[new_school]
+      i['school_rating'] = school_ratings[new_school]
+    #else:
+    #  i['school_rating'] = 1
+      print school_ratings_color[i['school_rating'] -1]
+      i['school_rating_color'] = school_ratings_color[i['school_rating'] -1]
+      appended_bbblist.append(i)
+      
+  
+  
+    
+  #json.dumps(your_data)
+
+  return render_to_response('maps.html',
+                            {'results':appended_bbblist})
 
 
 def autosuggest(request):
@@ -279,6 +363,8 @@ def gen_appraisal_page(request):
 
     app_data = gen_appraisal(r)
     
+    print app_data
+    
     
     recent_sales = get_recent_sales(r)
 
@@ -293,8 +379,6 @@ def gen_appraisal_page(request):
     except ZeroDivisionError:
       pass
     
-    print "XXXXXX"
-    print recent_sales
     
     recent_sales_table = RecentSalesTable(recent_sales)
     RequestConfig(request).configure(recent_sales_table)
@@ -479,7 +563,7 @@ def gen_appraisal(subject_home):
     num_months = diff_month(datetime.datetime.now(), home_sale_date)
     adjusted_home_value = data["home" + str(i)].get("sale_price") + sqft_adjustment
     time_adjustment = adjusted_home_value * (1.01)**num_months - adjusted_home_value
-    adjustment['Market adjustment'] = time_adjustment
+    adjustment['market_adjustment'] = time_adjustment
     data['adjusted_home_value' + str(i)] = adjusted_home_value + time_adjustment
     print num_months
     data['adjustment' + str(i)] = adjustment

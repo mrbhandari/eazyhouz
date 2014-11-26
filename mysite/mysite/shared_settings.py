@@ -133,9 +133,19 @@ INSTALLED_APPS = (
     'django_twilio',
     'django_tables2',
     'mathfilters',
+    'leaflet',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
+
+LEAFLET_CONFIG = {
+    #'SPATIAL_EXTENT': (5.0, 44.0, 7.5, 46),
+    #'DEFAULT_CENTER': (6.0, 45.0),
+    #'DEFAULT_ZOOM': 16,
+    #'TILES': 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    'SCALE': 'imperial',
+    'RESET_VIEW': False,
+}
 
 TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.request',)
 

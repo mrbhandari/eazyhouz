@@ -140,3 +140,20 @@
 //
 //});
 
+
+{'home2': {'user_input': None, 'address': u'26 W 4th Ave #4', 'high': None, 'middle': None, 'lot_size': 24000L, 'baths': Decimal('2.0'), 'elementary': None, 'property_type': u'Condo/Townhouse', u'id': 687283L, 'city': u'san mateo', 'last_zestimate': None, 'view_rating': None, 'remodeled': False, 'zipcode': u'94402', 'state': u'CA', 'curr_status': u'sold', 'latitude': Decimal('37.561928000'), 'sale_price': 875000L, 'last_sale_date': datetime.date(2014, 5, 30), 'exterior_rating': None, 'interior_rating': None, 'year_built': 1920L, 'url': u'http://www.movoto.com/san-mateo-ca/26-w-4th-ave-4-san-mateo-ca-94402-100_81418960/', 'sqft': 1725L, 'longitude': Decimal('-122.326163000'), 'beds': 2L, 'image_url': None, 'home_type': None}, 'home3': {'user_input': None, 'address': u'10 9th Ave #101', 'high': None, 'middle': None, 'lot_size': 30625L, 'baths': Decimal('2.0'), 'elementary': None, 'property_type': u'Condo/Townhouse', u'id': 659397L, 'city': u'san mateo', 'last_zestimate': None, 'view_rating': None, 'remodeled': False, 'zipcode': u'94401', 'state': u'CA', 'curr_status': u'sold', 'latitude': Decimal('37.559388000'), 'sale_price': 810000L, 'last_sale_date': datetime.date(2014, 7, 22), 'exterior_rating': None, 'interior_rating': None, 'year_built': 1983L, 'url': u'http://www.movoto.com/san-mateo-ca/10-9th-ave-101-san-mateo-ca-94401-100_81422271/', 'sqft': 1731L, 'longitude': Decimal('-122.320774000'), 'beds': 2L, 'image_url': u'http://100.mlsimages.movoto.com/071/81422271_0.jpg', 'home_type': None}, 'home1': {'user_input': None, 'address': u'222 8th Ave #320', 'high': None, 'middle': None, 'lot_size': 51834L, 'baths': Decimal('2.0'), 'elementary': None, 'property_type': u'Condo/Townhouse', u'id': 635280L, 'city': u'san mateo', 'last_zestimate': None, 'view_rating': None, 'remodeled': False, 'zipcode': u'94401', 'state': u'CA', 'curr_status': u'sold', 'latitude': Decimal('37.561667000'), 'sale_price': 918000L, 'last_sale_date': datetime.date(2014, 3, 25), 'exterior_rating': None, 'interior_rating': None, 'year_built': 2006L, 'url': u'http://www.movoto.com/san-mateo-ca/222-8th-ave-320-san-mateo-ca-94401-100_81404749/', 'sqft': 1693L, 'longitude': Decimal('-122.318908000'), 'beds': 2L, 'image_url': u'http://100.mlsimages.movoto.com/049/81404749_0.jpg', 'home_type': None}, 'adjustment1': {'sqft': 0.0}, 'adjustment2': {'sqft': -17351.447135262846}, 'adjustment3': {'sqft': -20604.84347312463}, 'estimated_price': 918000.0, 'use_low_sim_homes': True, 'similarity1': 1.0, 'similarity2': 0.23758502488416003, 'similarity3': 0.2049702590326657}
+
+
+var subject_marker = L.marker([{{ subject_home.latitude }}, {{ subject_home.longitude }}], {icon: redIcon}).addTo(detail.map);
+				    subject_marker.bindPopup("<b>Original Home</b><br>{{ subject_home.address }}").openPopup();
+				    
+				    var home1marker = L.marker([{{ result.home1.latitude }}, {{ result.home1.longitude }}], {icon: greenIcon}).addTo(detail.map);
+				    home1marker.bindPopup("<b>${{result.adjusted_home_value1| intdiv:1 |floatformat:"0"|intcomma}}</b><br>{{ result.home1.address }}");
+				    
+				    var home2marker = L.marker([{{ result.home2.latitude }}, {{ result.home2.longitude }}], {icon: greenIcon}).addTo(detail.map);
+				    home2marker.bindPopup("<b>${{result.adjusted_home_value2| intdiv:1 |floatformat:"0"|intcomma}}</b><br>{{ result.home2.address }}");
+				    
+				    var home3marker = L.marker([{{ result.home3.latitude }}, {{ result.home3.longitude }}], {icon: greenIcon}).addTo(detail.map);
+				    home3marker.bindPopup("<b>${{result.adjusted_home_value3| intdiv:1 |floatformat:"0"|intcomma}}</b><br>{{ result.home3.address }}");
+				    
+				    detail.map.setView([{{ subject_home.latitude }}, {{ subject_home.longitude }}], 13);
