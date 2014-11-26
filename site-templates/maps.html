@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block content %}
+{% load humanize %}
+{% load mathfilters %}
+{% load render_table from django_tables2 %}
+{% load leaflet_tags %}
+    {% leaflet_js %}
+    {% leaflet_css %}
+    
+    
+<script src="{% static 'L.GeoSearch-master/src/js/l.control.geosearch.js' %}"></script>
+<script src="{% static 'L.GeoSearch-master/src/js/l.geosearch.provider.openstreetmap.js' %}"></script>
+<link rel="stylesheet" href="{% static 'L.GeoSearch-master/src/css/l.geosearch.css' %}" />
+
+
+<link rel="stylesheet" type="text/css" href="{% static 'DataTables-1.10.4/dataTables.bootstrap.css' %}">
+<!-- DataTables -->
+<script type="text/javascript" charset="utf8" src="{% static 'DataTables-1.10.4/media/js/jquery.dataTables.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'DataTables-1.10.4/dataTables.bootstrap.js' %}"></script>
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-12">
+				<style>
+				    .leaflet-container {  /* all maps */
+					width:  auto;
+					height: 600px;
+				    }
+				</style>
+				
+				<h3>Map of comparables</h3>
+				{% leaflet_map "yourmap" %}
+				
+				
+				<script>
+				window.addEventListener("map:init", function (e) {
+				    
+				//var greenIcon = L.icon({
+				//    iconUrl: "{% static 'icons/green_home_icon.png' %}",
+				//    iconSize:     [30, 50], // size of the icon
+				//    iconAnchor:   [22, 38], // point of the icon which will correspond to marker's location
+				//    popupAnchor:  [-3, -30] // point from which the popup should open relative to the iconAnchor
+				//    });
+				//var redIcon = L.icon({
+				//    iconUrl: "{% static 'icons/red_home_icon.png' %}",
+				//    iconSize:     [40, 45], // size of the icon
+				//    iconAnchor:   [22, 38], // point of the icon which will correspond to marker's location
+				//    popupAnchor:  [-3, -30] // point from which the popup should open relative to the iconAnchor
+				//    });                                    
+				    
+				    
+				    var detail = e.detail;
+				    console.log(e.detail)
+				    
+				    {% for result in results %}
+					L.marker([{{ result.location.latitude}}, {{ result.location.longitude }}]).addTo(detail.map).bindPopup("<b>{{result.school}}</b><br>{{result.school_rating }}");
+					L.circle([{{ result.location.latitude}}, {{ result.location.longitude }}], 500, {color: "{{result.school_rating_color}}",
+						 fillColor: "{{result.school_rating_color}}",
+						 fillOpacity: 0.4
+						 }).addTo(detail.map);
+					detail.map.setView([{{ result.location.latitude }}, {{ result.location.longitude }}], 13);
+				    
+				    {% endfor %}
+				    
+				    
+				    detail.map.scrollWheelZoom.disable();
+				    
+				//
+				//    new L.Control.GeoSearch({
+				//	provider: new L.GeoSearch.Provider.OpenStreetMap(),
+				//	q: "222 8th ave, san mateo CA 94401",
+				//	showMarker: true
+				//    }).addTo(detail.map);
+				
+				}, false);
+				</script>
+			</div>
+		</div>
+	</div>
+	</div>
+	</div>
+	</div>
+	</div>
+</body>
+
+{% endblock %}
