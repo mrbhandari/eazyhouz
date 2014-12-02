@@ -36,15 +36,20 @@ class PrevHomeSales(models.Model):
     elementary = models.IntegerField(null=True,blank=True)
     middle = models.IntegerField(null=True,blank=True)
     high = models.IntegerField(null=True,blank=True)
+    other_school_rating = models.IntegerField(null=True,blank=True)
     remodeled = models.NullBooleanField()
     last_sale_date = models.DateField(null=True, blank=True)
     user_input = models.NullBooleanField()
     last_zestimate = models.IntegerField(null=True, blank=True)
     curr_status = models.CharField(max_length=512,null=True, blank=True)
     property_type = models.CharField(max_length=512,null=True, blank=True)
+    elem_school_name = models.CharField(max_length=2000,null=True,blank=True)
+    middle_school_name = models.CharField(max_length=2000,null=True,blank=True)
+    high_school_name = models.CharField(max_length=2000,null=True,blank=True)
+    other_school_name = models.CharField(max_length=2000,null=True,blank=True)
 
     def __unicode__(self):
-        return "%s, %s, %s %s" % (self.address, self.city, self.state, self.zipcode)
+        return "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (self.address, self.city, self.state, self.zipcode, self.last_sale_date, self.sale_price, self.property_type, self.beds, self.baths, self.sqft)
     
     #def save(self, *args, **kwargs):
     #     try:
