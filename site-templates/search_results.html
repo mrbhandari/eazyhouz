@@ -189,11 +189,32 @@
 							</tr>
 							<tr>
 								<td>Interior Rating</td>
-								<td>{{subject_home_interior_rating}}</td>
+								<td>{{subject_home.interior_rating}}</td>
 								<td>{{result.home1.display_interior_rating}}</td>
 								<td>{{result.home2.display_interior_rating}}</td>
 								<td>{{result.home3.display_interior_rating}}</td>
 							</tr>
+                                                        <tr>
+								<td>Elementary School (School Rating)</td>
+								<td>{{subject_home.elem_school_name}} ({{subject_home.elementary}})</td>
+								<td>{{result.home1.elem_school_name}} ({{result.home1.elementary}})</td>
+								<td>{{result.home2.elem_school_name}} ({{result.home2.elementary}})</td>
+								<td>{{result.home3.elem_school_name}} ({{result.home3.elementary}})</td>
+							</tr>
+                                                        <tr>
+								<td>Middle School (School Rating)</td>
+								<td>{{subject_home.middle_school_name}} ({{subject_home.middle}})</td>
+								<td>{{result.home1.middle_school_name}} ({{result.home1.middle}})</td>
+								<td>{{result.home2.middle_school_name}} ({{result.home2.middle}})</td>
+								<td>{{result.home3.middle_school_name}} ({{result.home3.middle}})</td>
+							</tr>
+                                                        <tr>
+								<td>High School (School Rating)</td>
+								<td>{{subject_home.high_school_name}} ({{subject_home.high}})</td>
+								<td>{{result.home1.high_school_name}} ({{result.home1.high}})</td>
+								<td>{{result.home2.high_school_name}} ({{result.home2.high}})</td>
+								<td>{{result.home3.high_school_name}} ({{result.home3.high}})</td>
+							</tr>                                                        
 							<tr class="warning">
 								<td>Similarity Score</td>
 								<td>na</td>
@@ -249,9 +270,9 @@
 							<tr>
 								<td>Included in Average?</td>
 								<td>-</td>
-								<td>{{result.home1.comp_used }}</td>
-								<td>{{result.home2.comp_used }}</td>
-								<td>{{result.home3.comp_used }}</td>
+								<td>{% if result.home1.comp_used %} <span class="glyphicon glyphicon-check" aria-hidden="true" style="color:green"></span> {% endif %}</td>
+								<td>{% if result.home2.comp_used %} <span class="glyphicon glyphicon-check" aria-hidden="true" style="color:green"></span> {% endif %}</td>
+								<td>{% if result.home3.comp_used %} <span class="glyphicon glyphicon-check" aria-hidden="true" style="color:green"></span> {% endif %}</td>
 							</tr>
 						</tbody>
 					</table>
@@ -358,17 +379,6 @@
 						</tbody>
 					</table>
 				</div>
-				<!--{'user_input': None, 'address': u'1150 W K St', 'high': None, 'middle': None,
-					'lot_size': None, 'baths': Decimal('4.0'), 'elementary': None, 'property_type':
-					u'Single Family Residence', u'id': 411483L, 'city': u'benicia',
-					'last_zestimate': None, 'reason_excluded': 'Difference in Sqft', 'view_rating':
-					None, 'remodeled': None, 'zipcode': u'94510', 'state': u'CA', 'curr_status':
-					u'sold', 'sim_score': 9, 'latitude': Decimal('38.062527000'), 'sale_price':
-					1389000L, 'last_sale_date': datetime.date(2014, 4, 5), 'exterior_rating': None,
-					'interior_rating': None, 'distance': '1.89', 'year_built': None, 'url':
-					u'http://www.movoto.com/benicia-ca/1150-w-k-st-benicia-ca-94510-101_21405074/',
-					'sqft': 3357L, 'longitude': Decimal('-122.177795000'), 'beds': 4L, 'image_url':
-					u'http://101.mlsimages.movoto.com/074/21405074_0.jpg', 'home_type': None}, -->
 				<h2 class="sub-header" id="market_temp">Market Temperature*</h2>
 				<p><strong>Extreme Seller's Market:</strong> more buyers are hunting for homes than there are homes to buy.</p>
 				<br>
