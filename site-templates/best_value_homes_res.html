@@ -22,7 +22,6 @@
 <body>
     <div class="container-fluid">
               
-
     
         <div class="container">
             <div class="row">
@@ -33,6 +32,7 @@
                             <thead>
                               <tr>
                                 <th>Home Address</th>
+                                <th>Elementary School Rating</th>
                                 <th>List Price ($)</th>
                                 <th>EazyHouz Estimate ($)</th>
                                 <th>Discount from Value (Premium)</th>
@@ -45,6 +45,7 @@
                                             class="success"
                                             {% endif %}>
                                         <td><a href="/home/genappraisal/?pid={{h.home.id}}">{{ h.home.address }}</a></td>
+                                        <td>{% if h.home.elementary %}{{ h.home.elementary }} {% else %} na {% endif %}</td>
                                         <td>{{ h.list_price |floatformat:"0" |intcomma}}</td>
                                         <td>{{ h.predicted_price|floatformat:"0" |intcomma }}</td>
                                         

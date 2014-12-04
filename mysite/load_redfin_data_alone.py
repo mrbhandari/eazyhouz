@@ -104,8 +104,8 @@ for ind in range(0,len(lines)):
             prevhomesales.sqft = line1['SQFT']
         if line1['YEAR_BUILT']:
             prevhomesales.year_built = line1['YEAR_BUILT']
-        if line1['LIST_PRICE']:
-            prevhomesales.sale_price = Decimal(line1['LIST_PRICE'])
+        if line1['LAST_SALE_PRICE']:
+            prevhomesales.sale_price = Decimal(line1['LAST_SALE_PRICE'])
         if line1['URL']:
             prevhomesales.url = line1['URL']
         if line1['LATITUDE']:
@@ -122,15 +122,15 @@ for ind in range(0,len(lines)):
             prevhomesales.zipcode = line1['ZIP']
         if line1['LOT_SIZE']:
             prevhomesales.lot_size = line1['LOT_SIZE']
-        #if line1['LAST_SALE_DATE']:
-        #    if '/' in line1['LAST_SALE_DATE']:
-        #        prevhomesales.last_sale_date = datetime.datetime.strptime(line1['LAST_SALE_DATE'], '%m/%d/%y').date()
-        #    else:
-        #        prevhomesales.last_sale_date = datetime.datetime.strptime(line1['LAST_SALE_DATE'], '%Y-%m-%d').date()
+        if line1['LAST_SALE_DATE']:
+            if '/' in line1['LAST_SALE_DATE']:
+                prevhomesales.last_sale_date = datetime.datetime.strptime(line1['LAST_SALE_DATE'], '%m/%d/%y').date()
+            else:
+                prevhomesales.last_sale_date = datetime.datetime.strptime(line1['LAST_SALE_DATE'], '%Y-%m-%d').date()
         if line1['ADDRESS']:
             prevhomesales.address = normalize_address(line1['ADDRESS'])
         prevhomesales.user_input = False
-        prevhomesales.curr_status="active"
+        prevhomesales.curr_status="sold"
         id = prevhomesales.url.split("/")[-1]
         if re.match(r'[a-z]+',id):
             id = prevhomesales.url.split("/")[-2]

@@ -41,6 +41,7 @@ class BestValueTable(tables.Table):
   home_address = tables.LinkColumn('home', args=[A('home.id')], verbose_name="Address", empty_values=()) #accessor="name.address" A('home.address')
   list_price = tables.Column()
   predicted_price = tables.Column()
+  elementary = tables.LinkColumn('home', args=[A('home.elementary')], verbose_name="Elementary Rating", empty_values=())
   error = tables.Column(verbose_name="Value Score")
   
   class Meta:
@@ -662,7 +663,7 @@ def gen_best_value_res(request, city):
   best_homes = get_best_value_homes(city, -10000, 10000)
   
   #print "XXXXXXXXXXXXX Best Homes"
-  #print best_homes
+  print best_homes
   
   best_homes_table = BestValueTable(best_homes)
   RequestConfig(request).configure(best_homes_table)
