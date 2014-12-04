@@ -443,20 +443,37 @@ def home_similarity(home, subject_home):
   if (subject_home.city == "cupertino" or subject_home.city == "sunnyvale") and subject_home.year_built:
     use_year_built = True
   distance = distance_on_unit_sphere(float(home.latitude), float(home.longitude), float(subject_home.latitude), float(home.longitude))
-  similarity_score = 80 * abs(float(home.baths) - float(subject_home.baths)) + 1600 * distance #+ 10 * abs(home.year_built - subject_home.year_built)
+  similarity_score = 80 * abs(float(home.baths) - float(subject_home.baths)) + 2000 * distance #+ 10 * abs(home.year_built - subject_home.year_built)
   if use_year_built:
     similarity_score += abs(home.year_built - subject_home.year_built)
   if use_lot_size:
     similarity_score += 0.1 * abs(home.lot_size - subject_home.lot_size)
+  use_school_rating = True
+  
+  if use_school_rating:
+    subject_elementary = subject_home.elementary if subject_home.elementary else 3
+    subject_middle = subject_home.middle if subject_home.middle else 3
+    subject_high = subject_home.high if subject_home.high else 3
+    home_elementary = home.elementary if home.elementary else 3
+    home_middle = home.middle if home.middle else 3
+    home_high = home.high if home.high else 3
+
+    similarity_score += 500 * abs(subject_elementary - home_elementary)
+    similarity_score += 500 * abs(subject_middle - home_middle)
+    similarity_score += 500 * abs(subject_high - home_high)
   return similarity_score
 
 def get_candidates(subject_home):
   use_lot_size = False
   use_year_built = False
-  if (subject_home.city == "cupertino" or subject_home.city == "sunnyvale") and subject_home.property_type == "Single Family Residence" and subject_home.lot_size:
+  if subject_home.property_type == "Single Family Residence" and subject_home.lot_size:
     use_lot_size = True
-  if (subject_home.city == "cupertino" or subject_home.city == "sunnyvale") and subject_home.year_built:
+    min_lot_size = subject_home.lot_size * 0.6
+    max_lot_size = subject_home.lot_size * 1.4
+  if subject_home.year_built:
     use_year_built = True
+    min_year_built = subject_home.year_built - 20
+    max_year_built = subject_home.year_built + 20
   use_interior_rating = False
   if subject_home.interior_rating:
     use_interior_rating = True
@@ -466,15 +483,12 @@ def get_candidates(subject_home):
   sqft = subject_home.sqft
   min_baths = Decimal(baths) - Decimal(0.5)
   max_baths = Decimal(baths) + Decimal(0.5)
+ 
   min_sqft = sqft * 0.7
   max_sqft = sqft * 1.3
   last_sale_date_threshold = "2014-01-01"
   
   last_sale_date_max_threshold = datetime.datetime.now()
-  min_lot_size = subject_home.lot_size * 0.6
-  max_lot_size = subject_home.lot_size * 1.4
-  min_year_built = subject_home.year_built - 20
-  max_year_built = subject_home.year_built + 20
   if use_interior_rating:
     if subject_home.interior_rating == 3:
       comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
