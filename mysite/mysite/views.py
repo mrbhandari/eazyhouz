@@ -439,12 +439,14 @@ def biggest_dissimilarity_factor(home, subject_home):
 def home_similarity(home, subject_home):
   use_lot_size = False
   use_year_built = False
-  if (subject_home.city == "cupertino" or subject_home.city == "sunnyvale") and subject_home.property_type == "Single Family Residence" and subject_home.lot_size:
+  if subject_home.property_type == "Single Family Residence" and subject_home.lot_size:
     use_lot_size = True
-  if (subject_home.city == "cupertino" or subject_home.city == "sunnyvale") and subject_home.year_built:
+  if subject_home.year_built:
     use_year_built = True
+  use_lot_size = False
+  use_year_built = False
   distance = distance_on_unit_sphere(float(home.latitude), float(home.longitude), float(subject_home.latitude), float(home.longitude))
-  similarity_score = 80 * abs(float(home.baths) - float(subject_home.baths)) + 2000 * distance #+ 10 * abs(home.year_built - subject_home.year_built)
+  similarity_score = 80 * abs(float(home.baths) - float(subject_home.baths)) + 3000 * distance #+ 10 * abs(home.year_built - subject_home.year_built)
   if use_year_built:
     similarity_score += abs(home.year_built - subject_home.year_built)
   if use_lot_size:
@@ -471,10 +473,12 @@ def get_candidates(subject_home):
     use_lot_size = True
     min_lot_size = subject_home.lot_size * 0.6
     max_lot_size = subject_home.lot_size * 1.4
+  use_lot_size = False
   if subject_home.year_built:
     use_year_built = True
     min_year_built = subject_home.year_built - 20
     max_year_built = subject_home.year_built + 20
+  use_year_built = False
   use_interior_rating = False
   if subject_home.interior_rating:
     use_interior_rating = True
@@ -508,6 +512,8 @@ def get_candidates(subject_home):
     comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
     baths__lte=max_baths, baths__gte=min_baths,
     sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,last_sale_date__lt=last_sale_date_max_threshold,property_type__exact=subject_home.property_type).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active")
+  print comp_candidates
+  print use_lot_size, use_year_built
   if use_lot_size:
     comp_candidates = comp_candidates.filter(lot_size__lt=max_lot_size,lot_size__gt=min_lot_size)
   if use_year_built:
@@ -535,6 +541,7 @@ def gen_appraisal(subject_home):
   data["number_of_homes_used"] = len(comp_candidates)
   for c in comp_candidates:
     sim_score = home_similarity(c,subject_home)
+    print "similarity with home:\t",c,"\t",sim_score
     heapq.heappush(h,(sim_score,c))
   k = 3
   avg_sqft_price = 0
