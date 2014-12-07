@@ -52,9 +52,9 @@ class PrevHomeSalesForm(ModelForm):
         Field('sqft', css_class='input-sm'),
         Field('lot_size', css_class='input-sm'),
         Field('year_built', css_class='input-sm'),
-        Field('elementary',  type="hidden"),
-        Field('middle',  type="hidden"),
-        Field('high',  type="hidden"),
+        Field('elementary',  css_class='input-sm'),
+        Field('middle',  css_class='input-sm'),
+        Field('high',  css_class='input-sm'),
         
         #bunch of fields hidden for now
         Field('last_sale_date', type="hidden"),

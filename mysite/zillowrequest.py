@@ -90,9 +90,13 @@ def parse_zillow_result(zillow_dict):
         prevhomesales.address = result['address']['street']
         print prevhomesales.address
         
-        prevhomesales.home_type = result.get('useCode', None)
-        print prevhomesales.home_type
         
+        useCode = result.get('useCode', None)
+        if useCode == "Condominium" or useCode == "Townhouse":
+            prevhomesales.property_type = "Condo/Townhouse"
+        if useCode == "SingleFamily":
+            prevhomesales.property_type = "Single Family Residence"
+        print prevhomesales.property_type
         #TODO - fix this so that property_type gets populated (RB)
         
         prevhomesales.lot_size = result.get('lotSizeSqFt', None)
