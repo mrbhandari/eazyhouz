@@ -16,6 +16,16 @@ getcontext().prec = 5
 from search.models import PrevHomeSales
 import django
 
+def same_homes(home, existing_home):
+    return home.beds == existing_home.beds and home.baths == existing_home.baths and home.sqft == existing_home.sqft and home.lot_size == existing_home.lot_size and home.zipcode == existing_home.zipcode and home.latitude == existing_home.latitude and home.longitude == existing_home.longitude and home.url == existing_home.url and home.last_sale_date == existing_home.last_sale_date and home.sale_price == existing_home.sale_price and home.address == existing_home.address and home.property_type == existing_home.property_type
+
+def home_exists(existing_homes, home):
+    key = home.address + "\t" + home.city
+    existing_home = existing_homes.get(key)
+    if existing_home:
+        return True #same_homes(home,existing_home)
+    return False
+
 
 def normalize_address(address):
     return address.lower().replace(" apt ", " #").replace(" unit "," #").title()
@@ -80,6 +90,7 @@ num_bad_homes = 0
 num_exception_homes = 0
 lines = open(sys.argv[2]).readlines()
 header_index = {}
+inserted_homes = {}
 for ind in range(0,len(lines)):
     try:
         line1 = {}
@@ -93,9 +104,12 @@ for ind in range(0,len(lines)):
             for i in range(0,len(line)):
                 line1[header_index[i]] = line[i]
          
-        #line1 = lines[ind]
         home = PrevHomeSales()
         prevhomesales = PrevHomeSales()
+        if line1['ADDRESS']:
+            prevhomesales.address = normalize_address(line1['ADDRESS'])
+        if "undisclosed" in prevhomesales.address:
+            continue
         if line1['BEDS']:
             prevhomesales.beds = line1['BEDS']
         if line1['BATHS']:
@@ -127,8 +141,6 @@ for ind in range(0,len(lines)):
                 prevhomesales.last_sale_date = datetime.datetime.strptime(line1['LAST_SALE_DATE'], '%m/%d/%y').date()
             else:
                 prevhomesales.last_sale_date = datetime.datetime.strptime(line1['LAST_SALE_DATE'], '%Y-%m-%d').date()
-        if line1['ADDRESS']:
-            prevhomesales.address = normalize_address(line1['ADDRESS'])
         prevhomesales.user_input = False
         prevhomesales.curr_status="sold"
         id = prevhomesales.url.split("/")[-1]
@@ -150,9 +162,10 @@ for ind in range(0,len(lines)):
                 if k == "other":
                     prevhomesales.other_school_rating = school_scores[k]
                     prevhomesales.other_school_name = school_names[k]
-        if good_home(prevhomesales):
+        if good_home(prevhomesales) and not home_exists(inserted_homes, prevhomesales):
             print "GOOD HOME:",prevhomesales
             num_good_homes += 1
+            inserted_homes[prevhomesales.address + "\t" + prevhomesales.city] = prevhomesales
             prevhomesales.save()
         else:
             print "BAD HOME:",prevhomesales
