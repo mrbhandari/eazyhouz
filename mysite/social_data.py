@@ -154,6 +154,12 @@ def nearby_seatgeek(latitude, longitude, radius=tradius):
     json = send_request(url)
     build_event_list(json)
 
+def schoolandhousing(schooldata):
+    baseurl = 'http://www.schoolandhousing.com/jsp/school_locator/findpublicschoolbyaddress.jsp?'
+    data = urllib.urlencode(schooldata)
+    url = baseurl +data
+    return url
+
 def build_event_list(json):
     loc_event = []
     try:

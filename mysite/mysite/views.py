@@ -12,7 +12,7 @@ from django.forms.models import model_to_dict
 from django.db.models import Q
 import heapq
 from decimal import *
-from social_data import nearby_insta, nearby_yelp, nearby_twitter, nearby_foursquare, nearby_eventful, nearby_image
+from social_data import nearby_insta, nearby_yelp, nearby_twitter, nearby_foursquare, nearby_eventful, nearby_image, schoolandhousing
 import django_tables2 as tables
 from django_tables2 import RequestConfig
 from django_tables2 import A
@@ -317,14 +317,27 @@ def update_prevhome(request, query, query2):
                   {'form': form,
                    })
       else:
+	school_data = {}
         try:
           print "Not a post request"
           result = return_zhome_attr(query, query2) #try to get Zillow data
           if result == None:
 	    raise AttributeError
           form = PrevHomeSalesForm(instance=result)
-          #print form
-        except AttributeError: #catches if Zillow Fails
+	  school_data = {
+	    'format': 'address',
+	    'city': result.city,
+	    'state': result.state,
+	    'zipcode':result.zipcode,
+	    'lng': result.longitude,
+	    'lat':result.latitude,
+	    'schoolname' : '',
+	    'address': result.address
+	  }
+          school_url = schoolandhousing(school_data)
+	  print school_url
+        except AttributeError, e:  #catches if Zillow Fails Attribute error
+	  print "Zillow failed reverting to Google Geolocate %s" % (e)
           try:
             loc = geolocate(query + ' ' +query2)
             print loc['latitude'] #throws exception if the geolocate fails
@@ -337,11 +350,24 @@ def update_prevhome(request, query, query2):
                                                'user_input': True,
                                                'latitude': loc.get('latitude'),
                                                'longitude': loc.get('longitude')}) #create blank result
+	    school_data = {
+	      'format': 'address',
+	      'city': loc.get('city'),
+	      'state': loc.get('state'),
+	      'zipcode':loc.get('zipcode'),
+	      'lng': loc.get('longitude'),
+	      'lat': loc.get('latitude'),
+	      'schoolname' : '',
+	      'address': loc.get('firstline')
+	    }
+	    school_url = schoolandhousing(school_data)
+	    print school_url
           except KeyError, e: #catches a failed geolocate
             print "%s not found" % (e)
 	    return HttpResponseRedirect('/home?error=Please enter a valid address')#Return homepage with error
 	return render_to_response('detailed_more_info.html', #Render normal page
 		  {'form': form,
+		   'school_url': school_url
 		   })
       
 

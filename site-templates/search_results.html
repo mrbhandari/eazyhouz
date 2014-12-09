@@ -278,7 +278,15 @@
 					</table>
 				</div>
 				<!-- end responsive table-->
+
+                                <script type="text/javascript">
+                                                                    
+                                console.log("{{subject_home.url}}")
+                                console.log("{{result.home1.url}}")
+                                console.log("{{result.home2.url}}")
+                                console.log("{{result.home3.url}}")
                                 
+                                </script>
                                 <style>
                                     .leaflet-container {  /* all maps */
                                         width:  auto;
@@ -287,25 +295,36 @@
                                 </style>
                                 
                                 <h3>Map of comparables</h3>
+                                <span>
+                                <p>Legend:
+                                <img style="max-height: 25px" src="{% static 'icons/red_home_icon.png' %}"> Subject Home
+                                <img style="max-height: 30px" src="{% static 'icons/green-home-icon-th.png' %}"> Closest Comparables
+                                <img style="max-height: 25px" src="{% static 'icons/gray_home_icon.png' %}"> Other Recent Sales
+                                </p>
                                 {% leaflet_map "yourmap" %}
-                                
+                                </span>
                                 
                                 <script>
                                 window.addEventListener("map:init", function (e) {
                                     
                                 var greenIcon = L.icon({
-                                    iconUrl: "{% static 'icons/green_home_icon.png' %}",
-                                    iconSize:     [30, 50], // size of the icon
+                                    iconUrl: "{% static 'icons/green-home-icon-th.png' %}",
+                                    iconSize:     [45, 45], // size of the icon
                                     iconAnchor:   [22, 38], // point of the icon which will correspond to marker's location
                                     popupAnchor:  [-3, -30] // point from which the popup should open relative to the iconAnchor
                                     });
                                 var redIcon = L.icon({
                                     iconUrl: "{% static 'icons/red_home_icon.png' %}",
-                                    iconSize:     [40, 45], // size of the icon
+                                    iconSize:     [45, 45], // size of the icon
+                                    iconAnchor:   [22, 38], // point of the icon which will correspond to marker's location
+                                    popupAnchor:  [-3, -30] // point from which the popup should open relative to the iconAnchor
+                                    });
+                                var grayIcon = L.icon({
+                                    iconUrl: "{% static 'icons/gray_home_icon.png' %}",
+                                    iconSize:     [40, 40], // size of the icon
                                     iconAnchor:   [22, 38], // point of the icon which will correspond to marker's location
                                     popupAnchor:  [-3, -30] // point from which the popup should open relative to the iconAnchor
                                     });                                    
-                                    
                                     
                                     var detail = e.detail;
                                     console.log(e.detail)
@@ -322,11 +341,21 @@
                                     var home3marker = L.marker([{{ result.home3.latitude }}, {{ result.home3.longitude }}], {icon: greenIcon}).addTo(detail.map);
                                     home3marker.bindPopup("<b>${{result.adjusted_home_value3| intdiv:1 |floatformat:"0"|intcomma}}</b><br>{{ result.home3.address }}");
                                     
+                                    {% for r in recent_sales %}
+                                        {% if forloop.counter > 3 %}
+                                            var home3marker = L.marker([{{ r.latitude }}, {{ r.longitude }}], {icon: grayIcon}).addTo(detail.map);
+                                            home3marker.bindPopup("<b>${{r.sale_price| intdiv:1 |floatformat:"0"|intcomma}}, psft ${{r.psft| intdiv:1 |floatformat:"0"|intcomma}}</b><br>{{ r.address }}<br>Elementary School Rating: {{ r.elementary }}");
+                                        {% endif %}
+                                    {% endfor %}                                    
+                                    
+                                    
                                     detail.map.setView([{{ subject_home.latitude }}, {{ subject_home.longitude }}], 13);
                                     
                                     detail.map.scrollWheelZoom.disable();
                                 }, false);
                                 </script>
+                                
+                                
                                 
 				<h2 class="sub-header" id="recent_sales">Other Recent Sales</h2>
 				<p>
@@ -352,6 +381,7 @@
 								<th>Distance (mi)</th>
 								<th>Sqft</th>
 								<th>Price/sqft</th>
+                                                                <th>Elementary Rating</th>
 								<th>Similarity Score</th>
 								<th>Reason Excluded</th>
 							</tr>
@@ -372,6 +402,7 @@
 								<td>{{r.distance}}</td>
 								<td>{{r.sqft | intcomma}}</td>
 								<td>${{r.psft | intcomma}}</td>
+                                                                <td>{{r.elementary}}</td>
 								<td>{{r.sim_score}}</td>
 								<td style="text-align: left">{{r.reason_excluded}}</td>
 							</tr>
@@ -517,5 +548,6 @@
 	$('#tagtest').on('itemRemoved', function(event) {
 	    tagtest(event, {{result.estimated_price}})
 	});
+        
 </script>
 {% endblock %}

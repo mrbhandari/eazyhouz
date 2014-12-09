@@ -15,6 +15,9 @@ from search.models import *
 class PrevHomeSalesForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(PrevHomeSalesForm, self).__init__(*args,**kwargs)
+        self.fields['elementary'].label = "Elementary School Rating: 1-10"
+        self.fields['middle'].label = "Middle School Rating: 1-10"
+        self.fields['high'].label = "High School Rating: 1-10"
         
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -28,9 +31,10 @@ class PrevHomeSalesForm(ModelForm):
     
     class Meta:
         model = PrevHomeSales
+        
     id = forms.IntegerField(widget=forms.HiddenInput()) #need this for the model to update properly
     #TODO: Rename elementary school to a rating
-    #forms.fields['elementary'].label = "Elementary School rating 1-10"
+    
     #middle.label = "Middle School rating 1-10"
     #high.label = "High School rating 1-10"
     
@@ -52,9 +56,12 @@ class PrevHomeSalesForm(ModelForm):
         Field('sqft', css_class='input-sm'),
         Field('lot_size', css_class='input-sm'),
         Field('year_built', css_class='input-sm'),
-        Field('elementary',  type="hidden"),
-        Field('middle',  type="hidden"),
-        Field('high',  type="hidden"),
+        #HTML("""<p>We use notes to get better, <strong>please help us {{ username }}</strong></p>"""),
+        Field('high',  css_class='input-sm'),
+        Field('middle',  css_class='input-sm'),
+        Field('elementary',  css_class='input-sm'),
+        
+        
         
         #bunch of fields hidden for now
         Field('last_sale_date', type="hidden"),
