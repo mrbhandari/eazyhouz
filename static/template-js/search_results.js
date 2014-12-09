@@ -12,6 +12,8 @@ Number.prototype.formatMoney = function(c, d, t) {
 $(document).ready(function() {
 
     console.log('Document ready');
+    
+
 
     $(".nav-sidebar li a[href^='#']").on('click', function(e) {
         console.log('TEST');

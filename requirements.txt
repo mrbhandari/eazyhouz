@@ -226,6 +226,11 @@ pip install geopy
 pip install django-leaflet
 
 
+OrderedDict([(u'zpid', u'2140148633'), (u'links', OrderedDict([(u'homedetails', u'http://www.zillow.com/homedetails/230-W-5th-Ave-San-Mateo-CA-94402/2140148633_zpid/'), (u'mapthishome', u'http://www.zillow.com/homes/2140148633_zpid/'), (u'comparables', u'http://www.zillow.com/homes/comps/2140148633_zpid/')])), (u'address', OrderedDict([(u'street', u'230 W 5th Ave'), (u'zipcode', u'94402'), (u'city', u'San Mateo'), (u'state', u'CA'), (u'latitude', u'37.559253'), (u'longitude', u'-122.32838')])), (u'FIPScounty', None), (u'useCode', u'Townhouse'), (u'yearBuilt', u'1968'), (u'lotSizeSqFt', u'13880'), (u'finishedSqFt', u'1359'), (u'bathrooms', u'2.0'), (u'bedrooms', u'2'), (u'lastSoldDate', u'07/30/2013'), (u'lastSoldPrice', OrderedDict([(u'@currency', u'USD'), ('#text', u'780000')])), (u'zestimate', OrderedDict([(u'amount', OrderedDict([(u'@currency', u'USD'), ('#text', u'659783')])), (u'last-updated', u'12/04/2014'), (u'oneWeekChange', OrderedDict([(u'@deprecated', u'true')])), (u'valueChange', OrderedDict([(u'@duration', u'30'), (u'@currency', u'USD'), ('#text', u'31099')])), (u'valuationRange', OrderedDict([(u'low', OrderedDict([(u'@currency', u'USD'), ('#text', u'607000')])), (u'high', OrderedDict([(u'@currency', u'USD'), ('#text', u'725761')]))])), (u'percentile', u'0')])), (u'localRealEstate', OrderedDict([(u'region', OrderedDict([(u'@id', u'343946'), (u'@type', u'neighborhood'), (u'@name', u'Baywood Knolls'), (u'zindexValue', u'1,764,600'), (u'links', OrderedDict([(u'overview', u'http://www.zillow.com/local-info/CA-San-Mateo/Baywood-Knolls/r_343946/'), (u'forSaleByOwner', u'http://www.zillow.com/baywood-knolls-san-mateo-ca/fsbo/'), (u'forSale', u'http://www.zillow.com/baywood-knolls-san-mateo-ca/')]))]))]))])
+2
+
+
+
 
 
 xxxxxxxxxx

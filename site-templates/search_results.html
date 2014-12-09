@@ -278,7 +278,15 @@
 					</table>
 				</div>
 				<!-- end responsive table-->
+
+                                <script type="text/javascript">
+                                                                    
+                                console.log("{{subject_home.url}}")
+                                console.log("{{result.home1.url}}")
+                                console.log("{{result.home2.url}}")
+                                console.log("{{result.home3.url}}")
                                 
+                                </script>
                                 <style>
                                     .leaflet-container {  /* all maps */
                                         width:  auto;
@@ -540,5 +548,6 @@
 	$('#tagtest').on('itemRemoved', function(event) {
 	    tagtest(event, {{result.estimated_price}})
 	});
+        
 </script>
 {% endblock %}
