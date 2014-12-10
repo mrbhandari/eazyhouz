@@ -685,13 +685,14 @@ def get_recent_sales(subject_home):
 def gen_best_value_search(request):
   list_of_cities = get_distinct_cities_with_k_active_houses()
   print "Cities",list_of_cities
-  #error = None
-  #if 'error' in request.GET:
-  #  error = request.GET.get('error','')
   return render_to_response('best_value_homes.html',
                             {'cities':  list_of_cities})
   
-
+def gen_accuracy_search(request):
+  list_of_cities = get_distinct_cities_with_sold_homes()
+  print "Cities",list_of_cities
+  return render_to_response('accuracy.html',
+                            {'cities':  list_of_cities})
 
 def gen_best_value_res(request, city):
   best_homes = get_best_value_homes(city, -10000, 10000)
@@ -702,19 +703,15 @@ def gen_best_value_res(request, city):
   best_homes_table = BestValueTable(best_homes)
   RequestConfig(request).configure(best_homes_table)
   return render_to_response('best_value_homes_res.html',
-                            {'best_homes_table':  best_homes_table,
-			     'best_homes': best_homes,},
-			    RequestContext(request))
+                            {'best_homes': best_homes})
 
 def gen_accuracy_for_city(request, city):
-  best_homes = get_last3_months_accuracy(city)
-  print best_homes
+  recent_city_sales = get_last3_months_accuracy(city)
+  print recent_city_sales
   
-  best_homes_table = BestValueTable(best_homes)
-  RequestConfig(request).configure(best_homes_table)
-  return render_to_response('best_value_homes_res.html',
-                            {'best_homes_table':  best_homes_table,
-			     'best_homes': best_homes,},
+  
+  return render_to_response('accuracy_homes_res.html',
+                            {'recent_city_sales':  recent_city_sales},
 			    RequestContext(request))
 
 def get_distinct_cities():
@@ -723,6 +720,12 @@ def get_distinct_cities():
 
 def get_distinct_cities_with_k_active_houses(k=3):
 	return PrevHomeSales.objects.filter(curr_status__exact="active").values('city').annotate(total=Count('city')).filter(total__gte=k)
+
+def get_distinct_cities_with_sold_homes(mth=3):
+	last_3_months_before_date = datetime.datetime.now() + relativedelta(months=(-1*mth))
+	return PrevHomeSales.objects.filter(curr_status__exact="sold", last_sale_date__gte=last_3_months_before_date).values('city').annotate(total=Count('city'))
+	
+
 
 
 def get_homes_accuracy(all_homes, today, low_percent = -1000, high_percent = 1000, multiplier = 1):

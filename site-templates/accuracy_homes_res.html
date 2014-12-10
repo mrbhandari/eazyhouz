@@ -13,7 +13,6 @@
 <script type="text/javascript" charset="utf8" src="{% static 'DataTables-1.10.4/dataTables.bootstrap.js' %}"></script>
 
 
-
 <style>
     body {
   padding-top: 60px;
@@ -33,28 +32,29 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1>Best Value Bay Area Homes by City</h1>
+                    <h1>Accuracy for {{ recent_city_sales.0.home.city }}'s Most Recent Sales</h1>
                     <div class="table-responsive"> <!--Twitter view-->
                         <table id="recent_sales_table" class="table table-striped">
                             <thead>
                               <tr>
                                 <th>Home Address</th>
-                                <th>Elementary School Rating</th>
-                                <th>List Price ($)</th>
+                                <th>Sold Date</th>
+                                <th>Sold Price</th>
+                                
                                 <th>EazyHouz Estimate ($)</th>
-                                <th>Discount from Value (Premium)</th>
+                                <th>Error</th>
                               </tr>
                             </thead>
                             <tbody>
-                                {% for h in best_homes %}
+                                {% for h in recent_city_sales %}
                                     <tr
-                                        {% if h.error < -0.05 %}
-                                            class="success"
-                                            {% elif h.error > 0.05 %}
-                                                class ="danger"
+                                        {% if h.error < -0.25 or h.error > 0.25 %}
+                                            class="danger"
+                                            {% else %}
+                                                class="success"
                                             {% endif %}>
                                         <td><a href="/home/genappraisal/?pid={{h.home.id}}">{{ h.home.address }}</a></td>
-                                        <td>{% if h.home.elementary %}{{ h.home.elementary }} {% else %} na {% endif %}</td>
+                                        <td>{{ h.home.last_sale_date}}</td>
                                         <td>{{ h.list_price |floatformat:"0" |intcomma}}</td>
                                         <td>{{ h.predicted_price|floatformat:"0" |intcomma }}</td>
                                         
@@ -84,12 +84,13 @@ $(document).ready(function() {
     var table = $('#recent_sales_table').DataTable({
         'paging': false,
         'order': [
-            [4, 'desc']
+            [1, 'desc']
         ]
     }); //TODOTODAY
 
 });//end document.ready    
 </script>
+
 
 
 {% endblock %}
