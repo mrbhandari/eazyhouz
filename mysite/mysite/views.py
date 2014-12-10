@@ -1,4 +1,5 @@
 from django.template.loader import get_template
+from dateutil.relativedelta import relativedelta
 from django.shortcuts import render_to_response
 from django.template import Context
 from django.http import HttpResponseRedirect, HttpResponse
@@ -388,7 +389,7 @@ def gen_appraisal_page(request):
     if r.image_url == None or r.image_url == '':
       r.image_url = nearby_image(r.latitude, r.longitude)
 
-    app_data = gen_appraisal(r)
+    app_data = gen_appraisal(r, datetime.datetime.now())
     
     print app_data
     
@@ -492,7 +493,7 @@ def home_similarity(home, subject_home):
     similarity_score += 500 * abs(subject_high - home_high)
   return similarity_score
 
-def get_candidates(subject_home):
+def get_candidates(subject_home, date_of_prediction):
   use_lot_size = False
   use_year_built = False
   if subject_home.property_type == "Single Family Residence" and subject_home.lot_size:
@@ -519,7 +520,7 @@ def get_candidates(subject_home):
   max_sqft = sqft * 1.3
   last_sale_date_threshold = "2014-01-01"
   
-  last_sale_date_max_threshold = datetime.datetime.now()
+  last_sale_date_max_threshold = date_of_prediction
   if use_interior_rating:
     if subject_home.interior_rating == 3:
       comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
@@ -550,7 +551,7 @@ def get_candidates(subject_home):
 def diff_month(d1, d2):
   return (d1.year - d2.year)*12 + d1.month - d2.month
 
-def gen_appraisal(subject_home):
+def gen_appraisal(subject_home, date_of_prediction):
   data = {}
   #TODO make sure to not fetch the subject home itself.
   interior_rating_display_map = {} 
@@ -561,7 +562,7 @@ def gen_appraisal(subject_home):
   interior_rating_display_map[5] = "Excellent"
   h = []
 
-  comp_candidates = get_candidates(subject_home)
+  comp_candidates = get_candidates(subject_home, date_of_prediction)
   if len(comp_candidates) < 3:
      return data
   data["number_of_homes_used"] = len(comp_candidates)
@@ -608,7 +609,7 @@ def gen_appraisal(subject_home):
     sqft_adjustment = avg_sqft_price * (subject_home.sqft - data['home'+str(i)]['sqft'])
     adjustment['sqft'] = sqft_adjustment
     home_sale_date = data['home' + str(i)]['last_sale_date']
-    num_months = diff_month(datetime.datetime.now(), home_sale_date)
+    num_months = diff_month(date_of_prediction, home_sale_date)
     adjusted_home_value = data["home" + str(i)].get("sale_price") + sqft_adjustment
     time_adjustment = adjusted_home_value * (1.01)**num_months - adjusted_home_value
     adjustment['market_adjustment'] = time_adjustment
@@ -663,7 +664,7 @@ def distance_on_unit_sphere(lat1, long1, lat2, long2):
     return 3960*arc
 def get_recent_sales(subject_home):
   h = []
-  comp_candidates = get_candidates(subject_home)
+  comp_candidates = get_candidates(subject_home, datetime.datetime.now())
   for c in comp_candidates:
     sim_score = home_similarity(c,subject_home)
     comp_house = model_to_dict(c)
@@ -683,7 +684,7 @@ def get_recent_sales(subject_home):
 
 def gen_best_value_search(request):
   list_of_cities = get_distinct_cities_with_k_active_houses()
-  print list_of_cities
+  print "Cities",list_of_cities
   #error = None
   #if 'error' in request.GET:
   #  error = request.GET.get('error','')
@@ -705,6 +706,17 @@ def gen_best_value_res(request, city):
 			     'best_homes': best_homes,},
 			    RequestContext(request))
 
+def gen_accuracy_for_city(request, city):
+  best_homes = get_last3_months_accuracy(city)
+  print best_homes
+  
+  best_homes_table = BestValueTable(best_homes)
+  RequestConfig(request).configure(best_homes_table)
+  return render_to_response('best_value_homes_res.html',
+                            {'best_homes_table':  best_homes_table,
+			     'best_homes': best_homes,},
+			    RequestContext(request))
+
 def get_distinct_cities():
 	return PrevHomeSales.objects.values_list('city', flat=True).distinct()
 
@@ -713,13 +725,15 @@ def get_distinct_cities_with_k_active_houses(k=3):
 	return PrevHomeSales.objects.filter(curr_status__exact="active").values('city').annotate(total=Count('city')).filter(total__gte=k)
 
 
-def get_best_value_homes(city, low_percent, high_percent, multiplier = 1):
-	all_homes_in_city = PrevHomeSales.objects.filter(curr_status__exact="active",city__exact=city)
+def get_homes_accuracy(all_homes, today, low_percent = -1000, high_percent = 1000, multiplier = 1):
 	best_homes = []
 	h = []
 	ctr = 0
-	for home in all_homes_in_city:
-		data = gen_appraisal(home)
+	for home in all_homes:
+		if today:
+			data = gen_appraisal(home, datetime.datetime.now())
+		else:
+			data = gen_appraisal(home, home.last_sale_date)
 		list_price = home.sale_price
 		predicted_price = data.get("estimated_price")
 		if not predicted_price:
@@ -740,3 +754,13 @@ def get_best_value_homes(city, low_percent, high_percent, multiplier = 1):
 		d["predicted_price"] = predicted_price
 		best_homes.append(d)
 	return best_homes
+	
+def get_last3_months_accuracy(city):
+	last_3_months_before_date = datetime.datetime.now() + relativedelta(months=-3)
+	homes_for_accuracy = PrevHomeSales.objects.filter(curr_status__exact="sold", city__exact=city, last_sale_date__gte=last_3_months_before_date)
+	return get_homes_accuracy(homes_for_accuracy, False)
+
+
+def get_best_value_homes(city, low_percent, high_percent, multiplier = 1):
+	all_homes_in_city = PrevHomeSales.objects.filter(curr_status__exact="active",city__exact=city)
+	return get_homes_accuracy(all_homes_in_city, True, low_percent, high_percent, multiplier)
