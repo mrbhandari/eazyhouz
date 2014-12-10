@@ -406,3 +406,6 @@ sudo pip install BeautifulSoup4
 sudo pip install pyvirtualdisplay
 sudo pip install selenium
 sudo pip install scrapy
+
+
+pip install python-dateutil

@@ -32,35 +32,44 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1>Accuracy for {{ recent_city_sales.0.home.city }}'s Most Recent Sales</h1>
+                    <h1>{{ recent_city_sales.0.home.city }}'s Most Recent Sales</h1>
+                    <h4>Accuracy vs actual sales price</h4>
+                    <p>See how our estimates stacked up for the most recent sales in {{ recent_city_sales.0.home.city }}.
+                    We're still working our accuracy and would love feedback on why we got the ones in red wrong so we
+                    can continue to make EazyHouz esimtates better.</p>
+                    <h4>Accuracy vs Zestimates</h4>
+                    <p>For full transperancy we also show the Zesimtates for those properties.</p>
                     <div class="table-responsive"> <!--Twitter view-->
                         <table id="recent_sales_table" class="table table-striped">
                             <thead>
                               <tr>
+                                <th>Date Sold</th>
                                 <th>Home Address</th>
-                                <th>Sold Date</th>
                                 <th>Sold Price</th>
                                 
                                 <th>EazyHouz Estimate ($)</th>
-                                <th>Error</th>
+                                <th>EazyHouz Error</th>
+                                <th>Zestimate</th>
+                                <th>Zestiamte Error</th>
                               </tr>
                             </thead>
                             <tbody>
                                 {% for h in recent_city_sales %}
                                     <tr
-                                        {% if h.error < -0.25 or h.error > 0.25 %}
+                                        {% if h.error < -0.10 or h.error > 0.10 %}
                                             class="danger"
                                             {% else %}
                                                 class="success"
                                             {% endif %}>
-                                        <td><a href="/home/genappraisal/?pid={{h.home.id}}">{{ h.home.address }}</a></td>
                                         <td>{{ h.home.last_sale_date}}</td>
+                                        <td><a href="/home/genappraisal/?pid={{h.home.id}}">{{ h.home.address }}</a></td>
                                         <td>{{ h.list_price |floatformat:"0" |intcomma}}</td>
                                         <td>{{ h.predicted_price|floatformat:"0" |intcomma }}</td>
-                                        
-                                        <td
-                                            >{{ h.error|mul:-100|floatformat:"0" }}%</td></tr>
-                                        
+                                        <td>{{ h.error|mul:-100|floatformat:"0" }}%</td>
+                                        <td>{{ h.home.zestimate|floatformat:"0" |intcomma }}</td>
+                                        <td>{{ h.home.zestimate_error|mul:100|floatformat:"0"  }}{% if h.home.zestimate_error %}%{% endif %}
+                                        </td>
+                                    </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -84,7 +93,7 @@ $(document).ready(function() {
     var table = $('#recent_sales_table').DataTable({
         'paging': false,
         'order': [
-            [1, 'desc']
+            [0, 'desc']
         ]
     }); //TODOTODAY
 

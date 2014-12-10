@@ -8,7 +8,7 @@ import MySQLdb
 from search.models import *
 import json
 from forms import *
-from zillowrequest import return_zhome_attr
+from zillowrequest import return_zhome_attr, return_zestimate
 from django.forms.models import model_to_dict
 from django.db.models import Q
 import heapq
@@ -706,9 +706,24 @@ def gen_best_value_res(request, city):
                             {'best_homes': best_homes})
 
 def gen_accuracy_for_city(request, city):
-  recent_city_sales = get_last3_months_accuracy(city)
-  print recent_city_sales
+  recent_city_sales = get_last3_months_accuracy(city)[:20]
   
+  for x in range(0,len(recent_city_sales)):
+    i = recent_city_sales[x]
+    address = i['home'].address
+    zipcode = i['home'].zipcode
+    zestimate = return_zestimate(address, zipcode)
+    
+    try:
+      zestimate_error = (zestimate /recent_city_sales[x]['home'].sale_price ) -1
+    except TypeError, e:
+      zestimate_error = ""
+    
+    
+    recent_city_sales[x]['home'].zestimate = zestimate
+    recent_city_sales[x]['home'].zestimate_error = zestimate_error
+    
+    print zestimate
   
   return render_to_response('accuracy_homes_res.html',
                             {'recent_city_sales':  recent_city_sales},
@@ -758,9 +773,9 @@ def get_homes_accuracy(all_homes, today, low_percent = -1000, high_percent = 100
 		best_homes.append(d)
 	return best_homes
 	
-def get_last3_months_accuracy(city):
+def get_last3_months_accuracy(city, limit=20):
 	last_3_months_before_date = datetime.datetime.now() + relativedelta(months=-3)
-	homes_for_accuracy = PrevHomeSales.objects.filter(curr_status__exact="sold", city__exact=city, last_sale_date__gte=last_3_months_before_date)
+	homes_for_accuracy = PrevHomeSales.objects.filter(curr_status__exact="sold", city__exact=city, last_sale_date__gte=last_3_months_before_date)[0:limit]
 	return get_homes_accuracy(homes_for_accuracy, False)
 
 

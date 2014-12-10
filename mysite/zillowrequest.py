@@ -17,10 +17,24 @@ def return_zhome_attr(raw_address, raw_citystatezip):
     url_xml_string = request(url)
     
     output = parse_zhome_attr(url_xml_string)
-    print output
     result_prevhomesales = parse_zillow_result(output)
     
     return result_prevhomesales
+
+def return_zestimate(raw_address, raw_citystatezip):
+    
+    zestimate = "na"
+    url = zformrequest(raw_address, raw_citystatezip)
+    url_xml_string = request(url)
+    
+    output = parse_zhome_attr(url_xml_string)
+    try:
+        result_prevhomesales = output['SearchResults:searchresults']['response']['results']['result']
+        zestimate = Decimal(result_prevhomesales.get('zestimate', None).get('amount', None).get('#text', None))
+    except (AttributeError, KeyError), e:
+        print "failed to get Zestimate for this reason: %s" % e
+    return zestimate
+
 
 #forms the URL request for Zillow
 def zformrequest(raw_address, raw_citystatezip):
@@ -127,7 +141,6 @@ def parse_zillow_result(zillow_dict):
         #TODO: does not check if this record already exists just saves it
     return prevhomesales
     
-
 
 #places: https://graph.facebook.com/search?q=&type=place&center=37.56166,-122.318908&distance=100&access_token=CAACEdEose0cBACopUWkMgy2d3JgFbPmZCP2u5A4vn9rmhhJKpbsXgdRfuM41SBj2JRHrcD6gY3Mw0aQoRFqpfL0eOEBx9o3t99EWJohpZBEr3S58wV73vvdwM0m7yZAR9ue24ZAZCBsZAdp6A1GG9OeKCLkD6RYRwv6ROiobr5s8UUqMWhSWGJXjyeLtZC1DZCCK9V7NHLmejDSqoZAhhCU3g
     
