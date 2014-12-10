@@ -31,7 +31,7 @@ def return_zestimate(raw_address, raw_citystatezip):
     try:
         result_prevhomesales = output['SearchResults:searchresults']['response']['results']['result']
         zestimate = Decimal(result_prevhomesales.get('zestimate', None).get('amount', None).get('#text', None))
-    except (AttributeError, KeyError), e:
+    except (AttributeError, KeyError, TypeError), e:
         print "failed to get Zestimate for this reason: %s" % e
     return zestimate
 
