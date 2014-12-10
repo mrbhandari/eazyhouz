@@ -33,7 +33,9 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1>Best Value Bay Area Homes by City</h1>
+                    <h1>Bargain Homes for Sale in {{ best_homes.0.home.city }}</h1>
+                    <p>All the homes currently listed for sale in {{ best_homes.0.home.city }} sorted by what we think are the best values out there.</p>
+                    <p>See EazyHouz's <a href="/accuracy-recent-sales/search/{{ best_homes.0.home.city|iriencode }}">accuracy in {{ best_homes.0.home.city }}.</a></p>
                     <div class="table-responsive"> <!--Twitter view-->
                         <table id="recent_sales_table" class="table table-striped">
                             <thead>
