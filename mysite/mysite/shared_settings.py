@@ -123,7 +123,7 @@ INSTALLED_APPS = (
    'django.contrib.auth',
    'django.contrib.contenttypes',
    'django.contrib.sessions',
- #   'django.contrib.sites',
+   'django.contrib.sites',
  #   'django.contrib.messages',
    'django.contrib.staticfiles',
     'search',
@@ -134,6 +134,7 @@ INSTALLED_APPS = (
     'django_tables2',
     'mathfilters',
     'leaflet',
+    'django.contrib.sitemaps',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

@@ -4,6 +4,7 @@ admin.autodiscover()
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from mysite.views import search, autosuggest, gen_results, gen_homepage, more_info_page, gen_appraisal_page, gen_best_value_search, gen_best_value_res, gen_maps_page, gen_accuracy_for_city, gen_accuracy_search
 from django.http import HttpResponse
+from django.contrib.sitemaps.views import sitemap
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -24,8 +25,9 @@ urlpatterns = patterns('',
                        (r'^best-value-homes/search/(?P<city>.*)', gen_best_value_res),
                        (r'^accuracy-recent-sales/search/(?P<city>.*)', gen_accuracy_for_city),
                        (r'^home/genappraisal/(\w{2})/(\w)+/home/(?P<pid>[a-zA-Z0-9_-]+)', gen_appraisal_page),
-                       (r'^maps/$', gen_maps_page), #for a map test page
-                       (r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow:", content_type="text/plain"))
+                       (r'^maps/$', gen_maps_page),
+                       (r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow:", content_type="text/plain")),
+                       
 )
 
 urlpatterns += staticfiles_urlpatterns()

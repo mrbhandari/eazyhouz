@@ -75,6 +75,7 @@ class PrevHomeSalesForm(ModelForm):
         Field('last_zestimate', type="hidden"),
         Field('exterior_rating', type="hidden"),
         Field('interior_rating', type="hidden"),
+        Field('eazyhouz_hash', type="hidden")
 
     )
     helper.add_input(Submit('Submit', 'Submit', css_class='btn-primary'))
