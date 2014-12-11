@@ -391,7 +391,7 @@ def gen_appraisal_page(request, pid):
     if r.image_url == None or r.image_url == '':
       r.image_url = nearby_image(r.latitude, r.longitude)
 
-    app_data = gen_appraisal(r, datetime.datetime.now())
+    app_data = gen_appraisal(r, True)
     
     print app_data
     
@@ -553,7 +553,19 @@ def get_candidates(subject_home, date_of_prediction):
 def diff_month(d1, d2):
   return (d1.year - d2.year)*12 + d1.month - d2.month
 
-def gen_appraisal(subject_home, date_of_prediction):
+def gen_appraisal_precomputed(subject_home, today):
+	return CMA.objects.filter(eazyhouz_hash_source__exact=subject_home.eazyhouz_hash,todays_prediction__exact=today)
+
+
+def gen_appraisal(subject_home, today):
+  cma = gen_appraisal_precomputed(subject_home, today)
+  if cma and len(cma) > 0:
+	  return json.loads(cma[0].cma_dict)
+  print "RETURNING NOT PRECOMPUTED STUFF!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  if today:
+    date_of_prediction = datetime.datetime.now()
+  else:
+    date_of_prediction = subject_home.last_sale_date
   data = {}
   #TODO make sure to not fetch the subject home itself.
   interior_rating_display_map = {} 
@@ -752,9 +764,9 @@ def get_homes_accuracy(all_homes, today, low_percent = -1000, high_percent = 100
 	ctr = 0
 	for home in all_homes:
 		if today:
-			data = gen_appraisal(home, datetime.datetime.now())
+			data = gen_appraisal(home, True)
 		else:
-			data = gen_appraisal(home, home.last_sale_date)
+			data = gen_appraisal(home, False)
 		list_price = home.sale_price
 		predicted_price = data.get("estimated_price")
 		if not predicted_price:

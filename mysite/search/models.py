@@ -12,7 +12,13 @@ class LeadGenUser(models.Model):
     created_date = models.DateTimeField(auto_now = True, null=True)
     zestimate_found = models.NullBooleanField()
     zestimate_link = models.URLField(null=True, blank=True)
-                            
+
+
+class CMA(models.Model):
+	eazyhouz_hash_source = models.CharField(max_length=512, null=True, blank=True)
+	todays_prediction = models.NullBooleanField()
+	cma_dict = models.TextField()
+
 class PrevHomeSales(models.Model):
     #sale_type = models.CharField(max_length=512,null=True, blank=True)
     home_type = models.CharField(max_length=512,null=True, blank=True)
@@ -59,7 +65,7 @@ class PrevHomeSales(models.Model):
     
     def gen_url(self):
         address = self.human_readable_title()
-        return "/".join(["/home/genappraisal", self.state, address, 'home', self.eazyhouz_hash])
+        return "/".join(["/home/genappraisal", self.state, self.address, 'home', self.eazyhouz_hash])
         
     #def save(self, *args, **kwargs):
     #     try:
