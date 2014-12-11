@@ -6,6 +6,8 @@ import datetime
 import os
 from address import AddressParser, Address
 from search.models import PrevHomeSales
+from random import randrange
+
 os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
 
 
@@ -14,6 +16,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
 def return_zhome_attr(raw_address, raw_citystatezip):
     
     url = zformrequest(raw_address, raw_citystatezip)
+    
     url_xml_string = request(url)
     
     output = parse_zhome_attr(url_xml_string)
@@ -39,7 +42,8 @@ def return_zestimate(raw_address, raw_citystatezip):
 #forms the URL request for Zillow
 def zformrequest(raw_address, raw_citystatezip):
     baseurl = 'http://www.zillow.com/webservice/GetDeepSearchResults.htm'
-    values = {'zws-id' : 'X1-ZWz1dyahf20tu3_634pb',
+    zws = [ 'X1-ZWz1csm2cyipsb_6plsv','X1-ZWz1chwxis15aj_9skq6', 'X1-ZWz1dyahf20tu3_634pb', 'X1-ZWz1byi0snpg5n_7x5fi', 'X1-ZWz1bw8guo3swb_61q4u'][randrange(4)]
+    values = {'zws-id' : zws,
               'address' : raw_address,
               'citystatezip' : raw_citystatezip }
     data = urllib.urlencode(values)
@@ -57,6 +61,7 @@ def request(url):
 def parse_zhome_attr(url_xml_string):
     testd = xmltodict.parse(url_xml_string)
     parsed_home_attr = testd
+    print parsed_home_attr
     return parsed_home_attr
     
 def parse_zillow_result(zillow_dict):

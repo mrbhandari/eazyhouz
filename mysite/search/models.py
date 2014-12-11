@@ -1,5 +1,5 @@
 from django.db import models
-
+import re
 
 class LeadGenUser(models.Model):
     full_name = models.CharField(max_length=512,null=False, blank=False)
@@ -53,6 +53,14 @@ class PrevHomeSales(models.Model):
     def __unicode__(self):
         return "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (self.address, self.city, self.state, self.zipcode, self.last_sale_date, self.sale_price, self.property_type, self.beds, self.baths, self.sqft)
     
+    def human_readable_title(self):
+        address = self.address.replace(' ', '_')
+        return re.sub(r'\W+', '', address)
+    
+    def gen_url(self):
+        address = self.human_readable_title()
+        return "/".join(["/home/genappraisal", self.state, address, 'home', self.eazyhouz_hash])
+        
     #def save(self, *args, **kwargs):
     #     try:
     #         existing = PrevHomeSales.objects.get(user=self.user)

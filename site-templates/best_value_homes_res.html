@@ -55,13 +55,13 @@
                                             {% elif h.error > 0.05 %}
                                                 class ="danger"
                                             {% endif %}>
-                                        <td><a href="/home/genappraisal/?pid={{h.home.id}}">{{ h.home.address }}</a></td>
+                                        <td><a href="{{h.home.gen_url}}">{{ h.home.address }}</a></td>
                                         <td>{% if h.home.elementary %}{{ h.home.elementary }} {% else %} na {% endif %}</td>
                                         <td>{{ h.list_price |floatformat:"0" |intcomma}}</td>
                                         <td>{{ h.predicted_price|floatformat:"0" |intcomma }}</td>
                                         
-                                        <td
-                                            >{{ h.error|mul:-100|floatformat:"0" }}%</td></tr>
+                                        <td>{{ h.error|mul:-100|floatformat:"0" }}%</td>
+                                    </tr>
                                         
                                 {% endfor %}
                             </tbody>

@@ -373,11 +373,10 @@ def update_prevhome(request, query, query2):
       
 
 
-def gen_appraisal_page(request):
+def gen_appraisal_page(request, pid):
   result = []
-  if 'pid' in request.GET: #All correct vars exist load page
-    pid = request.GET.get('pid','')  
-    r = PrevHomeSales.objects.get(id=pid)
+  if 'pid':   
+    r = PrevHomeSales.objects.get(eazyhouz_hash=pid)
     subject_interior_rating_display = "Unknown"
     if r.interior_rating == 1 or r.interior_rating == 2:
         subject_interior_rating_display = "Poor"

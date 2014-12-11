@@ -9,6 +9,8 @@ from django.http import HttpResponse
 # from django.contrib import admin
 # admin.autodiscover()
 
+#http://www.redfin.com/CA/Saint-Helena/917-Allison-Ave-94574/home/12193743
+
 urlpatterns = patterns('',
                        (r'^$', gen_homepage), #search to go to landing page
                        (r'^admin/', include(admin.site.urls)),
@@ -21,8 +23,8 @@ urlpatterns = patterns('',
                        (r'^accuracy-recent-sales/$', gen_accuracy_search),
                        (r'^best-value-homes/search/(?P<city>.*)', gen_best_value_res),
                        (r'^accuracy-recent-sales/search/(?P<city>.*)', gen_accuracy_for_city),
-                       (r'^home/genappraisal/$', gen_appraisal_page),
-                       (r'^maps/$', gen_maps_page),
+                       (r'^home/genappraisal/(\w{2})/(\w)+/home/(?P<pid>[a-zA-Z0-9_-]+)', gen_appraisal_page),
+                       (r'^maps/$', gen_maps_page), #for a map test page
                        (r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow:", content_type="text/plain"))
 )
 
