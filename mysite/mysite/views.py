@@ -586,12 +586,13 @@ def gen_appraisal(subject_home, date_of_prediction):
     except TypeError:
       pass
     data['home' + str(i)] = model_to_dict(home)
+    data['home'+str(i)]['url'] = home.gen_url()
     if home.interior_rating:
       data['home' + str(i)]['display_interior_rating'] = interior_rating_display_map.get(home.interior_rating)
     else:
       data['home' + str(i)]['display_interior_rating'] = "Unknown"
 
-    data['similarity' + str(i)] = 100/(1.0+sim_score/100)
+    data['similarity' + str(i)] = 100/(1.0 + sim_score/100)
     dist = distance_on_unit_sphere(float(subject_home.latitude),float(subject_home.longitude),float(home.latitude),float(home.longitude))
     dist = "{0:.2f}".format(round(dist,2))
     data["distance" + str(i)] = dist
@@ -609,7 +610,7 @@ def gen_appraisal(subject_home, date_of_prediction):
     adjustment['sqft'] = sqft_adjustment
     home_sale_date = data['home' + str(i)]['last_sale_date']
     num_months = diff_month(date_of_prediction, home_sale_date)
-    adjusted_home_value = data["home" + str(i)].get("sale_price") + sqft_adjustment
+    adjusted_home_value = data['home' + str(i)]['sale_price'] + sqft_adjustment
     time_adjustment = adjusted_home_value * (1.01)**num_months - adjusted_home_value
     adjustment['market_adjustment'] = time_adjustment
     data['adjusted_home_value' + str(i)] = adjusted_home_value + time_adjustment
