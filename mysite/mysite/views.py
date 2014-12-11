@@ -24,6 +24,7 @@ from django.db.models import Count
 import math
 import time
 
+
 class FoursquareTable(tables.Table):
     name = tables.Column(verbose_name="Venue Name")
     category = tables.Column(verbose_name="Type")
@@ -227,7 +228,7 @@ def search(request):
         if form.is_valid():
             instance = form.save(commit=False)
             instance.save()
-            return HttpResponseRedirect('/gen_results/?prevHomeSalesId=' + str(result.id))
+            return HttpResponseRedirect('/gen_results/?prevHomeSalesId=' + str(result.eazyhouz_hash))
       else:
 
         form = LeadGenUserForm()
@@ -311,7 +312,9 @@ def update_prevhome(request, query, query2):
         if form.is_valid():
           requesthome = form.save(commit=False)
           requesthome.save()
-          return HttpResponseRedirect('/home/genappraisal/?pid=' + str(requesthome.id))
+	  print requesthome
+          return HttpResponseRedirect(requesthome.eaxyhouz_hash)
+	  #'/home/genappraisal/?pid=' + str(requesthome.id))
         else:
           print form.errors
           return render_to_response('detailed_more_info.html', #Render normal page

@@ -7,6 +7,7 @@ import os
 from address import AddressParser, Address
 from search.models import PrevHomeSales
 from random import randrange
+from utils import normalize_address, get_eazyhouz_hash
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
 
@@ -110,6 +111,7 @@ def parse_zillow_result(zillow_dict):
         print prevhomesales.address
         
         
+        
         useCode = result.get('useCode', None)
         if useCode == "Condominium" or useCode == "Townhouse":
             prevhomesales.property_type = "Condo/Townhouse"
@@ -133,6 +135,7 @@ def parse_zillow_result(zillow_dict):
         prevhomesales.last_zestimate = Decimal(result.get('zestimate', None).get('amount', None).get('#text', None))
         print prevhomesales.last_zestimate
         
+        prevhomesales.eazyhouz_hash = get_eazyhouz_hash(prevhomesales)
         
         from django.core.exceptions import ValidationError
         try:

@@ -66,22 +66,22 @@
 						<span class="text-muted">Subject Property</span>
 					</div>
 					<div class="col-xs-6 col-sm-3 placeholder">
-						<a href="/home/genappraisal/{{ result.home1.state }}/{{ result.home1.human_readable_title }}/home/{{ result.home1.eazyhouz_hash }}"><img src="{{result.home1.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail"></a>
-						<a href="/home/genappraisal/?pid={{ result.home1.id }}">
+						<a href="{{ result.home1.url }}"><img src="{{result.home1.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail"></a>
+						<a href="{{ result.home1.url }}">
 							<h4>{{ result.home1.address }}</h4>
 						</a>
 						<span class="text-muted">Comparable #1<br>Last Sale Price: ${{result.home1.sale_price | intcomma}}</span>
 					</div>
 					<div class="col-xs-6 col-sm-3 placeholder">
-						<a href="/home/genappraisal/?pid={{ result.home2.id }}"><img src="{{result.home2.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail"></a>
-						<a href="/home/genappraisal/?pid={{ result.home2.id }}">
+						<a href="{{ result.home2.url }}"><img src="{{result.home2.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail"></a>
+						<a href="{{ result.home2.url }}">
 							<h4>{{ result.home2.address }}</h4>
 						</a>
 						<span class="text-muted">Comparable #2<br>Last Sale Price: ${{result.home2.sale_price | intcomma}}</span>
 					</div>
 					<div class="col-xs-6 col-sm-3 placeholder">
-						<a href="/home/genappraisal/?pid={{ result.home3.id }}"><img src="{{result.home3.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail"></a>
-						<a href="/home/genappraisal/?pid={{ result.home3.id }}">
+						<a href="{{ result.home3.url }}"><img src="{{result.home3.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail"></a>
+						<a href="{{ result.home3.url }}">
 							<h4>{{ result.home3.address }}</h4>
 						</a>
 						<span class="text-muted">Comparable #3<br>Last Sale Price: ${{result.home3.sale_price | intcomma}}</span>
@@ -395,7 +395,7 @@
 						<tbody style="text-align: right">
 							{% for r in recent_sales %}
 							<tr>
-								<td style="text-align: left"><a href="/home/genappraisal/?pid={{ r.id }}">{{r.address}}</a></td>
+								<td style="text-align: left"><a href="{{ r.gen_url }}">{{r.address}}</a></td>
 								<td>{{r.last_sale_date}}</td>
 								<td>${{r.sale_price | intcomma}}</td>
 								<td>{{r.beds}}</td>
