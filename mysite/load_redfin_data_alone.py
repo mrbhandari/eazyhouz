@@ -1,4 +1,5 @@
 import sys,os
+import hashlib
 import copy
 import re
 import datetime
@@ -25,6 +26,9 @@ def home_exists(existing_homes, home):
     if existing_home:
         return True #same_homes(home,existing_home)
     return False
+
+def get_eazyhouz_hash(home):
+	return hashlib.sha1(home.address + home.city).hexdigest()
 
 
 def normalize_address(address):
@@ -168,6 +172,7 @@ for ind in range(0,len(lines)):
             print "GOOD HOME:",prevhomesales
             num_good_homes += 1
             inserted_homes[prevhomesales.address + "\t" + prevhomesales.city] = prevhomesales
+            prevhomesales.eazyhouz_hash = get_eazyhouz_hash(prevhomesales)
             prevhomesales.save()
         else:
             print "BAD HOME:",prevhomesales
