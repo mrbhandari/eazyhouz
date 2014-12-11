@@ -47,6 +47,8 @@ class PrevHomeSales(models.Model):
     middle_school_name = models.CharField(max_length=2000,null=True,blank=True)
     high_school_name = models.CharField(max_length=2000,null=True,blank=True)
     other_school_name = models.CharField(max_length=2000,null=True,blank=True)
+    outlier = models.NullBooleanField()
+    eazyhouz_hash = models.CharField(max_length=512,null=True,blank=True)	
 
     def __unicode__(self):
         return "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (self.address, self.city, self.state, self.zipcode, self.last_sale_date, self.sale_price, self.property_type, self.beds, self.baths, self.sqft)
