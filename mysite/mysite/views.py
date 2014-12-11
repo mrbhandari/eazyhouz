@@ -23,7 +23,7 @@ import pprint
 from django.db.models import Count
 import math
 import time
-
+from utils import get_eazyhouz_hash
 
 class FoursquareTable(tables.Table):
     name = tables.Column(verbose_name="Venue Name")
@@ -228,7 +228,8 @@ def search(request):
         if form.is_valid():
             instance = form.save(commit=False)
             instance.save()
-            return HttpResponseRedirect('/gen_results/?prevHomeSalesId=' + str(result.eazyhouz_hash))
+	    redirecturl = '/'.join('/gen_results', result.state, result.address, 'home', result.eazyhouz_hash)
+            return HttpResponseRedirect(redirecturl)
       else:
 
         form = LeadGenUserForm()
@@ -309,13 +310,20 @@ def update_prevhome(request, query, query2):
           form = PrevHomeSalesForm(request.POST)
           #print form
           form.id = -1
+	  form.eazyhouz_hash = 'blah'
         if form.is_valid():
+	  print "XXXXXXXXXX Form is valid"
           requesthome = form.save(commit=False)
-          requesthome.save()
+          m = requesthome.save()
 	  print requesthome
-          return HttpResponseRedirect(requesthome.eaxyhouz_hash)
-	  #'/home/genappraisal/?pid=' + str(requesthome.id))
+	  #redirecturl1 = form.gen_url()
+	  redirecturl = requesthome.gen_url()
+	  #redirecturl3 = m.gen_url()
+	  
+	  #'/'.join(['/gen_results', requesthome.state, requesthome.address, 'home', requesthome.eazyhouz_hash])
+          return HttpResponseRedirect(redirecturl)
         else:
+	  print "XXXXXXXXXX FOrm has error"
           print form.errors
           return render_to_response('detailed_more_info.html', #Render normal page
                   {'form': form,
@@ -346,27 +354,37 @@ def update_prevhome(request, query, query2):
             loc = geolocate(query + ' ' +query2)
             print loc['latitude'] #throws exception if the geolocate fails
             #print pprint.pprint(loc)
-            form = PrevHomeSalesForm( initial={'address': loc.get('firstline'),
-                                               'city': loc.get('city'),
-                                               'zipcode': loc.get('zipcode'),
-                                               'state':  loc.get('state'), 
+	    home = PrevHomeSales()
+	    print loc
+	    home.address = loc.get('firstline')
+	    home.city = loc.get('city')
+	    home.zipcode = loc.get('zipcode')
+	    home.latitude = loc.get('latitude')
+	    home.longitude = loc.get('longitude')
+	    home.state = loc.get('state')
+	    print home
+            form = PrevHomeSalesForm( initial={'address': home.address,
+                                               'city': home.city,
+                                               'zipcode': home.zipcode,
+                                               'state': home.state, 
                                                'id': -1,
                                                'user_input': True,
-                                               'latitude': loc.get('latitude'),
-                                               'longitude': loc.get('longitude')}) #create blank result
+                                               'latitude': home.latitude,
+                                               'longitude': home.longitude,
+					       'eazyhouz_hash': get_eazyhouz_hash(home)}) #create blank result
 	    school_data = {
 	      'format': 'address',
-	      'city': loc.get('city'),
-	      'state': loc.get('state'),
-	      'zipcode':loc.get('zipcode'),
-	      'lng': loc.get('longitude'),
-	      'lat': loc.get('latitude'),
+	      'city': home.city,
+	      'state': home.state,
+	      'zipcode': home.zipcode,
+	      'lng': home.latitude,
+	      'lat': home.longitude,
 	      'schoolname' : '',
-	      'address': loc.get('firstline')
+	      'address': '+'.join([home.address, home.city, home.state, home.zipcode]),
 	    }
 	    school_url = schoolandhousing(school_data)
 	    print school_url
-          except KeyError, e: #catches a failed geolocate
+          except (KeyError, AttributeError), e: #catches a failed geolocate
             print "%s not found" % (e)
 	    return HttpResponseRedirect('/home?error=Please enter a valid address')#Return homepage with error
 	return render_to_response('detailed_more_info.html', #Render normal page
@@ -379,7 +397,7 @@ def update_prevhome(request, query, query2):
 def gen_appraisal_page(request, pid):
   result = []
   if 'pid':   
-    r = PrevHomeSales.objects.get(eazyhouz_hash=pid)
+    r = PrevHomeSales.objects.filter(eazyhouz_hash=pid).order_by('-id')[:1].get()
     subject_interior_rating_display = "Unknown"
     if r.interior_rating == 1 or r.interior_rating == 2:
         subject_interior_rating_display = "Poor"
