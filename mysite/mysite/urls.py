@@ -32,7 +32,6 @@ urlpatterns = patterns('',
                        (r'^best-value-homes/search/(?P<city>.*)', gen_best_value_res),
                        (r'^accuracy-recent-sales/search/(?P<city>.*)', gen_accuracy_for_city),
                        (r'^home/genappraisal/(\w{2})/(\w)+/home/(?P<pid>[a-zA-Z0-9_-]+)', gen_appraisal_page),
-                       #(r'^sitemap\.xml', 'django.contrib.sitemaps.views.sitemap', {'sitemaps':sitemaps}),
                        (r'^maps/$', gen_maps_page),
                        (r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow:", content_type="text/plain")),
                        

@@ -157,3 +157,17 @@ var subject_marker = L.marker([{{ subject_home.latitude }}, {{ subject_home.long
 				    home3marker.bindPopup("<b>${{result.adjusted_home_value3| intdiv:1 |floatformat:"0"|intcomma}}</b><br>{{ result.home3.address }}");
 				    
 				    detail.map.setView([{{ subject_home.latitude }}, {{ subject_home.longitude }}], 13);
+                                    
+                                    
+   zestimate = "na"
+    url = zformrequest(raw_address, raw_citystatezip)
+    url_xml_string = request(url)
+    
+    output = parse_zhome_attr(url_xml_string)
+    print output
+    try:
+        result_prevhomesales = output['SearchResults:searchresults']['response']['results']['result']
+        zestimate = Decimal(result.get('zestimate', None).get('amount', None).get('#text', None))
+    except KeyError:
+        print "failed to get Zestimate for this reason: %s" % e
+    return zestimate
