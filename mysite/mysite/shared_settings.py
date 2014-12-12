@@ -79,6 +79,10 @@ STATICFILES_DIRS = (
     '../../static',
     ),
 )
+STATICSITEMAPS_ROOT_DIR = os.path.join(
+    os.path.dirname(__file__),
+    '../../static',
+    )
 
 # List of finder classes that know how to find static files in
 # various locations.
@@ -135,6 +139,7 @@ INSTALLED_APPS = (
     'mathfilters',
     'leaflet',
     'django.contrib.sitemaps',
+    'static_sitemaps',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -149,7 +154,7 @@ LEAFLET_CONFIG = {
 }
 
 TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.request',)
-
+STATICSITEMAPS_ROOT_SITEMAP = 'mysite.urls.sitemaps'
 
 #TO DO MOVE TO ENV VARIABLES
 TWILIO_AUTH_TOKEN = '9c9026216c818eb92f78c5921a2d322c'

@@ -65,7 +65,7 @@ class PrevHomeSales(models.Model):
     
     def gen_url(self):
         address = self.human_readable_title()
-        return "/".join(["/home/genappraisal", self.state, self.address, 'home', self.eazyhouz_hash])
+        return "/".join(["/home/genappraisal", self.state, address, 'home', self.eazyhouz_hash])
         
     #def save(self, *args, **kwargs):
     #     try:
