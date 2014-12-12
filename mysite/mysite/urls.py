@@ -37,9 +37,13 @@ urlpatterns = patterns('',
                        
 )
 
-urlpatterns += staticfiles_urlpatterns()
 
-urlpatterns += patterns('django.contrib.sitemaps.views',
-    (r'^sitemap\.xml$', 'index', {'sitemaps': sitemaps}),
-    (r'^sitemap-(?P<section>.+)\.xml$', 'sitemap', {'sitemaps': sitemaps}),
-)
+urlpatterns += patterns('',
+        url(r'^sitemap.xml', include('static_sitemaps.urls')),
+        )
+
+urlpatterns += staticfiles_urlpatterns()
+#urlpatterns += patterns('django.contrib.sitemaps.views',
+#    (r'^sitemap\.xml$', 'index', {'sitemaps': sitemaps}),
+#    (r'^sitemap-(?P<section>.+)\.xml$', 'sitemap', {'sitemaps': sitemaps}),
+#)

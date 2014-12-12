@@ -14,6 +14,9 @@ class HomesSitemap(Sitemap):
     def lastmod(self, obj):
         return datetime.now()
     
+    def changefreq(self, obj):
+        return 'weekly'
+    
     def location(self, obj):
         return obj.gen_url()
     

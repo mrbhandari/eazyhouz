@@ -409,3 +409,4 @@ sudo pip install scrapy
 
 
 pip install python-dateutil
+pip install django-static-sitemaps
