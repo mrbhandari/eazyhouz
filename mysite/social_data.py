@@ -62,7 +62,7 @@ def nearby_twitter(latitude, longitude, radius=tradius):
     auth = OAuth(access_key, access_secret, consumer_key, consumer_secret)
     twitter = Twitter(auth = auth)
     geocode = "%s,%s,%s" % (latitude, longitude, radius)
-    query = twitter.search.tweets(geocode = geocode, count=8)
+    query = twitter.search.tweets(geocode = geocode, count=40)
     tweets = []
     for result in query["statuses"]:
         tweets.append(result.get("text"))
