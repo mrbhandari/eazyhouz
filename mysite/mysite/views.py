@@ -427,9 +427,8 @@ def gen_appraisal_page(request, pid):
     except ZeroDivisionError:
       pass
     
-    
-    recent_sales_table = RecentSalesTable(recent_sales)
-    RequestConfig(request).configure(recent_sales_table)
+    print "THESE WERE THE RECENT SALES FOUND"
+    print recent_sales
     
     #print app_data
     
@@ -469,7 +468,6 @@ def gen_appraisal_page(request, pid):
 		   'twitter_r': twitter_r,
 		   'foursquare_r': foursquare_r,
 		   'table': foursquare_table,
-		   'recent_sales_table': recent_sales_table,
 		   'recent_sales': recent_sales,
 		   'eventful_r': eventful_r,
 		   },
@@ -702,6 +700,7 @@ def get_recent_sales(subject_home):
     sim_score = home_similarity(c,subject_home)
     comp_house = model_to_dict(c)
     comp_house["sim_score"] = int(100/(1.0 + sim_score/100))
+    comp_house["eazyhouz_url"] = c.gen_url()
     #sim_score = "{0:.2f}".format(round(sim_score,2))
     dist = distance_on_unit_sphere(float(subject_home.latitude),float(subject_home.longitude),float(c.latitude),float(c.longitude))
     dist = "{0:.2f}".format(round(dist,2))
