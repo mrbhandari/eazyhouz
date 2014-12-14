@@ -7,44 +7,86 @@
 
 <!-- DataTables CSS -->
 <!--<link rel="stylesheet" type="text/css" href="{% static 'DataTables-1.10.4/media/css/jquery.dataTables.css' %}">-->
+<link href="{% static 'dashboard.css' %}" rel="stylesheet" media="screen">
 <link rel="stylesheet" type="text/css" href="{% static 'DataTables-1.10.4/dataTables.bootstrap.css' %}">
 <!-- DataTables -->
 <script type="text/javascript" charset="utf8" src="{% static 'DataTables-1.10.4/media/js/jquery.dataTables.js' %}"></script>
 <script type="text/javascript" charset="utf8" src="{% static 'DataTables-1.10.4/dataTables.bootstrap.js' %}"></script>
+<!-- DataTables Column Filter -->
+<link href="{% static 'yadcf-master/jquery.dataTables.yadcf.css' %}" rel="stylesheet" type="text/css" />
+<script src="{% static 'yadcf-master/jquery.dataTables.yadcf.js' %}"></script>
+<!-- Sliders Jquery -->
+<link href="{% static 'jquery-ui-1.11.2/jquery-ui.css' %}" rel="stylesheet" type="text/css" />
+<script src="{% static 'jquery-ui-1.11.2/jquery-ui.js' %}"></script>
 
+<!--<script src="http://cdn.datatables.net/responsive/1.0.3/js/dataTables.responsive.js"></script>
+<link href="http://cdn.datatables.net/responsive/1.0.3/css/dataTables.responsive.css" rel="stylesheet" type="text/css"/>-->
 
 
 <style>
-    body {
-  padding-top: 60px;
-}
+body {
+    padding-top: 60px;
+  }
 @media (max-width: 979px) {
   body {
     padding-top: 0px;
   }
 }
+/*.dataTables_filter { visibility: hidden;}*/
 </style>
 
 
 <body>
+    
+    
+    
+    
+    
     <div class="container-fluid">
               
     
         <div class="container">
+            
+
+
             <div class="row">
-                <div class="col-lg-12">
+                <div class="col-sm-3 col-md-2 sidebar">
+                    <h3>Filter your results</h3>
+                    <label>Beds</label>
+                    <div id="beds_external_filter_container"></div>
+                    <label>Baths</label>
+                    <div id="baths_external_filter_container"></div>
+                    <label>Sqft</label>
+                    <div id="sqft_external_filter_container"></div>
+                    <label>Elementary School Rating</label>
+                    <div id="elementary_external_filter_container"></div>
+                    <label>List Price</label>
+                    <div id="listprice_external_filter_container"></div>
+                    <label>EazyHouz Estimate</label>
+                    <div id="estimate_external_filter_container"></div>
+                    <label>Discount (%)</label>
+                    <div id="discount_external_filter_container"></div>
+                    
+                </div>
+                
+                <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                   
                     <h1>Bargain Homes for Sale in {{ best_homes.0.home.city }}</h1>
                     <p>All the homes currently listed for sale in {{ best_homes.0.home.city }} sorted by what we think are the best values out there.</p>
                     <p>See EazyHouz's <a href="/accuracy-recent-sales/search/{{ best_homes.0.home.city|iriencode }}">accuracy in {{ best_homes.0.home.city }}.</a></p>
+
                     <div class="table-responsive"> <!--Twitter view-->
                         <table id="recent_sales_table" class="table table-striped">
                             <thead>
                               <tr>
                                 <th>Home Address</th>
+                                <th>Beds</th>
+                                <th>Baths</th>
+                                <th>Sqft</th>
                                 <th>Elementary School Rating</th>
                                 <th>List Price ($)</th>
                                 <th>EazyHouz Estimate ($)</th>
-                                <th>Discount from Value (Premium)</th>
+                                <th>Discount from Value</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -56,39 +98,55 @@
                                                 class ="danger"
                                             {% endif %}>
                                         <td><a href="{{h.home.gen_url}}">{{ h.home.address }}</a></td>
-                                        <td>{% if h.home.elementary %}{{ h.home.elementary }} {% else %} na {% endif %}</td>
-                                        <td>{{ h.list_price |floatformat:"0" |intcomma}}</td>
-                                        <td>{{ h.predicted_price|floatformat:"0" |intcomma }}</td>
+                                        <td align="right">{{ h.home.beds |floatformat:"0"}}</td>
+                                        <td align="right">{{ h.home.baths |floatformat:"0.0"}}</td>
+                                        <td align="right">{{ h.home.sqft | intcomma}}</td>
+                                        <td align="center">{% if h.home.elementary %}{{ h.home.elementary }} {% else %}{% endif %}</td>
+                                        <td align="right">{{ h.list_price |floatformat:"0"|intcomma}}</td>
+                                        <td align="right">{{ h.predicted_price|floatformat:"0"|intcomma}}</td>
                                         
-                                        <td>{{ h.error|mul:-100|floatformat:"0" }}%</td>
+                                        <td align="center">{{ h.error|mul:-100|floatformat:"0"}}%</td>
                                     </tr>
                                         
                                 {% endfor %}
                             </tbody>
                         </table>
                         
-                    </div> <!--table div ends-->  
-                </div>
+                    </div> <!--table div ends-->
+                </div>    
             </div>
-
         </div>
-        <!-- /.container -->
 
     </div>
+        <!-- /.container -->
+
+
 </body>
 
 
 <script type="text/javascript">
 $(document).ready(function() {
 
+
     console.log('Document ready');       
+ 
        
     var table = $('#recent_sales_table').DataTable({
         'paging': false,
         'order': [
-            [4, 'desc']
-        ]
-    }); //TODOTODAY
+            [7, 'desc']
+        ],
+        "stateSave": true,
+    });
+     yadcf.init(table, [
+    
+        {column_number : 1, filter_type: "range_number_slider", filter_reset_button_text: false, filter_container_id: "beds_external_filter_container"},
+        {column_number : 2, filter_type: "range_number_slider", filter_reset_button_text: false, filter_container_id: "baths_external_filter_container"},
+        {column_number : 3, ignore_char: ",", filter_type: "range_number_slider", filter_reset_button_text: false, filter_container_id: "sqft_external_filter_container"},
+        {column_number : 4, filter_type: "range_number_slider", filter_reset_button_text: false, filter_container_id: "elementary_external_filter_container"},
+        {column_number : 5, ignore_char: ",", filter_type: "range_number_slider", filter_reset_button_text: false, filter_container_id: "listprice_external_filter_container"},
+        {column_number : 6, ignore_char: ",", filter_type: "range_number_slider", filter_reset_button_text: false, filter_container_id: "estimate_external_filter_container"},
+        {column_number : 7, ignore_char: "%", filter_type: "range_number_slider", filter_reset_button_text: false, filter_container_id: "discount_external_filter_container"}]);
 
 });//end document.ready    
 </script>

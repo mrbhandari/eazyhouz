@@ -5,6 +5,11 @@ from address import AddressParser, Address
 def geolocate(address):
     geolocator = GoogleV3(api_key='AIzaSyBYVngMReah5qDa3j-ZZqpwkvxJ-7gYecs')
     location = geolocator.geocode(address)
+    print(location.raw)
+    for i in location.raw['address_components']:
+        if i['types'] == ['route']:
+            long_street_name = i['long_name']
+            short_street_name = i['short_name']
     loc = {}
     try:
         #print(location.latitude, location.longitude)
@@ -16,6 +21,7 @@ def geolocate(address):
         
         
         loc['firstline'] = alist[0].strip()
+        loc['firstline'] = loc['firstline'].replace(long_street_name, short_street_name)
         loc['city'] = alist[1].strip()
         loc['state'] = alist[2].split(" ")[1].strip()
         loc['zipcode'] = alist[2].split(" ")[2].strip()

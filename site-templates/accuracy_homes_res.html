@@ -51,8 +51,9 @@
                                 
                                 <th>EazyHouz Estimate ($)</th>
                                 <th>EazyHouz Error</th>
-                                <th>Zestimate</th>
-                                <th>Zestiamte Error</th>
+                                <!--Show zestimates-->
+                                <!--<th>Zestimate</th>-->
+                                <!--<th>Zestiamte Error</th>-->
                               </tr>
                             </thead>
                             <tbody>
@@ -65,12 +66,13 @@
                                             {% endif %}>
                                         <td>{{ h.home.last_sale_date}}</td>
                                         <td><a href="{{h.home.gen_url}}">{{ h.home.address }}</a></td>
-                                        <td>{{ h.list_price |floatformat:"0" |intcomma}}</td>
-                                        <td>{{ h.predicted_price|floatformat:"0" |intcomma }}</td>
-                                        <td>{{ h.error|mul:-100|floatformat:"0" }}%</td>
-                                        <td>{{ h.home.zestimate|floatformat:"0" |intcomma }}</td>
-                                        <td>{{ h.home.zestimate_error|mul:100|floatformat:"0"  }}{% if h.home.zestimate_error %}%{% endif %}
-                                        </td>
+                                        <td align="right">{{ h.list_price |floatformat:"0" |intcomma}}</td>
+                                        <td align="right">{{ h.predicted_price|floatformat:"0" |intcomma }}</td>
+                                        <td align="center">{{ h.error|mul:-100|floatformat:"0" }}%</td>
+                                        <!--Show zestimates-->
+                                        <!--<td>{{ h.home.zestimate|floatformat:"0" |intcomma }}</td>-->
+                                        <!--<td>{{ h.home.zestimate_error|mul:100|floatformat:"0"  }}{% if h.home.zestimate_error %}%{% endif %}-->
+                                        <!--</td>-->
                                     </tr>
                                 {% endfor %}
                             </tbody>

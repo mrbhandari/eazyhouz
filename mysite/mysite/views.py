@@ -24,6 +24,7 @@ from django.db.models import Count
 import math
 import time
 from utils import get_eazyhouz_hash
+from django.core.exceptions import ObjectDoesNotExist
 
 class FoursquareTable(tables.Table):
     name = tables.Column(verbose_name="Venue Name")
@@ -316,12 +317,7 @@ def update_prevhome(request, query, query2):
           requesthome = form.save(commit=False)
           m = requesthome.save()
 	  print requesthome
-	  #redirecturl1 = form.gen_url()
-	  redirecturl = requesthome.gen_url()
-	  #redirecturl3 = m.gen_url()
-	  
-	  #'/'.join(['/gen_results', requesthome.state, requesthome.address, 'home', requesthome.eazyhouz_hash])
-          return HttpResponseRedirect(redirecturl)
+          return HttpResponseRedirect(requesthome.gen_url())
         else:
 	  print "XXXXXXXXXX FOrm has error"
           print form.errors
@@ -330,69 +326,74 @@ def update_prevhome(request, query, query2):
                    })
       else:
 	school_data = {}
-        try:
-          print "Not a post request"
-          result = return_zhome_attr(query, query2) #try to get Zillow data
-          if result == None:
-	    raise AttributeError
-          form = PrevHomeSalesForm(instance=result)
-	  school_data = {
-	    'format': 'address',
-	    'city': result.city,
-	    'state': result.state,
-	    'zipcode':result.zipcode,
-	    'lng': result.longitude,
-	    'lat':result.latitude,
-	    'schoolname' : '',
-	    'address': result.address
-	  }
-          school_url = schoolandhousing(school_data)
-	  print school_url
-        except AttributeError, e:  #catches if Zillow Fails Attribute error
-	  print "Zillow failed reverting to Google Geolocate %s" % (e)
+        print "Not a post request"
+	try: #try and see if home already exists
+	  home = gen_home_model_from_google(query + ' ' +query2)
+	  get_home = PrevHomeSales.objects.filter(address__iexact=home.address, zipcode=home.zipcode, user_input=0).order_by('-id')[:1].get()
+	  return HttpResponseRedirect(get_home.gen_url())
+	except ObjectDoesNotExist: #if you can't find it
           try:
-            loc = geolocate(query + ' ' +query2)
-            print loc['latitude'] #throws exception if the geolocate fails
-            #print pprint.pprint(loc)
-	    home = PrevHomeSales()
-	    print loc
-	    home.address = loc.get('firstline')
-	    home.city = loc.get('city')
-	    home.zipcode = loc.get('zipcode')
-	    home.latitude = loc.get('latitude')
-	    home.longitude = loc.get('longitude')
-	    home.state = loc.get('state')
-	    print home
-            form = PrevHomeSalesForm( initial={'address': home.address,
-                                               'city': home.city,
-                                               'zipcode': home.zipcode,
-                                               'state': home.state, 
-                                               'id': -1,
-                                               'user_input': True,
-                                               'latitude': home.latitude,
-                                               'longitude': home.longitude,
-					       'eazyhouz_hash': get_eazyhouz_hash(home)}) #create blank result
+	    result = return_zhome_attr(query, query2) # otherwise try to get Zillow data
+	    if result == None:
+	      raise AttributeError
+	    form = PrevHomeSalesForm(instance=result)
 	    school_data = {
 	      'format': 'address',
-	      'city': home.city,
-	      'state': home.state,
-	      'zipcode': home.zipcode,
-	      'lng': home.latitude,
-	      'lat': home.longitude,
+	      'city': result.city,
+	      'state': result.state,
+	      'zipcode':result.zipcode,
+	      'lng': result.longitude,
+	      'lat':result.latitude,
 	      'schoolname' : '',
-	      'address': '+'.join([home.address, home.city, home.state, home.zipcode]),
+	      'address': result.address
 	    }
 	    school_url = schoolandhousing(school_data)
 	    print school_url
-          except (KeyError, AttributeError), e: #catches a failed geolocate
-            print "%s not found" % (e)
-	    return HttpResponseRedirect('/home?error=Please enter a valid address')#Return homepage with error
-	return render_to_response('detailed_more_info.html', #Render normal page
-		  {'form': form,
-		   'school_url': school_url
-		   })
+	  except AttributeError, e:  #catches if Zillow Fails Attribute error
+	    print "Zillow failed reverting to Google Geolocate %s" % (e)
+	    try:
+	      home = gen_home_model_from_google(query + ' ' +query2)
+	      form = PrevHomeSalesForm( initial={'address': home.address,
+						 'city': home.city,
+						 'zipcode': home.zipcode,
+						 'state': home.state, 
+						 'id': -1,
+						 'user_input': True,
+						 'latitude': home.latitude,
+						 'longitude': home.longitude,
+						 'eazyhouz_hash': get_eazyhouz_hash(home)}) #create blank result
+	      school_data = {
+		'format': 'address',
+		'city': home.city,
+		'state': home.state,
+		'zipcode': home.zipcode,
+		'lng': home.latitude,
+		'lat': home.longitude,
+		'schoolname' : '',
+		'address': '+'.join([home.address, home.city, home.state, home.zipcode]),
+	      }
+	      school_url = schoolandhousing(school_data)
+	      print school_url
+	    except (KeyError, AttributeError), e: #catches a failed geolocate
+	      print "%s not found" % (e)
+	      return HttpResponseRedirect('/home?error=Please enter a valid address')#Return homepage with error
+	  return render_to_response('detailed_more_info.html', #Render normal page
+		    {'form': form,
+		     'school_url': school_url
+		     })
       
-
+def gen_home_model_from_google(raw_address):
+  loc = geolocate(raw_address)
+  print loc['latitude'] #throws exception if the geolocate fails
+  home = PrevHomeSales()
+  print loc
+  home.address = loc.get('firstline')
+  home.city = loc.get('city')
+  home.zipcode = loc.get('zipcode')
+  home.latitude = loc.get('latitude')
+  home.longitude = loc.get('longitude')
+  home.state = loc.get('state')
+  return home
 
 def gen_appraisal_page(request, pid):
   result = []
