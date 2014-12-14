@@ -492,8 +492,10 @@ def home_similarity(home, subject_home):
     use_year_built = True
   use_lot_size = False
   use_year_built = False
-  distance = distance_on_unit_sphere(float(home.latitude), float(home.longitude), float(subject_home.latitude), float(home.longitude))
-  similarity_score = 80 * abs(float(home.baths) - float(subject_home.baths)) + 3000 * distance #+ 10 * abs(home.year_built - subject_home.year_built)
+  dist = distance_on_unit_sphere(float(subject_home.latitude), float(subject_home.longitude), float(home.latitude), float(home.longitude))
+  similarity_score = 80 * abs(float(home.baths) - float(subject_home.baths)) + 3000 * dist #+ 10 * abs(home.year_built - subject_home.year_built)
+  print "DISTANCE to ", home.address, "\t", dist
+  print "SIM1",similarity_score
   if use_year_built:
     similarity_score += abs(home.year_built - subject_home.year_built)
   if use_lot_size:
@@ -511,6 +513,7 @@ def home_similarity(home, subject_home):
     similarity_score += 500 * abs(subject_elementary - home_elementary)
     similarity_score += 500 * abs(subject_middle - home_middle)
     similarity_score += 500 * abs(subject_high - home_high)
+  print "SIM2",similarity_score
   return similarity_score
 
 def get_candidates(subject_home, date_of_prediction):
@@ -572,14 +575,17 @@ def diff_month(d1, d2):
   return (d1.year - d2.year)*12 + d1.month - d2.month
 
 def gen_appraisal_precomputed(subject_home, today):
-	return CMA.objects.filter(eazyhouz_hash_source__exact=subject_home.eazyhouz_hash,todays_prediction__exact=today)
+	try:
+		return CMA.objects.filter(eazyhouz_hash_source__exact = subject_home.eazyhouz_hash,todays_prediction__exact=today)
+	except AttributeError as e:
+		return
 
 
 def gen_appraisal(subject_home, today):
   cma = gen_appraisal_precomputed(subject_home, today)
   if cma and len(cma) > 0:
 	  return json.loads(cma[0].cma_dict)
-  print "RETURNING NOT PRECOMPUTED STUFF!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  print "RETURNING NOT PRECOMPUTED STUFF!!"
   if today:
     date_of_prediction = datetime.datetime.now()
   else:
@@ -774,7 +780,15 @@ def get_distinct_cities_with_sold_homes(mth=3):
 	return PrevHomeSales.objects.filter(curr_status__exact="sold", last_sale_date__gte=last_3_months_before_date).values('city').annotate(total=Count('city'))
 	
 
-
+def get_schools_user_input(address, city, state, latitude, longitude):
+	schools = {"elementary":[],"middle":[],"high":[]}
+	elem_schools = PrevHomeSales.objects.filter(city__exact=city).exclude(elem_school_name__isnull=True).values('elem_school_name').distinct()
+	middle_schools = PrevHomeSales.objects.filter(city__exact=city).exclude(middle_school_name__isnull=True).values('middle_school_name').distinct()
+	high_schools = PrevHomeSales.objects.filter(city__exact=city).exclude(high_school_name__isnull=True).values('high_school_name').distinct()
+	print elem_schools
+	for school in elem_schools:
+		schools["elementary"].append(school)
+	return schools
 
 def get_homes_accuracy(all_homes, today, low_percent = -1000, high_percent = 1000, multiplier = 1):
 	best_homes = []
