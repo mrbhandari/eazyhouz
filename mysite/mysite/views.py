@@ -784,9 +784,12 @@ def get_schools_user_input(address, city, state, latitude, longitude):
 	elem_schools = PrevHomeSales.objects.filter(city__exact=city).exclude(elem_school_name__isnull=True).values('elem_school_name').distinct()
 	middle_schools = PrevHomeSales.objects.filter(city__exact=city).exclude(middle_school_name__isnull=True).values('middle_school_name').distinct()
 	high_schools = PrevHomeSales.objects.filter(city__exact=city).exclude(high_school_name__isnull=True).values('high_school_name').distinct()
-	print elem_schools
 	for school in elem_schools:
-		schools["elementary"].append(school)
+		schools["elementary"].append(school.get('elem_school_name'))
+	for school in middle_schools:
+		schools["middle"].append(school.get('middle_school_name'))
+	for school in high_schools:
+		schools["high"].append(school.get('high_school_name'))
 	return schools
 
 def get_homes_accuracy(all_homes, today, low_percent = -1000, high_percent = 1000, multiplier = 1):
