@@ -475,8 +475,16 @@ def gen_appraisal_page(request, pid):
 
 def biggest_dissimilarity_factor(home, subject_home):
 	distance = distance_on_unit_sphere(float(home.latitude), float(home.longitude), float(subject_home.latitude), float(home.longitude))
- 	factors = [5 * abs(home.sqft - subject_home.sqft), 80 * abs(float(home.baths) - float(subject_home.baths)), 200 * distance]
-	factor_names = ["Difference in Sqft","Difference in number of baths","Distance from subject property"]
+	subject_elementary = subject_home.elementary if subject_home.elementary else 3
+	subject_middle = subject_home.middle if subject_home.middle else 3
+	subject_high = subject_home.high if subject_home.high else 3
+	home_elementary = home.elementary if home.elementary else 3
+	home_middle = home.middle if home.middle else 3
+	home_high = home.high if home.high else 3
+	factors = [80 * abs(float(home.baths) - float(subject_home.baths)), 3000 * distance, 500 * (subject_elementary - home_elementary) + 500 * (subject_middle - home_middle) + 500 * (subject_high - home_high) ]
+	factor_names = ["Difference in number of baths","Too far away", "Difference in school ratings"]
+	if max(factors) <= 0.01:
+		return "Very similar homes (no reason)"
 	return factor_names[factors.index(max(factors))]
 
 
@@ -492,8 +500,6 @@ def home_similarity(home, subject_home):
   use_year_built = False
   dist = distance_on_unit_sphere(float(subject_home.latitude), float(subject_home.longitude), float(home.latitude), float(home.longitude))
   similarity_score = 80 * abs(float(home.baths) - float(subject_home.baths)) + 3000 * dist #+ 10 * abs(home.year_built - subject_home.year_built)
-  print "DISTANCE to ", home.address, "\t", dist
-  print "SIM1",similarity_score
   if use_year_built:
     similarity_score += abs(home.year_built - subject_home.year_built)
   if use_lot_size:
@@ -582,7 +588,12 @@ def gen_appraisal_precomputed(subject_home, today):
 def gen_appraisal(subject_home, today):
   cma = gen_appraisal_precomputed(subject_home, today)
   if cma and len(cma) > 0:
-	  return json.loads(cma[0].cma_dict)
+	  precomputed_data = json.loads(cma[0].cma_dict)
+	  if precomputed_data:
+	  	precomputed_data["home1"]["url"] = precomputed_data["home1"]["url"].replace("%20","_").replace(" ","_")
+	  	precomputed_data["home2"]["url"] = precomputed_data["home2"]["url"].replace("%20","_").replace(" ","_")
+	  	precomputed_data["home3"]["url"] = precomputed_data["home3"]["url"].replace("%20","_").replace(" ","_")
+	  return precomputed_data
   print "RETURNING NOT PRECOMPUTED STUFF!!"
   if today:
     date_of_prediction = datetime.datetime.now()
@@ -716,6 +727,8 @@ def get_recent_sales(subject_home):
   comp_candidates_with_sim = []
   for i in range(0,min(20,len(comp_candidates))):
     sim_score,comp_home = heapq.heappop(h)
+    if i < 3:
+		comp_home["reason_excluded"] = "Included"
     comp_candidates_with_sim.append(comp_home)
   return comp_candidates_with_sim
 
