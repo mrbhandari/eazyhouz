@@ -25,7 +25,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1>Our accuracy on recent sales in your area</h1>
+                    <h1>Our Accuracy by City</h1>
                     <br>
                     <p>
                         We are transparent about our accuracy so please
@@ -35,14 +35,14 @@
                     </p>
                     <br>
                     <p>
-                        Click on your city below (# homes sold in the last 3 months):
+                        Click on your city below:
                     </p>
                     <div class="table-responsive"> <!--Twitter view-->
                         <table class="table table-striped">
                             <tbody>
                                 {% for r in cities %}
                                     {% cycle '<tr>' '' '' '' %}
-                                    <td><a href="search/{{r.city}}">{{ r.city }}</a> ({{r.total}} homes)</td>
+                                    <td><a href="search/{{r.city}}">{{ r.city }}</a></td>
                                     {% cycle '' '' '' '</tr>' %}
                                 {% endfor %}
                             </tbody>

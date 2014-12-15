@@ -8,7 +8,8 @@ from crispy_forms.layout import Submit, Layout, Field
 from crispy_forms.bootstrap import (
     PrependedText, PrependedAppendedText, FormActions)
 from search.models import *
-
+#from mysite.views import search
+#from ...mysite.views import get_schools_user_input
 
 
 # Create the form class.
@@ -43,6 +44,12 @@ class PrevHomeSalesForm(ModelForm):
                                             widget=forms.Select,
                                             empty_value = None,
                                             )
+    #ELEMENTARY_CHOICES = ((2, 'Single Family Residence'), (7, 'Condo/Townhouse'), )
+    #elementary = forms.TypedChoiceField(choices=ELEMENTARY_CHOICES,
+    #                                        widget=forms.Select,
+    #                                        empty_value = None,
+    #                                        )
+
     helper = FormHelper()
     helper.form_method = 'POST'
     helper.layout = Layout(
