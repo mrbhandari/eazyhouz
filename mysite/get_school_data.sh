@@ -1,0 +1,3 @@
+python redfin_schools.py $1 > school_data.tsv
+awk -F'\t' '{if (NF >= 5) {print $0}}' school_data.tsv|grep -v  "None" |cut -f4,5|sort -t'	' -k2,2|uniq -c|sort -nr|awk -F'\t' '{school = $2;if (school_data[school] == "") { school_data[school] = $1}} END {for (s in school_data) {print s "\t" school_data[s]}}'|awk -F'\t' '{n=split($2,arr," "); print $1 "\t" arr[2]}' > clean_school_name_data.tsv
+awk -F'\t' '{if (NF == 2) {score[$1] = $2} else {if (NF == 5) {if (score[$5] == "") {print $0} else {print $1 "\t" $2 "\t" $3 "\t" score[$5] "\t" $5}}}}' clean_school_name_data.tsv school_data.tsv |grep -v "None" > clean_school_data.tsv
