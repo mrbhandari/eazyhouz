@@ -52,7 +52,7 @@ $(document).ready(function() {
     var table = $('#recent_sales_table').DataTable({
         'paging': false,
         'order': [
-            [7, 'desc']
+            [8, 'desc']
         ]
     });
 
