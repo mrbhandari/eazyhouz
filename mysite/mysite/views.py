@@ -289,7 +289,7 @@ def gen_homepage(request):
 
 
 def more_info_page(request):
-  result, query, form =  [], [], PrevHomeSalesForm()
+  result, query =  [], []
   
   if 'q' in request.GET and 'q2' in request.GET: #All correct vars exist load page
     query, query2 = request.GET.get('q',''), request.GET.get('q2','')
@@ -328,6 +328,7 @@ def update_prevhome(request, query, query2):
 	school_data = {}
         print "Not a post request"
 	try: #try and see if home already exists
+	  print "try and see if home already exists"
 	  home = gen_home_model_from_google(query + ' ' +query2)
 	  get_home = PrevHomeSales.objects.filter(address__iexact=home.address, zipcode=home.zipcode, user_input=0).order_by('-id')[:1].get()
 	  return HttpResponseRedirect(get_home.gen_url())
@@ -336,7 +337,7 @@ def update_prevhome(request, query, query2):
 	    result = return_zhome_attr(query, query2) # otherwise try to get Zillow data
 	    if result == None:
 	      raise AttributeError
-	    form = PrevHomeSalesForm(instance=result)
+	    form = PrevHomeSalesForm(instance=result, exp=result)
 	    school_data = {
 	      'format': 'address',
 	      'city': result.city,
@@ -353,6 +354,7 @@ def update_prevhome(request, query, query2):
 	    print "Zillow failed reverting to Google Geolocate %s" % (e)
 	    try:
 	      home = gen_home_model_from_google(query + ' ' +query2)
+	      print home
 	      form = PrevHomeSalesForm( initial={'address': home.address,
 						 'city': home.city,
 						 'zipcode': home.zipcode,
@@ -361,7 +363,8 @@ def update_prevhome(request, query, query2):
 						 'user_input': True,
 						 'latitude': home.latitude,
 						 'longitude': home.longitude,
-						 'eazyhouz_hash': get_eazyhouz_hash(home)}) #create blank result
+						 'eazyhouz_hash': get_eazyhouz_hash(home)},
+				       exp = home) #create blank result
 	      school_data = {
 		'format': 'address',
 		'city': home.city,

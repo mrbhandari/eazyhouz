@@ -11,15 +11,49 @@ from search.models import *
 #from mysite.views import search
 #from ...mysite.views import get_schools_user_input
 
+def get_schools_user_input(address, city, state, latitude, longitude):
+    schools = {"elementary":[],"middle":[],"high":[]}
+    elem_schools = PrevHomeSales.objects.filter(city__exact=city).exclude(elem_school_name__isnull=True).values('elem_school_name').distinct()
+    middle_schools = PrevHomeSales.objects.filter(city__exact=city).exclude(middle_school_name__isnull=True).values('middle_school_name').distinct()
+    high_schools = PrevHomeSales.objects.filter(city__exact=city).exclude(high_school_name__isnull=True).values('high_school_name').distinct()
+    for school in elem_schools:
+            schools["elementary"].append(school.get('elem_school_name'))
+    for school in middle_schools:
+            schools["middle"].append(school.get('middle_school_name'))
+    for school in high_schools:
+            schools["high"].append(school.get('high_school_name'))
+    return schools
+
 
 # Create the form class.
 class PrevHomeSalesForm(ModelForm):
-    def __init__(self, *args, **kwargs):
+
+    def __init__(self, exp=None, *args, **kwargs):
         super(PrevHomeSalesForm, self).__init__(*args,**kwargs)
-        self.fields['elementary'].label = "Elementary School Rating: 1-10"
-        self.fields['middle'].label = "Middle School Rating: 1-10"
-        self.fields['high'].label = "High School Rating: 1-10"
+        print "XXXXXXXXXXX1"
+        print exp
+        if exp:
+            print "XXXXXXXXXXX2"
+            self.school_choice_data = get_schools_user_input(exp.address, exp.city, exp.state, exp.latitude, exp.longitude)
+            print self.school_choice_data['elementary']
+        self.fields['elementary'].label = "GreatSchools Elementary School Rating: 1-10"
+        self.fields['middle'].label = "GreatSchools Middle School Rating: 1-10"
+        self.fields['high'].label = "GreatSchools High School Rating: 1-10"
         
+        HOME_TYPE_CHOICES = (('Single Family Residence', 'Single Family Residence'), ('Condo/Townhouse', 'Condo/Townhouse'), )
+        self.fields['property_type'] = forms.TypedChoiceField(choices=HOME_TYPE_CHOICES,
+                                            widget=forms.Select,
+                                            empty_value = None,
+                                            )
+        self.fields['elementary'] = forms.TypedChoiceField(choices=self.school_choice_data['elementary'],
+                                            widget=forms.Select,
+                                            empty_value = None,
+                                            )
+        
+        
+        #print address
+        #
+        #
     def clean(self):
         cleaned_data = self.cleaned_data
         id = cleaned_data.get('id')
@@ -32,23 +66,20 @@ class PrevHomeSalesForm(ModelForm):
     
     class Meta:
         model = PrevHomeSales
-        
+    
+    
+    print "OUTSIDE"    
+    #print self.school_choice_data
     id = forms.IntegerField(widget=forms.HiddenInput()) #need this for the model to update properly
-    #TODO: Rename elementary school to a rating
     
-    #middle.label = "Middle School rating 1-10"
-    #high.label = "High School rating 1-10"
     
-    HOME_TYPE_CHOICES = (('Single Family Residence', 'Single Family Residence'), ('Condo/Townhouse', 'Condo/Townhouse'), )
-    property_type = forms.TypedChoiceField(choices=HOME_TYPE_CHOICES,
+    ELEMENTARY_CHOICES = []
+    elementary = forms.TypedChoiceField(choices=ELEMENTARY_CHOICES,
                                             widget=forms.Select,
                                             empty_value = None,
                                             )
-    #ELEMENTARY_CHOICES = ((2, 'Single Family Residence'), (7, 'Condo/Townhouse'), )
-    #elementary = forms.TypedChoiceField(choices=ELEMENTARY_CHOICES,
-    #                                        widget=forms.Select,
-    #                                        empty_value = None,
-    #                                        )
+    
+    
 
     helper = FormHelper()
     helper.form_method = 'POST'
