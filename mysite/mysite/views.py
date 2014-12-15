@@ -475,15 +475,16 @@ def gen_appraisal_page(request, pid):
 		  RequestContext(request))
 
 def biggest_dissimilarity_factor(home, subject_home):
-	distance = distance_on_unit_sphere(float(home.latitude), float(home.longitude), float(subject_home.latitude), float(home.longitude))
+	distance = distance_on_unit_sphere(float(home.latitude), float(home.longitude), float(subject_home.latitude), float(subject_home.longitude))
 	subject_elementary = subject_home.elementary if subject_home.elementary else 3
 	subject_middle = subject_home.middle if subject_home.middle else 3
 	subject_high = subject_home.high if subject_home.high else 3
 	home_elementary = home.elementary if home.elementary else 3
 	home_middle = home.middle if home.middle else 3
 	home_high = home.high if home.high else 3
-	factors = [80 * abs(float(home.baths) - float(subject_home.baths)), 3000 * distance, 500 * (subject_elementary - home_elementary) + 500 * (subject_middle - home_middle) + 500 * (subject_high - home_high) ]
-	factor_names = ["Difference in number of baths","Too far away", "Difference in school ratings"]
+	factors = [80 * abs(float(home.baths) - float(subject_home.baths)), 3000 * distance, 500 * abs(subject_elementary - home_elementary) + 500 * abs(subject_middle - home_middle) + 500 * abs(subject_high - home_high) ]
+	
+	factor_names = ["Difference in number of baths","Farther away", "Difference in school ratings"]
 	if max(factors) <= 0.01:
 		return "Very similar homes (no reason)"
 	return factor_names[factors.index(max(factors))]
@@ -500,6 +501,7 @@ def home_similarity(home, subject_home):
   use_lot_size = False
   use_year_built = False
   dist = distance_on_unit_sphere(float(subject_home.latitude), float(subject_home.longitude), float(home.latitude), float(home.longitude))
+
   similarity_score = 80 * abs(float(home.baths) - float(subject_home.baths)) + 3000 * dist #+ 10 * abs(home.year_built - subject_home.year_built)
   if use_year_built:
     similarity_score += abs(home.year_built - subject_home.year_built)
