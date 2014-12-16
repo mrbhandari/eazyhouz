@@ -476,6 +476,7 @@ def gen_appraisal_page(request, pid):
 		   'table': foursquare_table,
 		   'recent_sales': recent_sales,
 		   'eventful_r': eventful_r,
+		   'more_info_url': "http://www.bing.com/search?q=",
 		   },
 		  RequestContext(request))
 

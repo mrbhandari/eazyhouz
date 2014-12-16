@@ -62,7 +62,7 @@
 					<div class="col-xs-6 col-sm-3 placeholder">
 						<img src="{{subject_home.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
 						<h4>{{subject_home.address}} 
-                                                <a target="_blank" href="https://www.google.com/search?q={{ subject_home.address }},{{subject_home.city}},{{subject_home.state}}"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>
+                                                <a target="_blank" href="{{more_info_url}}{{ subject_home.address }} {{subject_home.city}} {{subject_home.state}}"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>
                                                 </h4>
 						<span class="text-muted">Subject Property</span>
 					</div>
@@ -72,7 +72,7 @@
 						<a href="{{ result.home1.url }}">
 							<h4>{{ result.home1.address }}</h4></a>
                                                 <span class="text-muted">Comparable #1<br>Last Sale Price: ${{result.home1.sale_price | intcomma}}</span>
-                                                <br><a target="_blank" href="https://www.google.com/search?q={{ result.home1.address }},{{result.home1.city}},{{result.home1.state}}">More Info <span class="glyphicon glyphicon-new-window" aria-hidden="true"></a>
+                                                <br><a target="_blank" href="{{more_info_url}}{{ result.home1.address }} {{result.home1.city}} {{result.home1.state}}">More Info <span class="glyphicon glyphicon-new-window" aria-hidden="true"></a>
 					</div>
 					
                                         <div class="col-xs-6 col-sm-3 placeholder">
@@ -80,7 +80,7 @@
 						<a href="{{ result.home2.url }}">
 							<h4>{{ result.home2.address }}</h4></a>
                                                 <span class="text-muted">Comparable #2<br>Last Sale Price: ${{result.home2.sale_price | intcomma}}</span>
-                                                <br><a target="_blank" href="https://www.google.com/search?q={{ result.home2.address }},{{result.home2.city}},{{result.home2.state}}">More Info <span class="glyphicon glyphicon-new-window" aria-hidden="true"></a>
+                                                <br><a target="_blank" href="{{more_info_url}}{{ result.home2.address}} {{result.home2.city}} {{result.home2.state}}">More Info <span class="glyphicon glyphicon-new-window" aria-hidden="true"></a>
 					</div>
 					
                                         <div class="col-xs-6 col-sm-3 placeholder">
@@ -88,7 +88,7 @@
 						<a href="{{ result.home3.url }}">
 							<h4>{{ result.home3.address }}</h4></a>
 						<span class="text-muted">Comparable #3<br>Last Sale Price: ${{result.home3.sale_price | intcomma}}</span>
-                                                <br><a target="_blank" href="https://www.google.com/search?q={{ result.home3.address }},{{result.home3.city}},{{result.home3.state}}">More Info <span class="glyphicon glyphicon-new-window" aria-hidden="true"></a>
+                                                <br><a target="_blank" href="{{more_info_url}}{{ result.home3.address }} {{result.home3.city}} {{result.home3.state}}">More Info <span class="glyphicon glyphicon-new-window" aria-hidden="true"></a>
 					</div>
 				</div>
 				<!--images row-->
