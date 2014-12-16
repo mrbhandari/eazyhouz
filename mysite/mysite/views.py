@@ -303,12 +303,14 @@ def more_info_page(request):
 def update_prevhome(request, query, query2):
       if request.method== 'POST':
         try:     
-          print "XXXXXXX XXXXXXX Getting id"
+          print "Trying to see if we just recorded ID from zillow in the last step"
           print request.POST.get('id')
           u = PrevHomeSales.objects.get(id=request.POST.get('id')) #TODO figure out a unique key
           form = PrevHomeSalesForm(request.POST, instance=u)
         except: #TODO FIX blanket except clause PrevHomeSales.DoesNotExist, AttributeError:
-          form = PrevHomeSalesForm(request.POST)
+          print "ID was not found in the system as an existing home that we inserted from Zillow already, this home was not found on Zillow"
+	  print request.POST
+	  form = PrevHomeSalesForm(request.POST)
           #print form
           form.id = -1
 	  form.eazyhouz_hash = 'blah'

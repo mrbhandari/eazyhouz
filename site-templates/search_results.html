@@ -61,32 +61,39 @@
 				<div class="row placeholders">
 					<div class="col-xs-6 col-sm-3 placeholder">
 						<img src="{{subject_home.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail">
-						<h4>{{subject_home.address}}</h4>
+						<h4>{{subject_home.address}} 
+                                                <a target="_blank" href="https://www.google.com/search?q={{ subject_home.address }},{{subject_home.city}},{{subject_home.state}}"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>
+                                                </h4>
 						<span class="text-muted">Subject Property</span>
 					</div>
+                                        
 					<div class="col-xs-6 col-sm-3 placeholder">
 						<a href="{{ result.home1.url }}"><img src="{{result.home1.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail"></a>
 						<a href="{{ result.home1.url }}">
-							<h4>{{ result.home1.address }}</h4>
-						</a>
-						<span class="text-muted">Comparable #1<br>Last Sale Price: ${{result.home1.sale_price | intcomma}}</span>
+							<h4>{{ result.home1.address }}</h4></a>
+                                                <span class="text-muted">Comparable #1<br>Last Sale Price: ${{result.home1.sale_price | intcomma}}</span>
+                                                <br><a target="_blank" href="https://www.google.com/search?q={{ result.home1.address }},{{result.home1.city}},{{result.home1.state}}">More Info <span class="glyphicon glyphicon-new-window" aria-hidden="true"></a>
 					</div>
-					<div class="col-xs-6 col-sm-3 placeholder">
+					
+                                        <div class="col-xs-6 col-sm-3 placeholder">
 						<a href="{{ result.home2.url }}"><img src="{{result.home2.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail"></a>
 						<a href="{{ result.home2.url }}">
-							<h4>{{ result.home2.address }}</h4>
-						</a>
-						<span class="text-muted">Comparable #2<br>Last Sale Price: ${{result.home2.sale_price | intcomma}}</span>
+							<h4>{{ result.home2.address }}</h4></a>
+                                                <span class="text-muted">Comparable #2<br>Last Sale Price: ${{result.home2.sale_price | intcomma}}</span>
+                                                <br><a target="_blank" href="https://www.google.com/search?q={{ result.home2.address }},{{result.home2.city}},{{result.home2.state}}">More Info <span class="glyphicon glyphicon-new-window" aria-hidden="true"></a>
 					</div>
-					<div class="col-xs-6 col-sm-3 placeholder">
+					
+                                        <div class="col-xs-6 col-sm-3 placeholder">
 						<a href="{{ result.home3.url }}"><img src="{{result.home3.image_url}}" class="img-responsive" alt="Generic placeholder thumbnail"></a>
 						<a href="{{ result.home3.url }}">
-							<h4>{{ result.home3.address }}</h4>
-						</a>
+							<h4>{{ result.home3.address }}</h4></a>
 						<span class="text-muted">Comparable #3<br>Last Sale Price: ${{result.home3.sale_price | intcomma}}</span>
+                                                <br><a target="_blank" href="https://www.google.com/search?q={{ result.home3.address }},{{result.home3.city}},{{result.home3.state}}">More Info <span class="glyphicon glyphicon-new-window" aria-hidden="true"></a>
 					</div>
 				</div>
 				<!--images row-->
+                                
+                                
                                 
 				<h2 class="sub-header" id="estimate_explanation">Estimate Explanation</h2>
 				<p>
@@ -187,35 +194,38 @@
 								<td>{{result.home3.year_built}}</td>
 							</tr>
 							<tr>
-								<td>Interior Rating</td>
+								<td>Interior Rating <a href="#blah" data-toggle="popover" data-content="Our users rate the interior condition of homes. We use this to information to select the right comparables for the subject home." title="Interior Rating" ><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></a></td>
 								<td>{{subject_home.interior_rating}}</td>
 								<td>{{result.home1.display_interior_rating}}</td>
 								<td>{{result.home2.display_interior_rating}}</td>
 								<td>{{result.home3.display_interior_rating}}</td>
 							</tr>
+                                                        <script>
+                                                            
+                                                        </script>
                                                         <tr>
-								<td>Elementary School (School Rating)</td>
+								<td>Elementary School (School Rating) <a href="#blah" data-toggle="popover" data-content="School ratings are as per GreatSchools.com and are out of 10. If we do not accurately know the school for this area, it will be blank." title="Elementary School (School Rating)" ><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></a></td>
 								<td>{{subject_home.elem_school_name}} ({{subject_home.elementary}})</td>
 								<td>{{result.home1.elem_school_name}} ({{result.home1.elementary}})</td>
 								<td>{{result.home2.elem_school_name}} ({{result.home2.elementary}})</td>
 								<td>{{result.home3.elem_school_name}} ({{result.home3.elementary}})</td>
 							</tr>
                                                         <tr>
-								<td>Middle School (School Rating)</td>
+								<td>Middle School (School Rating) <a href="#blah" data-toggle="popover" data-content="School ratings are as per GreatSchools.com and are out of 10. If we do not accurately know the school for this area, it will be blank." title="Middle School (School Rating)" ><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></a></td>
 								<td>{{subject_home.middle_school_name}} ({{subject_home.middle}})</td>
 								<td>{{result.home1.middle_school_name}} ({{result.home1.middle}})</td>
 								<td>{{result.home2.middle_school_name}} ({{result.home2.middle}})</td>
 								<td>{{result.home3.middle_school_name}} ({{result.home3.middle}})</td>
 							</tr>
                                                         <tr>
-								<td>High School (School Rating)</td>
+								<td>High School (School Rating) <a href="#blah" data-toggle="popover" data-content="School ratings are as per GreatSchools.com and are out of 10. If we do not accurately know the school for this area, it will be blank." title="High School (School Rating)" ><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></a></td>
 								<td>{{subject_home.high_school_name}} ({{subject_home.high}})</td>
 								<td>{{result.home1.high_school_name}} ({{result.home1.high}})</td>
 								<td>{{result.home2.high_school_name}} ({{result.home2.high}})</td>
 								<td>{{result.home3.high_school_name}} ({{result.home3.high}})</td>
 							</tr>                                                        
 							<tr class="warning">
-								<td>Similarity Score</td>
+                                                                <td>Similarity Score <a href="#blah" data-toggle="popover" data-content="Similarity score ranges from 0-100 with 100 being the most similar 2 homes can be." title="Similarity Score" ><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></a></td>
 								<td>na</td>
 								<td>{{result.similarity1|intdiv:1 |floatformat:"0"|intcomma}}</td>
 								<td>{{result.similarity2|intdiv:1 |floatformat:"0"|intcomma}}</td>
@@ -245,21 +255,21 @@
 							</tr>
 							{% if result.home3.sale_price %} <!--to avoid an error if you are adding-->
 							<tr>
-								<td>Sqft Adjustments</td>
+								<td>Sqft Adjustment <a href="#blah" data-toggle="popover" data-content="If the comparable homes are of different sizes then we adjust the value of those homes to make it as if they were the size of the subject home." title="Sqft Adjustmente" ><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></a></td>
 								<td>-</td>
 								<td>${{result.adjustment1.sqft | intdiv:1 |floatformat:"0"|intcomma}}</td>
 								<td>${{result.adjustment2.sqft | intdiv:1 |floatformat:"0"|intcomma}}</td>
 								<td>${{result.adjustment3.sqft | intdiv:1 |floatformat:"0"|intcomma}}</td>
 							</tr>
 							<tr>
-								<td>Market Adjustment</td>
+								<td>Market Adjustment <a href="#blah" data-toggle="popover" data-content="Since the comparable homes were sold, the market may have moved up or down. To adjust for the current value of these homes, we use a market adjustment factor." title="Market Adjustment" ><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></a></td>
 								<td>-</td>
 								<td>${{result.adjustment1.market_adjustment | intdiv:1 |floatformat:"0"|intcomma}}</td>
 								<td>${{result.adjustment2.market_adjustment | intdiv:1 |floatformat:"0"|intcomma}}</td>
 								<td>${{result.adjustment3.market_adjustment | intdiv:1 |floatformat:"0"|intcomma}}</td>
 							</tr>
 							<tr class="warning">
-								<td>Adjusted Home Values</td>
+                                                                <td>Adjusted Home Value <a href="#blah" data-toggle="popover" data-content="The value of the home after all adjustments. This is what this home would sell for adjusted for the factors that make this home different than the subject home." title="Adjusted Home Value" ><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></a></td>
 								<td>-</td>
 								<td>${{result.adjusted_home_value1 | intdiv:1 |floatformat:"0"|intcomma}}</td>
 								<td>${{result.adjusted_home_value2 | intdiv:1 |floatformat:"0"|intcomma}}</td>
@@ -267,7 +277,7 @@
 							</tr>
 							{% endif %}
 							<tr>
-								<td>Included in Average?</td>
+								<td>Included in Average <a href="#blah" data-toggle="popover" data-content="We include 3 closest comps in the average to compute the value of the house. In the case that one of the comps has a very high similarity score (90+) to the home we base the estimate entirely on that comp." title="Included in Average" ><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></a></td>
 								<td>-</td>
 								<td>{% if result.home1.comp_used %} <span class="glyphicon glyphicon-check" aria-hidden="true" style="color:green"></span> {% endif %}</td>
 								<td>{% if result.home2.comp_used %} <span class="glyphicon glyphicon-check" aria-hidden="true" style="color:green"></span> {% endif %}</td>
@@ -548,5 +558,7 @@
 	    tagtest(event, {{result.estimated_price}})
 	});
         
+        //get tooltips to popover
+        $("[data-toggle=popover]").popover();
 </script>
 {% endblock %}

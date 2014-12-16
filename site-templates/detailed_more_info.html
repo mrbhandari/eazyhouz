@@ -36,19 +36,10 @@
                   <li>Trends showing if prices are rising</li>
                   <li>How long it takes to sell in your area</li>
                   <li>Data indicating if it's a good time to buy</li>
+                  <li>More detailed school data <a target="_blank" href="{{ school_url }}">here</a></li>
             </ul>
             
-            <script>
-                  $(window).load(function ()
-                        {
-                            
-                            var $contents = $('#frame').contents();
-                            //$contents.scrollTop($contents.height());
-                            contents.scrollTop($(schoolscore_div).position())
-                        });
-            </script>            
-            {{ r.city }}
-            <iframe height=600 seamless sandbox="allow-scripts allow-same-origin" scrollingname="school data" id="frame" src="{{ school_url }}"></iframe>
+            <!--<iframe height=600 seamless sandbox="allow-scripts allow-same-origin" scrollingname="school data" id="frame" src="{{ school_url }}"></iframe>-->
 
             
         </div><!-- end div for second column -->

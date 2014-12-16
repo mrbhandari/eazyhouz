@@ -13,15 +13,15 @@ from search.models import *
 
 def get_schools_user_input(address, city, state, latitude, longitude):
     schools = {"elementary":[],"middle":[],"high":[]}
-    elem_schools = PrevHomeSales.objects.filter(city__exact=city).exclude(elem_school_name__isnull=True).values('elem_school_name').distinct()
-    middle_schools = PrevHomeSales.objects.filter(city__exact=city).exclude(middle_school_name__isnull=True).values('middle_school_name').distinct()
-    high_schools = PrevHomeSales.objects.filter(city__exact=city).exclude(high_school_name__isnull=True).values('high_school_name').distinct()
+    elem_schools = PrevHomeSales.objects.filter(city__exact=city).exclude(elem_school_name__isnull=True).values('elem_school_name','elementary').distinct()
+    middle_schools = PrevHomeSales.objects.filter(city__exact=city).exclude(middle_school_name__isnull=True).values('middle_school_name','middle').distinct()
+    high_schools = PrevHomeSales.objects.filter(city__exact=city).exclude(high_school_name__isnull=True).values('high_school_name','high').distinct()
     for school in elem_schools:
-            schools["elementary"].append(school.get('elem_school_name'))
+            schools["elementary"].append((school.get('elementary'),school.get('elem_school_name')))
     for school in middle_schools:
-            schools["middle"].append(school.get('middle_school_name'))
+            schools["middle"].append((school.get('middle'),school.get('middle_school_name')))
     for school in high_schools:
-            schools["high"].append(school.get('high_school_name'))
+            schools["high"].append((school.get('high'),school.get('high_school_name')))
     return schools
 
 
@@ -29,13 +29,27 @@ def get_schools_user_input(address, city, state, latitude, longitude):
 class PrevHomeSalesForm(ModelForm):
 
     def __init__(self, exp=None, *args, **kwargs):
+        print "Starting form initialization for instance"
         super(PrevHomeSalesForm, self).__init__(*args,**kwargs)
-        print "XXXXXXXXXXX1"
-        print exp
         if exp:
-            print "XXXXXXXXXXX2"
-            self.school_choice_data = get_schools_user_input(exp.address, exp.city, exp.state, exp.latitude, exp.longitude)
-            print self.school_choice_data['elementary']
+            try:
+                print "Starting the process of finding schools for this home"
+                self.school_choice_data = get_schools_user_input(exp.address, exp.city, exp.state, exp.latitude, exp.longitude)
+                print self.school_choice_data['elementary']
+                self.fields['elementary'] = forms.TypedChoiceField(choices=self.school_choice_data['elementary'],
+                                                widget=forms.Select,
+                                                empty_value = None,
+                                                )
+                self.fields['middle'] = forms.TypedChoiceField(choices=self.school_choice_data['middle'],
+                                                    widget=forms.Select,
+                                                    empty_value = None,
+                                                    )        
+                self.fields['high'] = forms.TypedChoiceField(choices=self.school_choice_data['high'],
+                                                    widget=forms.Select,
+                                                    empty_value = None,
+                                                )
+            except AttributeError, e:
+                print "could not find the address field for the home and get schools %s" % (e)
         self.fields['elementary'].label = "GreatSchools Elementary School Rating: 1-10"
         self.fields['middle'].label = "GreatSchools Middle School Rating: 1-10"
         self.fields['high'].label = "GreatSchools High School Rating: 1-10"
@@ -45,12 +59,7 @@ class PrevHomeSalesForm(ModelForm):
                                             widget=forms.Select,
                                             empty_value = None,
                                             )
-        self.fields['elementary'] = forms.TypedChoiceField(choices=self.school_choice_data['elementary'],
-                                            widget=forms.Select,
-                                            empty_value = None,
-                                            )
-        
-        
+
         #print address
         #
         #
