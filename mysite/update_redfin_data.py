@@ -222,19 +222,19 @@ for ind in range(0,len(lines)):
 				if k == "other":
 					prevhomesales.other_school_rating = school_scores[k]
 					prevhomesales.other_school_name = school_names[k]
-		if good_home(prevhomesales):
-			existing_home_data = home_exists(inserted_homes, prevhomesales)
-			if existing_home_data == False:
+		existing_home_data = home_exists(inserted_homes, prevhomesales)
+		if existing_home_data == False:
+			if good_home(prevhomesales):
 				print "GOOD NEW HOME:",prevhomesales
 		 		num_good_homes += 1
 				inserted_homes[prevhomesales.address + "\t" + prevhomesales.city] = (prevhomesales, "new")
 				prevhomesales.eazyhouz_hash = get_eazyhouz_hash(prevhomesales)
 				prevhomesales.save()
 			else:
-				update_existing_home(existing_home_data[0], prevhomesales)
+				print "NEW BAD HOME:",prevhomesales
+				num_bad_homes += 1
 		else:
-			print "BAD HOME:",prevhomesales
-			num_bad_homes += 1
+			update_existing_home(existing_home_data[0], prevhomesales)
 	except Exception as e:
 		print "Exception", traceback.format_exc()
 		pass
