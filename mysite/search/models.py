@@ -19,6 +19,13 @@ class CMA(models.Model):
 	todays_prediction = models.NullBooleanField()
 	cma_dict = models.TextField()
 
+class School(models.Model):
+    city = models.CharField(max_length=500,null=True, blank=True)
+    state = models.CharField(max_length=50,null=True, blank=True)
+    school_name = models.CharField(max_length = 1024, null=True, blank=True)	
+    school_type = models.CharField(max_length = 100, null=True, blank=True)	
+    school_rating = models.IntegerField(null=True, blank=True)
+
 class PrevHomeSales(models.Model):
     #sale_type = models.CharField(max_length=512,null=True, blank=True)
     home_type = models.CharField(max_length=512,null=True, blank=True)
