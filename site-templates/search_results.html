@@ -16,6 +16,9 @@
 <!-- DataTables -->
 <script type="text/javascript" charset="utf8" src="{% static 'DataTables-1.10.4/media/js/jquery.dataTables.js' %}"></script>
 <script type="text/javascript" charset="utf8" src="{% static 'DataTables-1.10.4/dataTables.bootstrap.js' %}"></script>
+<style>
+    .hidden { display: none; }
+</style>
 <body>
 	<div class="container-fluid">
 		<div class="row">
@@ -28,7 +31,7 @@
 					<!--<li><a href="#ask_sell">Asking vs Selling Prices*</a></li>
 						<li><a href="#">Home's Sales History*</a></li>-->
 					<li><a href="#market_temp">Market Temperature*</a></li>
-					<li><a href="#improve_estimate">Improve Your Estimate*</a></li>
+					<li class="hidden"><a href="#improve_estimate">Improve Your Estimate*</a></li>
 				</ul>
 				<ul class="nav nav-sidebar">
 					<!--<li><a>Local Scoop</a></li>-->
@@ -440,7 +443,7 @@
 					<li>Add a personal touch</li>
 				</ul>
 				</p>
-				<h2 class="sub-header" id=improve_estimate>Improve your estimate*</h2>
+				<h2 class="sub-header hidden" id=improve_estimate>Improve your estimate*</h2>
 				<h5>DEMO Only: Start typing to improve the estimate. Tell us about this house (e.g., pool, kitchen to see options)</h5>
 				<!--        <div class="progress">
 					<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
@@ -560,5 +563,16 @@
         
         //get tooltips to popover
         $("[data-toggle=popover]").popover();
+        
+        //one popover at a time
+        $('body').on('click', function (e) {
+            $('[data-toggle="popover"]').each(function () {
+                //the 'is' for buttons that trigger popups
+                //the 'has' for icons within a button that triggers a popup
+                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                    $(this).popover('hide');
+                }
+            });
+        });
 </script>
 {% endblock %}

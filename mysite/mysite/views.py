@@ -339,7 +339,7 @@ def update_prevhome(request, query, query2):
 	    result = return_zhome_attr(query, query2) # otherwise try to get Zillow data
 	    if result == None:
 	      raise AttributeError
-	    form = PrevHomeSalesForm(instance=result, exp=result)
+	    form = PrevHomeSalesForm(instance=result)
 	    school_data = {
 	      'format': 'address',
 	      'city': result.city,
@@ -365,8 +365,7 @@ def update_prevhome(request, query, query2):
 						 'user_input': True,
 						 'latitude': home.latitude,
 						 'longitude': home.longitude,
-						 'eazyhouz_hash': get_eazyhouz_hash(home)},
-				       exp = home) #create blank result
+						 'eazyhouz_hash': get_eazyhouz_hash(home)}) #create blank result
 	      school_data = {
 		'format': 'address',
 		'city': home.city,
