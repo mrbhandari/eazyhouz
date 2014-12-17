@@ -289,7 +289,7 @@ def gen_homepage(request):
 
 
 def more_info_page(request):
-  result, query, form =  [], [], PrevHomeSalesForm()
+  result, query =  [], []
   
   if 'q' in request.GET and 'q2' in request.GET: #All correct vars exist load page
     query, query2 = request.GET.get('q',''), request.GET.get('q2','')
@@ -303,12 +303,14 @@ def more_info_page(request):
 def update_prevhome(request, query, query2):
       if request.method== 'POST':
         try:     
-          print "XXXXXXX XXXXXXX Getting id"
+          print "Trying to see if we just recorded ID from zillow in the last step"
           print request.POST.get('id')
           u = PrevHomeSales.objects.get(id=request.POST.get('id')) #TODO figure out a unique key
           form = PrevHomeSalesForm(request.POST, instance=u)
         except: #TODO FIX blanket except clause PrevHomeSales.DoesNotExist, AttributeError:
-          form = PrevHomeSalesForm(request.POST)
+          print "ID was not found in the system as an existing home that we inserted from Zillow already, this home was not found on Zillow"
+	  print request.POST
+	  form = PrevHomeSalesForm(request.POST)
           #print form
           form.id = -1
 	  form.eazyhouz_hash = 'blah'
@@ -328,6 +330,7 @@ def update_prevhome(request, query, query2):
 	school_data = {}
         print "Not a post request"
 	try: #try and see if home already exists
+	  print "try and see if home already exists"
 	  home = gen_home_model_from_google(query + ' ' +query2)
 	  get_home = PrevHomeSales.objects.filter(address__iexact=home.address, zipcode=home.zipcode, user_input=0).order_by('-id')[:1].get()
 	  return HttpResponseRedirect(get_home.gen_url())
@@ -353,6 +356,7 @@ def update_prevhome(request, query, query2):
 	    print "Zillow failed reverting to Google Geolocate %s" % (e)
 	    try:
 	      home = gen_home_model_from_google(query + ' ' +query2)
+	      print home
 	      form = PrevHomeSalesForm( initial={'address': home.address,
 						 'city': home.city,
 						 'zipcode': home.zipcode,
@@ -459,6 +463,8 @@ def gen_appraisal_page(request, pid):
       print "Could not get eventful"
       
     
+    recent_city_sales = get_last3_months_accuracy(r.city)[:20]
+    
     return render_to_response(
 		  'search_results.html',
 		  {'result': app_data,
@@ -471,6 +477,8 @@ def gen_appraisal_page(request, pid):
 		   'table': foursquare_table,
 		   'recent_sales': recent_sales,
 		   'eventful_r': eventful_r,
+		   'more_info_url': "http://www.bing.com/search?q=",
+		   'recent_city_sales': recent_city_sales,
 		   },
 		  RequestContext(request))
 

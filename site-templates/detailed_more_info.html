@@ -36,19 +36,10 @@
                   <li>Trends showing if prices are rising</li>
                   <li>How long it takes to sell in your area</li>
                   <li>Data indicating if it's a good time to buy</li>
+                  <li>More detailed school data</li>
             </ul>
             
-            <script>
-                  $(window).load(function ()
-                        {
-                            
-                            var $contents = $('#frame').contents();
-                            //$contents.scrollTop($contents.height());
-                            contents.scrollTop($(schoolscore_div).position())
-                        });
-            </script>            
-            {{ r.city }}
-            <iframe height=600 seamless sandbox="allow-scripts allow-same-origin" scrollingname="school data" id="frame" src="{{ school_url }}"></iframe>
+            <!--<iframe height=600 seamless sandbox="allow-scripts allow-same-origin" scrollingname="school data" id="frame" src="{{ school_url }}"></iframe>-->
 
             
         </div><!-- end div for second column -->
@@ -61,6 +52,13 @@
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script type="text/javascript">
+      
+      $( document ).ready(function() {
+          console.log( "ready!" );
+          $("#div_id_elementary").before().prepend("<p>Knowing the schools improves our accuracy greatly. <a target='_blank' href='{{ school_url }}'>Don't know the schools? Find out here.</a></p>");
+      });
+    </script>
 
 
 

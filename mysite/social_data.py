@@ -19,13 +19,17 @@ def nearby_image(latitude,longitude):
 def nearby_insta(latitude, longitude):
     #https://github.com/Instagram/python-instagram
     api = InstagramAPI(client_id='e5caa7d1da134dd681db8fd39389f8e7', client_secret='468c71adce01482aa17ca24090c07a1f')
-    local_media_search = api.media_search(count=30, lat=latitude, lng=longitude, distance=rdist)
-    #other params: min_timestamp, max_timestamp, q
-    photos = []
-    for media in local_media_search:
-        photos.append({'lri': media.images['low_resolution'].url,
-                       'sri': media.images['standard_resolution'].url,
-                       })
+    photos =[]
+    try:
+        local_media_search = api.media_search(count=30, lat=latitude, lng=longitude, distance=rdist)
+        #other params: min_timestamp, max_timestamp, q
+        photos = []
+        for media in local_media_search:
+            photos.append({'lri': media.images['low_resolution'].url,
+                           'sri': media.images['standard_resolution'].url,
+                           })  
+    except:
+        print "Could not find instagram pics"
     return photos
 
 def nearby_yelp(latitude, longitude):
@@ -61,14 +65,19 @@ def nearby_twitter(latitude, longitude, radius=tradius):
     access_secret = "FNiDwwbgs0WiElgaJ2hVECnsyavUKIQ3IP7JNr4BkiOhx"# create twitter API object
     auth = OAuth(access_key, access_secret, consumer_key, consumer_secret)
     twitter = Twitter(auth = auth)
-    geocode = "%s,%s,%s" % (latitude, longitude, radius)
-    query = twitter.search.tweets(geocode = geocode, count=40)
     tweets = []
-    for result in query["statuses"]:
-        tweets.append(result.get("text"))
+    geocode = "%s,%s,%s" % (latitude, longitude, radius)
+    try:
+        query = twitter.search.tweets(geocode = geocode, count=40)
+        tweets = []
+        for result in query["statuses"]:
+            tweets.append(result.get("text"))
+    except:
+        print "URLError could not get nearby Twitter"
     return tweets
 
 def nearby_foursquare(latitude, longitude, radius=rdist):
+    fscheckins = []
     fsclient_id = 'LVMG0AY1BFF5AJFPS0GJEF2MD4G4PB4OYDRJVZ4NJDC3PSRK'
     fsclient_secret = 'M5A2YFXKFKWHAMRX10430ZWUOH5VFOGDBTL42H5WPYYVG5R5'
     client = Foursquare(client_id=fsclient_id,
@@ -80,37 +89,40 @@ def nearby_foursquare(latitude, longitude, radius=rdist):
         'limit': 50,
         'radius': radius,
     }
-    response = client.venues.search(params)
-    fscheckins = []
-
-    #Filtering for high quality: make sure atleast 5% of users in area checked in here
-    #percent_of_total = .05
-    #totaluserCount = response.get('venues')[0].get('stats').get('usersCount')
-    #totaluserCount = response.get('venues')[0]
-    #print totaluserCount
-    #actual_venues = response.get('venues')[2:len(response.get('venues'))]#skips the first response which is always meta data
-    #print response
-    for i in response.get('venues'): 
-        fsvenue = {}
-        userCount = i.get('stats').get('usersCount')
-        if userCount > 30:
-            #print i
-            fsvenue['name'] = i.get('name')
-            fsvenue['usersCount'] = userCount
-            fsvenue['checkinsCount'] = i.get('stats').get('checkinsCount')
-            fsvenue['repeatRatio'] = fsvenue['checkinsCount'] / fsvenue['usersCount']
-            fsvenue['url'] = i.get('url')
-            #print i.get('popular')
-            #print i.get('hereNow')
-            #print i.get('tips')
-            #print i.get('tags')
-            #print i.get('photos')
-            try:
-                index_value = i.get('categories')[0].get('shortName')
-            except (ValueError, IndexError):
-                index_value = None
-            fsvenue['category'] = index_value
-            fscheckins.append(fsvenue)
+    try:
+        response = client.venues.search(params)
+        fscheckins = []
+    
+        #Filtering for high quality: make sure atleast 5% of users in area checked in here
+        #percent_of_total = .05
+        #totaluserCount = response.get('venues')[0].get('stats').get('usersCount')
+        #totaluserCount = response.get('venues')[0]
+        #print totaluserCount
+        #actual_venues = response.get('venues')[2:len(response.get('venues'))]#skips the first response which is always meta data
+        #print response
+        for i in response.get('venues'): 
+            fsvenue = {}
+            userCount = i.get('stats').get('usersCount')
+            if userCount > 30:
+                #print i
+                fsvenue['name'] = i.get('name')
+                fsvenue['usersCount'] = userCount
+                fsvenue['checkinsCount'] = i.get('stats').get('checkinsCount')
+                fsvenue['repeatRatio'] = fsvenue['checkinsCount'] / fsvenue['usersCount']
+                fsvenue['url'] = i.get('url')
+                #print i.get('popular')
+                #print i.get('hereNow')
+                #print i.get('tips')
+                #print i.get('tags')
+                #print i.get('photos')
+                try:
+                    index_value = i.get('categories')[0].get('shortName')
+                except (ValueError, IndexError):
+                    index_value = None
+                fsvenue['category'] = index_value
+                fscheckins.append(fsvenue)
+    except:
+        print "no foursquare found"        
     return fscheckins
     
 def nearby_eventful(latitude, longitude, radius=rdist):
