@@ -508,7 +508,9 @@ def home_similarity(home, subject_home):
   if use_lot_size:
     similarity_score += 0.1 * abs(home.lot_size - subject_home.lot_size)
   use_school_rating = True
-  
+  print home.address
+  print "DISTANCE IS ",dist
+  print "SIM1", similarity_score 
   if use_school_rating:
     subject_elementary = subject_home.elementary if subject_home.elementary else 3
     subject_middle = subject_home.middle if subject_home.middle else 3
@@ -551,30 +553,33 @@ def get_candidates(subject_home, date_of_prediction):
   last_sale_date_threshold = "2014-01-01"
   
   last_sale_date_max_threshold = date_of_prediction
+  outlier_detection = True
   if use_interior_rating:
     if subject_home.interior_rating == 3:
       comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
       baths__lte=max_baths, baths__gte=min_baths,
-      sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,last_sale_date__lt=last_sale_date_max_threshold,property_type__exact=subject_home.property_type,remodeled__exact=subject_home.remodeled,interior_rating__exact=subject_home.interior_rating).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active").exclude(interior_rating__isnull=True)
+      sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,last_sale_date__lt=last_sale_date_max_threshold,property_type__exact=subject_home.property_type,remodeled__exact=subject_home.remodeled,interior_rating__exact=subject_home.interior_rating,curr_status__exact="sold").exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active").exclude(interior_rating__isnull=True)
     if subject_home.interior_rating == 1 or subject_home.interior_rating == 2:
       comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
       baths__lte=max_baths, baths__gte=min_baths,
-      sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,last_sale_date__lt=last_sale_date_max_threshold,property_type__exact=subject_home.property_type,remodeled__exact=subject_home.remodeled).filter(Q(interior_rating__exact=1) | Q(interior_rating__exact=2)).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active").exclude(interior_rating__isnull=True)
+      sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,last_sale_date__lt=last_sale_date_max_threshold,property_type__exact=subject_home.property_type,remodeled__exact=subject_home.remodeled).filter(Q(interior_rating__exact=1) | Q(interior_rating__exact=2)).exclude(user_input__exact=1,curr_status__exact="sold").exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active").exclude(interior_rating__isnull=True)
     if subject_home.interior_rating == 4 or subject_home.interior_rating == 5:
       comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
       baths__lte=max_baths, baths__gte=min_baths,
-      sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,last_sale_date__lt=last_sale_date_max_threshold,property_type__exact=subject_home.property_type,remodeled__exact=subject_home.remodeled).filter(Q(interior_rating__exact=4) | Q(interior_rating__exact=5)).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active").exclude(interior_rating__isnull=True)
+      sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,last_sale_date__lt=last_sale_date_max_threshold,property_type__exact=subject_home.property_type,remodeled__exact=subject_home.remodeled,curr_status__exact="sold").filter(Q(interior_rating__exact=4) | Q(interior_rating__exact=5)).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active").exclude(interior_rating__isnull=True)
 
   else:
     comp_candidates = PrevHomeSales.objects.filter(beds__exact=beds,
     baths__lte=max_baths, baths__gte=min_baths,
-    sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,last_sale_date__lt=last_sale_date_max_threshold,property_type__exact=subject_home.property_type).exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active")
+    sqft__lte=max_sqft,sqft__gte=min_sqft,city__exact=city,last_sale_date__gte=last_sale_date_threshold,last_sale_date__lt=last_sale_date_max_threshold,property_type__exact=subject_home.property_type,curr_status__exact="sold").exclude(user_input__exact=1).exclude(id__exact=subject_home.id).exclude(address__iexact=subject_home.address,zipcode__exact=subject_home.zipcode).exclude(curr_status__exact="active")
   print comp_candidates
   print use_lot_size, use_year_built
   if use_lot_size:
     comp_candidates = comp_candidates.filter(lot_size__lt=max_lot_size,lot_size__gt=min_lot_size)
   if use_year_built:
     comp_candidates = comp_candidates.filter(year_built__lt=max_year_built,year_built__gt=min_year_built)
+  if outlier_detection:
+    comp_candidates = comp_candidates.exclude(outlier__exact=1)
   return comp_candidates
 
 
@@ -645,6 +650,8 @@ def gen_appraisal(subject_home, today):
 
     data['similarity' + str(i)] = 100/(1.0 + sim_score/100)
     dist = distance_on_unit_sphere(float(subject_home.latitude),float(subject_home.longitude),float(home.latitude),float(home.longitude))
+    print "IN GEN_APPRAISAL",home.address
+    print "DIST: ",dist
     dist = "{0:.2f}".format(round(dist,2))
     data["distance" + str(i)] = dist
   if use_low_sim_homes:
@@ -716,7 +723,9 @@ def distance_on_unit_sphere(lat1, long1, lat2, long2):
 def get_recent_sales(subject_home):
   h = []
   comp_candidates = get_candidates(subject_home, datetime.datetime.now())
+
   for c in comp_candidates:
+    print "RECENT SALES", c
     sim_score = home_similarity(c,subject_home)
     comp_house = model_to_dict(c)
     comp_house["sim_score"] = int(100/(1.0 + sim_score/100))
@@ -840,7 +849,7 @@ def get_homes_accuracy(all_homes, today, low_percent = -1000, high_percent = 100
 	
 def get_last3_months_accuracy(city, limit=20):
 	last_3_months_before_date = datetime.datetime.now() + relativedelta(months=-3)
-	homes_for_accuracy = PrevHomeSales.objects.filter(curr_status__exact="sold", city__exact=city, last_sale_date__gte=last_3_months_before_date)[0:limit]
+	homes_for_accuracy = PrevHomeSales.objects.filter(curr_status__exact="sold", city__exact=city, last_sale_date__gte=last_3_months_before_date).order_by('-last_sale_date')[0:limit]
 	return get_homes_accuracy(homes_for_accuracy, False)
 
 

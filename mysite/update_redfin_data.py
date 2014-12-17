@@ -19,6 +19,7 @@ getcontext().prec = 5
 from search.models import PrevHomeSales
 import django
 django.setup()
+
 def same_homes(home, existing_home):
 	return home.beds == existing_home.beds and home.baths == existing_home.baths and home.sqft == existing_home.sqft and home.lot_size == existing_home.lot_size and home.zipcode == existing_home.zipcode and home.latitude == existing_home.latitude and home.longitude == existing_home.longitude and home.url == existing_home.url and home.last_sale_date == existing_home.last_sale_date and home.sale_price == existing_home.sale_price and home.address == existing_home.address and home.property_type == existing_home.property_type
 
@@ -70,7 +71,7 @@ def good_home(home):
 
 
 def load_all_active_homes():
-	return PrevHomeSales.objects.filter(curr_status__exact="active")
+	return PrevHomeSales.objects.all()
 
 lines = open(sys.argv[1]).readlines()
 school_names_data = {}
@@ -177,6 +178,8 @@ for ind in range(0,len(lines)):
 		if line1['YEAR_BUILT']:
 			prevhomesales.year_built = line1['YEAR_BUILT']
 		prevhomesales.curr_status = line1['STATUS'].lower()
+		if not prevhomesales.curr_status and line1['LAST_SALE_PRICE']:
+			prevhomesales.curr_status = "sold"
 		if prevhomesales.curr_status == "sold" and line1['LAST_SALE_PRICE']:
 				prevhomesales.sale_price = Decimal(line1['LAST_SALE_PRICE'])
 		if prevhomesales.curr_status == "active" and line1['LIST_PRICE']:
@@ -227,9 +230,9 @@ for ind in range(0,len(lines)):
 			if good_home(prevhomesales):
 				print "GOOD NEW HOME:",prevhomesales
 		 		num_good_homes += 1
-				inserted_homes[prevhomesales.address + "\t" + prevhomesales.city] = (prevhomesales, "new")
 				prevhomesales.eazyhouz_hash = get_eazyhouz_hash(prevhomesales)
 				prevhomesales.save()
+				inserted_homes[prevhomesales.address + "\t" + prevhomesales.city] = (prevhomesales, "new")
 			else:
 				print "NEW BAD HOME:",prevhomesales
 				num_bad_homes += 1
