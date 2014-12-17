@@ -27,7 +27,7 @@ def return_zhome_attr(raw_address, raw_citystatezip):
 
 def return_zestimate(raw_address, raw_citystatezip):
     
-    zestimate = "na"
+    zestimate, rent_zestimate = 0, 0
     url = zformrequest(raw_address, raw_citystatezip)
     url_xml_string = request(url)
     
@@ -35,9 +35,11 @@ def return_zestimate(raw_address, raw_citystatezip):
     try:
         result_prevhomesales = output['SearchResults:searchresults']['response']['results']['result']
         zestimate = Decimal(result_prevhomesales.get('zestimate', None).get('amount', None).get('#text', None))
+        rent_zestimate = Decimal(result_prevhomesales.get('rentzestimate', None).get('amount', None).get('#text', None))
+        
     except (AttributeError, KeyError, TypeError), e:
         print "failed to get Zestimate for this reason: %s" % e
-    return zestimate
+    return [zestimate, rent_zestimate]
 
 
 #forms the URL request for Zillow
@@ -46,7 +48,8 @@ def zformrequest(raw_address, raw_citystatezip):
     zws = [ 'X1-ZWz1csm2cyipsb_6plsv','X1-ZWz1chwxis15aj_9skq6', 'X1-ZWz1dyahf20tu3_634pb', 'X1-ZWz1byi0snpg5n_7x5fi', 'X1-ZWz1bw8guo3swb_61q4u'][randrange(4)]
     values = {'zws-id' : zws,
               'address' : raw_address,
-              'citystatezip' : raw_citystatezip }
+              'citystatezip' : raw_citystatezip,
+              'rentzestimate' : 'true'}
     data = urllib.urlencode(values)
     url = urllib2.Request(baseurl, data)
     return url

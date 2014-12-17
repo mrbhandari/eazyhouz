@@ -87,6 +87,7 @@ body {
                                 <th>List Price ($)</th>
                                 <th>EazyHouz Estimate ($)</th>
                                 <th>Discount from Value</th>
+                                <th>Rental Coverage</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -104,8 +105,8 @@ body {
                                         <td align="center">{% if h.home.elementary %}{{ h.home.elementary }} {% else %}{% endif %}</td>
                                         <td align="right">{{ h.list_price |floatformat:"0"|intcomma}}</td>
                                         <td align="right">{{ h.predicted_price|floatformat:"0"|intcomma}}</td>
-                                        
                                         <td align="center">{{ h.error|mul:-100|floatformat:"0"}}%</td>
+                                        <td align="right">{{ h.home.rental_coverage }}</td>
                                     </tr>
                                         
                                 {% endfor %}

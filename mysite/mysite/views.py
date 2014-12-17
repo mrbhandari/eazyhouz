@@ -25,6 +25,7 @@ import math
 import time
 from utils import get_eazyhouz_hash
 from django.core.exceptions import ObjectDoesNotExist
+from decimal import *
 
 class FoursquareTable(tables.Table):
     name = tables.Column(verbose_name="Venue Name")
@@ -457,13 +458,13 @@ def gen_appraisal_page(request, pid):
     foursquare_table = FoursquareTable(foursquare_r)
     RequestConfig(request).configure(foursquare_table)
     
-    try:
-      eventful_r = nearby_eventful(r.latitude, r.longitude)
-    except: #TODO remove general except clause (Rahul)
-      print "Could not get eventful"
-      
+    #try:
+    #  eventful_r = nearby_eventful(r.latitude, r.longitude)
+    #except: #TODO remove general except clause (Rahul)
+    #  print "Could not get eventful"
+    #  
     
-    recent_city_sales = get_last3_months_accuracy(r.city)[:20]
+    recent_city_sales = get_last3_months_accuracy(r.city)[:10]
     
     return render_to_response(
 		  'search_results.html',
@@ -749,6 +750,7 @@ def gen_best_value_search(request):
   print "Cities",list_of_cities
   return render_to_response('best_value_homes.html',
                             {'cities':  list_of_cities})
+
   
 def gen_accuracy_search(request):
   list_of_cities = get_distinct_cities_with_sold_homes()
@@ -759,8 +761,39 @@ def gen_accuracy_search(request):
 def gen_best_value_res(request, city):
   best_homes = get_best_value_homes(city, -10000, 10000)
   
+  
+  for x in range(0,len(best_homes)):
+    i = best_homes[x]
+    address = i['home'].address
+    zipcode = i['home'].zipcode
+    zestimates = return_zestimate(address, zipcode)
+    
+    try:
+      zestimate_error = (zestimates[0] /best_homes[x]['home'].sale_price ) -1
+      P = best_homes[x]['home'].sale_price * 0.8
+      print P
+      i = .0421 / 12
+      n = 30*12
+      
+      monthly_payment = P*(i*(1+i)**n)/((1+i)**n-1)
+      print "this is the rent estiamte"
+      print zestimates[1]
+      print "this is the monthly payment"
+      print monthly_payment
+      try:
+	rental_coverage = round(Decimal(monthly_payment) /zestimates[1], 2)
+      except DivisionByZero,e:
+	rental_coverage = "na"
+     
+      best_homes[x]['home'].zestimate = zestimates[0]
+      best_homes[x]['home'].rent_zestimate = zestimates[1]
+      best_homes[x]['home'].monthly_payment = monthly_payment
+      best_homes[x]['home'].rental_coverage = rental_coverage
+      best_homes[x]['home'].zestimate_error = zestimate_error
+    except:
+      print "Could not get zestimates or rentzestimates"
   #print "XXXXXXXXXXXXX Best Homes"
-  print best_homes
+  #print best_homes
   
   best_homes_table = BestValueTable(best_homes)
   RequestConfig(request).configure(best_homes_table)
@@ -770,37 +803,20 @@ def gen_best_value_res(request, city):
 def gen_accuracy_for_city(request, city):
   recent_city_sales = get_last3_months_accuracy(city)[:20]
   
-  for x in range(0,len(recent_city_sales)):
-    i = recent_city_sales[x]
-    address = i['home'].address
-    zipcode = i['home'].zipcode
-    zestimate = return_zestimate(address, zipcode)
-    
-    try:
-      zestimate_error = (zestimate /recent_city_sales[x]['home'].sale_price ) -1
-    except TypeError, e:
-      zestimate_error = ""
-    
-    
-    recent_city_sales[x]['home'].zestimate = zestimate
-    recent_city_sales[x]['home'].zestimate_error = zestimate_error
-    
-    print zestimate
-  
   return render_to_response('accuracy_homes_res.html',
                             {'recent_city_sales':  recent_city_sales},
 			    RequestContext(request))
 
 def get_distinct_cities():
-	return PrevHomeSales.objects.values_list('city', flat=True).distinct()
+	return PrevHomeSales.objects.values_list('city', flat=True).distinct().order_by('city')
 
 
 def get_distinct_cities_with_k_active_houses(k=3):
-	return PrevHomeSales.objects.filter(curr_status__exact="active").values('city').annotate(total=Count('city')).filter(total__gte=k)
+	return PrevHomeSales.objects.filter(curr_status__exact="active").values('city').annotate(total=Count('city')).filter(total__gte=k).order_by('city')
 
 def get_distinct_cities_with_sold_homes(mth=3):
 	last_3_months_before_date = datetime.datetime.now() + relativedelta(months=(-1*mth))
-	return PrevHomeSales.objects.filter(curr_status__exact="sold", last_sale_date__gte=last_3_months_before_date).values('city').annotate(total=Count('city'))
+	return PrevHomeSales.objects.filter(curr_status__exact="sold", last_sale_date__gte=last_3_months_before_date).values('city').annotate(total=Count('city')).order_by('city')
 	
 
 def get_schools_user_input(address, city, state, latitude, longitude):

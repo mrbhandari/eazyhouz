@@ -41,7 +41,7 @@
 					<li><a href="#yelp">Yelp</a></li>
 					<li><a href="#instagram">Instagram</a></li>
 					<li><a href="#twitter">Recent Tweets</a></li>
-					<li><a href="#eventful">Events</a></li>
+					<li class="hidden"><a href="#eventful">Events</a></li>
 				</ul>
 				<!--          <ul class="nav nav-sidebar">
 					<li><a href="#">Evaluate Neighborhood*</a></li>
@@ -425,8 +425,8 @@
 					</table>
 				</div>
                                 
-                                <h2 id="accuracy" class="sub-header">Accuracy for last 20 homes sold in {{ recent_city_sales.0.home.city }}</h2>
-                                <p>See how our estimates stacked up for the 20 most recent
+                                <h2 id="accuracy" class="sub-header">Accuracy for last 10 homes sold in {{ recent_city_sales.0.home.city }}</h2>
+                                <p>See how our estimates stacked up for the 10 most recent
                                 sales in {{ recent_city_sales.0.home.city }}. We're still
                                 working our accuracy and would love feedback on why we got
                                 the ones in red wrong so we can continue to make EazyHouz
@@ -588,11 +588,11 @@
 					</table>
 				</div>
 				<!--table div ends-->        
-				<h2 class="sub-header" id="eventful">Events within 1000m</h2>
-				<p>
+				<h2 class="sub-header hidden" id="eventful">Events within 1000m</h2>
+				<p class="hidden">
 					More than any other factor, people define a neighborhood. Find out kinds of events are being held in this community within a 1,000 meters.
 				</p>
-				<div class="row list-group">
+				<div class="row list-group hidden">
 					<!--Eventful view-->
 					{% for r in eventful_r %}
 					<div class="item  col-xs-3 col-lg-3" style="height:300px; overflow: auto;">
