@@ -466,6 +466,20 @@ def gen_appraisal_page(request, pid):
     
     recent_city_sales = get_last3_months_accuracy(r.city)[:10]
     
+    school_data = {
+      'format': 'address',
+      'city': r.city,
+      'state': r.state,
+      'zipcode':r.zipcode,
+      'lng': r.longitude,
+      'lat':r.latitude,
+      'schoolname' : '',
+      'address': r.address
+    }
+    school_url = schoolandhousing(school_data)
+    print "XXXXX"
+    print school_url
+    
     return render_to_response(
 		  'search_results.html',
 		  {'result': app_data,
@@ -480,6 +494,7 @@ def gen_appraisal_page(request, pid):
 		   'eventful_r': eventful_r,
 		   'more_info_url': "http://www.bing.com/search?q=",
 		   'recent_city_sales': recent_city_sales,
+		   'school_url': school_url,
 		   },
 		  RequestContext(request))
 

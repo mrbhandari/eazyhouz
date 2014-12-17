@@ -170,6 +170,7 @@ def schoolandhousing(schooldata):
     baseurl = 'http://www.schoolandhousing.com/jsp/school_locator/findpublicschoolbyaddress.jsp?'
     data = urllib.urlencode(schooldata)
     url = baseurl +data
+    print "School data url is %s\n\n" % url
     return url
 
 def build_event_list(json):
