@@ -790,7 +790,7 @@ def gen_best_value_res(request, city):
       print "this is the monthly payment"
       print monthly_payment
       try:
-	rental_coverage = round(Decimal(monthly_payment) /zestimates[1], 2)
+	rental_coverage = round(zestimates[1] / Decimal(monthly_payment), 2)
       except DivisionByZero,e:
 	rental_coverage = "na"
      
