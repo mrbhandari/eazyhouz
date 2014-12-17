@@ -33,14 +33,13 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1>{{ recent_city_sales.0.home.city }}'s Most Recent Sales</h1>
-                    <h4>Accuracy vs actual sales price</h4>
-                    <p>See how our estimates stacked up for the most recent sales in {{ recent_city_sales.0.home.city }}.
-                    We're still working our accuracy and would love feedback on why we got the ones in red wrong so we
-                    can continue to make EazyHouz esimtates better.</p>
-                    <h4>Accuracy vs Zestimates</h4>
-                    <p>For full transperancy we also show the Zesimtates for those properties.</p>
-                    <h4>Homes for sale</h4>
-                    <p>See <a href="/best-value-homes/search/{{ recent_city_sales.0.home.city|iriencode }}">the best value homes for sale in {{ recent_city_sales.0.home.city }}.</a></p>
+                    <h4>Accuracy vs actual sales price for last 20 homes sold</h4>
+                    <p>See how our estimates stacked up for the most recent
+                    sales in {{ recent_city_sales.0.home.city }}. We're still
+                    working our accuracy and would love feedback on why we got
+                    the ones in red wrong so we can continue to make EazyHouz
+                    esimtates better. See <a href="/best-value-homes/search/{{recent_city_sales.0.home.city|iriencode }}">
+                    the best value homes for sale in {{ recent_city_sales.0.home.city}}.</a></p>
                     <div class="table-responsive"> <!--Twitter view-->
                         <table id="recent_sales_table" class="table table-striped">
                             <thead>

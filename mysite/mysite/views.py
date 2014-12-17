@@ -463,6 +463,8 @@ def gen_appraisal_page(request, pid):
       print "Could not get eventful"
       
     
+    recent_city_sales = get_last3_months_accuracy(r.city)[:20]
+    
     return render_to_response(
 		  'search_results.html',
 		  {'result': app_data,
@@ -476,6 +478,7 @@ def gen_appraisal_page(request, pid):
 		   'recent_sales': recent_sales,
 		   'eventful_r': eventful_r,
 		   'more_info_url': "http://www.bing.com/search?q=",
+		   'recent_city_sales': recent_city_sales,
 		   },
 		  RequestContext(request))
 

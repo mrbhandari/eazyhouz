@@ -30,12 +30,14 @@
 					<li><a href="#recent_sales">Other Recent Sales</a></li>
 					<!--<li><a href="#ask_sell">Asking vs Selling Prices*</a></li>
 						<li><a href="#">Home's Sales History*</a></li>-->
-					<li><a href="#market_temp">Market Temperature*</a></li>
+					<li><a href=#accuracy>Accuracy & Confidence</a></li>
+                                        <li><a href="#market_temp">Market Temperature*</a></li>
 					<li class="hidden"><a href="#improve_estimate">Improve Your Estimate*</a></li>
 				</ul>
 				<ul class="nav nav-sidebar">
 					<!--<li><a>Local Scoop</a></li>-->
-					<li><a href="#foursquare">Foursquare</a></li>
+					<li><a href="#schools">Schools</a></li>
+                                        <li><a href="#foursquare">Foursquare</a></li>
 					<li><a href="#yelp">Yelp</a></li>
 					<li><a href="#instagram">Instagram</a></li>
 					<li><a href="#twitter">Recent Tweets</a></li>
@@ -58,7 +60,7 @@
                                 
 				<p><strong>Closest comparables selected from {{ result.number_of_homes_used }} homes:</strong></p>
 				{% if subject_home.last_zestimate %}
-				<br>Zestimate: <strong>${{ subject_home.last_zestimate | intcomma }}</strong>
+				<!--<br>Zestimate: <strong>${{ subject_home.last_zestimate | intcomma }}</strong>-->
 				{% endif %}
 				<br><br>  
 				<div class="row placeholders">
@@ -422,6 +424,56 @@
 						</tbody>
 					</table>
 				</div>
+                                
+                                <h2 id="accuracy" class="sub-header">Accuracy for last 20 homes sold in {{ recent_city_sales.0.home.city }}</h2>
+                                <p>See how our estimates stacked up for the 20 most recent
+                                sales in {{ recent_city_sales.0.home.city }}. We're still
+                                working our accuracy and would love feedback on why we got
+                                the ones in red wrong so we can continue to make EazyHouz
+                                esimtates better.</p>
+                                    <div class="table-responsive"> <!--Twitter view-->
+                                        <table id="accuracy_sales_table" class="table table-striped">
+                                            <thead>
+                                              <tr>
+                                                <th>Date Sold</th>
+                                                <th>Home Address</th>
+                                                <th>Sold Price</th>
+                                                
+                                                <th>EazyHouz Estimate ($)</th>
+                                                <th>EazyHouz Error</th>
+                                                <!--Show zestimates-->
+                                                <!--<th>Zestimate</th>-->
+                                                <!--<th>Zestiamte Error</th>-->
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for h in recent_city_sales %}
+                                                    <tr
+                                                        {% if h.error < -0.10 or h.error > 0.10 %}
+                                                            class="danger"
+                                                            {% else %}
+                                                                class="success"
+                                                            {% endif %}>
+                                                        <td>{{ h.home.last_sale_date}}</td>
+                                                        <td><a href="{{h.home.gen_url}}">{{ h.home.address }}</a></td>
+                                                        <td align="right">{{ h.list_price |floatformat:"0" |intcomma}}</td>
+                                                        <td align="right">{{ h.predicted_price|floatformat:"0" |intcomma }}</td>
+                                                        <td align="center">{{ h.error|mul:-100|floatformat:"0" }}%</td>
+                                                        <!--Show zestimates-->
+                                                        <!--<td>{{ h.home.zestimate|floatformat:"0" |intcomma }}</td>-->
+                                                        <!--<td>{{ h.home.zestimate_error|mul:100|floatformat:"0"  }}{% if h.home.zestimate_error %}%{% endif %}-->
+                                                        <!--</td>-->
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        
+                                    </div> <!--table div ends-->  
+                                    
+                                
+                                
+                                
+                                
 				<h2 class="sub-header" id="market_temp">Market Temperature*</h2>
 				<p><strong>Extreme Seller's Market:</strong> more buyers are hunting for homes than there are homes to buy.</p>
 				<br>
@@ -452,7 +504,23 @@
 					<input data-role="tagsinput" class="bootstrap-tagsinput" name="q" autocomplete="off" id="tagtest" type="text">
 					<!--<button type="submit" class="btn btn-default">Submit</button>-->
 				</div>
-				<h2 class="sub-header" id=foursquare>Foursquare within 1000m</h2>
+				
+                                <h2 class="sub-header" id=schools>Schools for this home</h2>
+                                
+                                <p>Even if you don't have school-age children,
+                                it's a good idea to evaluate a potential home's
+                                school district. You may not care whether the
+                                local schools are any good, but if you decide
+                                later to sell the home prospective buyers might.
+                                remember that the quality of its school district
+                                affects a home's value.
+                                </p>
+                                
+                                {% if subject_home.elem_school_name %}<li><b>Elementary:</b> {{subject_home.elem_school_name}}, rated {{subject_home.elementary}}/10</li>{% endif %}
+                                {% if subject_home.middle_school_name %}<li><b>Middle:</b> {{subject_home.middle_school_name}}, rated {{subject_home.middle}}/10</li>{% endif %}
+                                {% if subject_home.high_school_name %}<li><b>High School:</b>{{subject_home.high_school_name}}, rated {{subject_home.high}}/10</li>{% endif %}
+                                
+                                <h2 class="sub-header" id=foursquare>Foursquare within 1000m</h2>
 				<p>
 					Here's what people are checking into nearby sorted by our proprietary <u>Loyalty Score</u> which helps you understand how often people are coming back there.
 				</p>
@@ -574,5 +642,12 @@
                 }
             });
         });
+        
+        var table = $('#accuracy_sales_table').DataTable({
+        'paging': false,
+        'order': [
+            [0, 'desc']
+        ]
+        }); //TODOTODAY
 </script>
 {% endblock %}

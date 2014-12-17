@@ -171,3 +171,8 @@ var subject_marker = L.marker([{{ subject_home.latitude }}, {{ subject_home.long
     except KeyError:
         print "failed to get Zestimate for this reason: %s" % e
     return zestimate
+
+763 Lakebird Dr This is a Single-Family Home located at 763 Lakebird Drive,
+Sunnyvale CA. 763 Lakebird Dr has 3 beds, 2 baths, and approximately 1,108
+square feet. The property was built in 1957. 763 Lakebird Dr is in the Lakewood
+neighborhood in Sunnyvale, CA. The average list price for Lakewood is $649,648.
