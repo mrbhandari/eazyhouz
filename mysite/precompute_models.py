@@ -29,7 +29,7 @@ class DateTimeEncoder(json.JSONEncoder):
            return json.JSONEncoder.default(self, obj)
 
 def get_homes():
-	return PrevHomeSales.objects.filter(Q(last_sale_date__gte="2014-09-01") | Q(curr_status="active"))
+	return PrevHomeSales.objects.filter(Q(last_sale_date__gte="2014-10-01") | Q(curr_status="active"))
 
 homes = get_homes()
 ctr = 0
