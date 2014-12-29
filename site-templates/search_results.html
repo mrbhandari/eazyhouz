@@ -38,8 +38,8 @@
 					<!--<li><a>Local Scoop</a></li>-->
 					<li><a href="#schools">Schools</a></li>
                                         <li><a href="#foursquare">Foursquare</a></li>
-					<li><a href="#yelp">Yelp</a></li>
-					<li><a href="#instagram">Instagram</a></li>
+					<li class="hidden"><a href="#yelp">Yelp</a></li>
+					<li class="hidden"><a href="#instagram">Instagram</a></li>
 					<li><a href="#twitter">Recent Tweets</a></li>
 					<li class="hidden"><a href="#eventful">Events</a></li>
 				</ul>
@@ -526,11 +526,11 @@
 					Here's what people are checking into nearby sorted by our proprietary <u>Loyalty Score</u> which helps you understand how often people are coming back there.
 				</p>
 				{% render_table table %} <!--Foursquare view-->
-				<h2 class="sub-header" id="yelp">Yelp within 1000m</h2>
+				<h2 class="sub-header hidden" id="yelp">Yelp within 1000m</h2>
 				<p>
 					Highly rated local businesses can make life pleasant and enhance your sense of community. Here's what people are Yelping about:
 				</p>
-				<div class="row list-group">
+				<div class="row list-group hidden">
 					<!--Yelp view-->
 					{% for r in yelp_r.businesses %}
 					<div class="item  col-xs-3 col-lg-3" style="height:300px; overflow: auto;">
@@ -555,11 +555,11 @@
 					</div>
 					{% endfor %}                    
 				</div>
-				<h2 class="sub-header" id=instagram>Instagram posts within 1000m</h2>
+				<h2 class="sub-header hidden" id=instagram>Instagram posts within 1000m</h2>
 				<p>
 					More than any other factor, people define a neighborhood. Find out what your neighbors are like. Look for signs that neighbors share your interests in these Instagram photos taken within a 1,000m.
 				</p>
-				<div class="table-responsive">
+				<div class="table-responsive hidden">
 					<!--Instragram view-->
 					<table class="table table-striped">
 						<tbody>

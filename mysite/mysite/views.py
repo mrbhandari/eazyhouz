@@ -26,6 +26,7 @@ import time
 from utils import get_eazyhouz_hash
 from django.core.exceptions import ObjectDoesNotExist
 from decimal import *
+import time
 
 class FoursquareTable(tables.Table):
     name = tables.Column(verbose_name="Venue Name")
@@ -447,16 +448,32 @@ def gen_appraisal_page(request, pid):
       print "%s does not exist" % (e)
     eventful_r, instagram_r, yelp_r, foursquare_r, twitter_r = {}, {}, {}, {}, {}
     
-    instagram_r = nearby_insta(r.latitude, r.longitude)
-    try:
-      yelp_r = nearby_yelp(r.latitude, r.longitude)
-    except:
-      pass
-      
+    #start_time = time.time()
+    #instagram_r = nearby_insta(r.latitude, r.longitude)
+    #elapsed_time = time.time() - start_time
+    #print "instagram time %s" % (elapsed_time)
+    
+    #start_time = time.time()
+    #try:
+    #  yelp_r = nearby_yelp(r.latitude, r.longitude)
+    #except:
+    #  pass
+    #elapsed_time = time.time() - start_time
+    #print "yelp_r time %s" % (elapsed_time)
+    
+    
+    start_time = time.time()  
     twitter_r = nearby_twitter(r.latitude, r.longitude)
+    elapsed_time = time.time() - start_time
+    print "twitter_r time %s" % (elapsed_time)
+    
+    start_time = time.time()  
     foursquare_r = nearby_foursquare(r.latitude, r.longitude)
     foursquare_table = FoursquareTable(foursquare_r)
     RequestConfig(request).configure(foursquare_table)
+    elapsed_time = time.time() - start_time
+    print "foursquare_r time %s" % (elapsed_time)
+    
     
     #try:
     #  eventful_r = nearby_eventful(r.latitude, r.longitude)
@@ -464,7 +481,11 @@ def gen_appraisal_page(request, pid):
     #  print "Could not get eventful"
     #  
     
+    start_time = time.time()  
     recent_city_sales = get_last3_months_accuracy(r.city)[:10]
+    elapsed_time = time.time() - start_time
+    print "recent_city_sales time %s" % (elapsed_time)
+    
     
     school_data = {
       'format': 'address',
@@ -484,14 +505,13 @@ def gen_appraisal_page(request, pid):
 		  'search_results.html',
 		  {'result': app_data,
 		   'subject_home': r,
-           'subject_home_interior_rating': subject_interior_rating_display,
+		   'subject_home_interior_rating': subject_interior_rating_display,
 		   'instagram_r': instagram_r,
 		   'yelp_r': yelp_r,
 		   'twitter_r': twitter_r,
 		   'foursquare_r': foursquare_r,
 		   'table': foursquare_table,
 		   'recent_sales': recent_sales,
-		   'eventful_r': eventful_r,
 		   'more_info_url': "http://www.bing.com/search?q=",
 		   'recent_city_sales': recent_city_sales,
 		   'school_url': school_url,
